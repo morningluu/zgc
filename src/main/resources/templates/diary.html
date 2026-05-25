@@ -32,11 +32,45 @@
         .btn-add-active { background: linear-gradient(135deg, #B5E8D5, #B8D8F8); color: #5D7E6D; box-shadow: 0 4px 16px rgba(180,220,200,0.3); }
         .btn-add:hover { transform: translateY(-2px); }
 
-        .add-form-wrap { display: none; max-width: 500px; margin: 0 auto 30px; background: rgba(255,255,255,0.9); border-radius: 20px; padding: 24px; box-shadow: 0 6px 24px rgba(180,160,200,0.1); }
-        .add-form-wrap input, .add-form-wrap textarea { width: 100%; padding: 10px 14px; margin-bottom: 10px; border: 2px solid #eee; border-radius: 12px; font-family: inherit; font-size: 0.9em; outline: none; }
-        .add-form-wrap input:focus, .add-form-wrap textarea:focus { border-color: #FFB5C2; }
-        .btn-submit { width: 100%; padding: 12px; background: linear-gradient(135deg, #B5E8D5, #B8D8F8); border: none; border-radius: 25px; color: #5D7E6D; font-weight: 600; cursor: pointer; font-family: inherit; font-size: 1em; }
+        /* 与相册完全一致的添加弹窗样式 */
+        .add-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); z-index: 300; display: none;
+            align-items: center; justify-content: center; backdrop-filter: blur(6px);
+        }
+        .add-overlay.active { display: flex; }
+        .add-card {
+            background: white; border-radius: 28px; padding: 32px 24px;
+            width: 90vw; max-width: 420px; color: #5D4E6D;
+            max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .add-card h3 { font-family: "ZCOOL KuaiLe", sans-serif; text-align: center; margin-bottom: 6px; font-size: 1.4em; color: #E8788A; }
+        .add-card .form-subtitle { text-align: center; color: #B8A9D4; font-size: 0.8em; margin-bottom: 24px; }
+        .field-group { margin-bottom: 18px; }
+        .field-label { font-size: 0.85em; font-weight: 600; color: #8B7D9B; margin-bottom: 6px; }
+        .add-card input, .add-card textarea {
+            width: 100%; padding: 12px 14px; border: 1.5px solid #f0e6f6; border-radius: 20px;
+            font-family: inherit; font-size: 0.95em; outline: none; background: #FFFAFD;
+        }
+        .custom-date-wrap { position: relative; }
+        .custom-date-wrap input[type="date"] {
+            width: 100%; padding: 12px 14px; border: 1.5px solid #f0e6f6; border-radius: 20px;
+            background: #FFFAFD; cursor: pointer;
+        }
+        .custom-date-wrap .date-icon {
+            position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+            pointer-events: none; font-size: 1.2em; color: #FF9AB2;
+        }
+        .btn-submit {
+            width: 100%; padding: 14px; background: linear-gradient(135deg, #FFB5C2, #FF9AB2);
+            border: none; border-radius: 40px; color: white; font-weight: 700;
+            font-size: 1em; cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,154,178,0.4); }
 
+        /* 时间轴样式保持不变 */
         .timeline { position: relative; padding-left: 40px; }
         .timeline::before { content: ''; position: absolute; left: 18px; top: 0; bottom: 0; width: 3px; background: linear-gradient(180deg, #FFD4B8, #FFB5C2, #D5C6E0); border-radius: 2px; }
         .timeline-item { position: relative; margin-bottom: 28px; animation: fadeInUp 0.5s ease-out both; }
@@ -62,6 +96,7 @@
             .nav-links.active { display: flex; }
             .nav-toggle { display: flex; }
             .timeline { padding-left: 30px; }
+            .add-card { padding: 28px 20px; }
         }
     </style>
 </head>
@@ -93,19 +128,10 @@
 
     <div class="add-section">
         <a sec:authorize="!isAuthenticated()" href="/login" class="btn-add btn-add-login">＋ 写新日记（需登录）</a>
-        <button sec:authorize="isAuthenticated()" class="btn-add btn-add-active"
-                onclick="document.getElementById('addFormWrap').style.display='block'">＋ 写新日记</button>
+        <button sec:authorize="isAuthenticated()" class="btn-add btn-add-active" onclick="openAddForm()">＋ 写新日记</button>
     </div>
 
-    <div class="add-form-wrap" id="addFormWrap">
-        <form action="/diary/add" method="post" onsubmit="setTimeout(function(){document.getElementById('addFormWrap').style.display='none';},500)">
-            <input type="text" name="title" placeholder="标题" required>
-            <textarea name="description" placeholder="记录下这个美好时刻..." rows="3"></textarea>
-            <input type="date" name="recordDate" required>
-            <button type="submit" class="btn-submit">发布日记</button>
-        </form>
-    </div>
-
+    <!-- 日记时间轴列表 -->
     <div class="timeline" th:if="${!#lists.isEmpty(records)}">
         <div class="timeline-item" th:each="record, iterStat : ${records}" th:style="'animation-delay:' + ${iterStat.index * 0.08} + 's'">
             <div class="ti-card">
@@ -125,9 +151,43 @@
 <footer class="main-footer"><p class="footer-text">用爱与温暖，记录每一个珍贵的成长瞬间</p></footer>
 <button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆</button>
 
+<!-- 与相册风格一致的添加日记弹窗 -->
+<div class="add-overlay" id="addOverlay" onclick="if(event.target===this)closeAddForm()">
+    <div class="add-card">
+        <h3>📝 写新日记</h3>
+        <p class="form-subtitle">记录宝宝每一个美好的瞬间</p>
+        <form action="/diary/add" method="post" onsubmit="setTimeout(function(){closeAddForm(); window.location.reload();}, 500)">
+            <div class="field-group">
+                <div class="field-label">📌 标题 <span class="required">*必填</span></div>
+                <input type="text" name="title" placeholder="如：第一次走路" required>
+            </div>
+            <div class="field-group">
+                <div class="field-label">💬 内容 <span class="required">*必填</span></div>
+                <textarea name="description" rows="3" placeholder="记录下这个美好时刻..." required></textarea>
+            </div>
+            <div class="field-group">
+                <div class="field-label">📅 日期 <span class="required">*必填</span></div>
+                <div class="custom-date-wrap">
+                    <input type="date" name="recordDate" required>
+                    <span class="date-icon">📆</span>
+                </div>
+            </div>
+            <button type="submit" class="btn-submit">✨ 发布日记</button>
+        </form>
+    </div>
+</div>
+
 <script>
     window.addEventListener('scroll',function(){document.getElementById('backToTop').style.display=window.scrollY>300?'block':'none';});
     document.querySelectorAll('#navLinks .nav-link').forEach(function(l){l.addEventListener('click',function(){document.getElementById('navLinks').classList.remove('active');});});
+
+    // 打开和关闭弹窗函数
+    function openAddForm() {
+        document.getElementById('addOverlay').classList.add('active');
+    }
+    function closeAddForm() {
+        document.getElementById('addOverlay').classList.remove('active');
+    }
 </script>
 
 </body>
