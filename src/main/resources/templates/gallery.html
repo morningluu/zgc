@@ -9,7 +9,7 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🌱</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        /* 样式完全与原代码相同，此处省略以节省篇幅，实际使用请保留完整样式 */
+        /* 样式完全保持原样，无改动 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body, div, p, span, h1, h2, h3, h4, a, button, .nav-link, .tl-header, .footer-text, .gallery-title, .viewer-info-top, .viewer-desc-left {
             -webkit-user-select: none !important;
@@ -402,7 +402,7 @@
     var compressedFiles = [];
     var fileHashes = new Set();
     var isCompressing = false;
-    var isSubmitting = false;  // 防止重复提交
+    var isSubmitting = false;
 
     function showToast(msg) {
         var toast = document.getElementById('toastMsg');
@@ -519,19 +519,18 @@
         uploadBtn.innerHTML = '✨ 批量发布 (' + newFiles.length + ' 张)';
     };
 
-    // 优化后的批量上传：防重复点击 + Promise.all 确保所有请求完成 + 静默失败（不提示错误）
     window.submitBatchPhotos = function() {
         if (!isAuthenticated) { window.location.href = '/login'; return; }
         if (isCompressing) { showToast('图片还在压缩中，请稍后'); return; }
         if (!compressedFiles.length) { showToast('请选择至少一张照片'); return; }
         var recordDate = document.getElementById('batchDate').value;
         if (!recordDate) { showToast('请选择拍摄日期'); return; }
-        if (isSubmitting) return;  // 防止重复提交
+        if (isSubmitting) return;
         isSubmitting = true;
         var title = document.getElementById('batchTitle').value;
         var description = document.getElementById('batchDesc').value;
 
-        var filesToUpload = compressedFiles.slice(); // 复制一份
+        var filesToUpload = compressedFiles.slice();
         var uploadPromises = [];
 
         for (var i = 0; i < filesToUpload.length; i++) {
@@ -541,36 +540,23 @@
             fd.append('recordDate', recordDate);
             fd.append('photo', filesToUpload[i]);
             var promise = fetch('/gallery/add', { method: 'POST', body: fd })
-                .then(function(res) {
-                    // 不关心成功或失败，都不提示
-                    return;
-                })
-                .catch(function() {
-                    // 完全静默，不提示
-                    return;
-                });
+                .then(function() { return; })
+                .catch(function() { return; });
             uploadPromises.push(promise);
         }
 
-        // 等待所有上传完成，然后关闭弹窗并刷新页面
         Promise.all(uploadPromises).then(function() {
             closeAddForm();
-            // 延迟刷新，让后端有时间处理
-            setTimeout(function() {
-                location.reload();
-            }, 500);
+            setTimeout(function() { location.reload(); }, 500);
         }).catch(function() {
-            // 即使有错误，也刷新页面（不提示）
             closeAddForm();
-            setTimeout(function() {
-                location.reload();
-            }, 500);
+            setTimeout(function() { location.reload(); }, 500);
         }).finally(function() {
             isSubmitting = false;
         });
     };
 
-    // ---------- 以下为原有幻灯片、相册缩略图、大图浏览等代码，无修改（但为了完整性保留）----------
+    // ---------- 幻灯片等原有代码（保留）----------
     var featuredRecords = records.filter(function(r) { return r.featured; });
     var slideshowRecords = featuredRecords.length > 0 ? featuredRecords : records;
     var originalSlideCount = slideshowRecords.length;
@@ -892,6 +878,30 @@
     document.querySelectorAll('#navLinks .nav-link').forEach(function(l) {
         l.addEventListener('click', function() { document.getElementById('navLinks').classList.remove('active'); });
     });
+
+    // ========== 手机端返回键直接跳转首页（新增） ==========
+    (function() {
+        // 如果当前已经是首页（避免死循环），不做处理
+        if (window.location.pathname === '/' || window.location.pathname === '') {
+            return;
+        }
+        // 替换当前历史状态，使返回时不会回到当前页面
+        history.replaceState({ fromSubPage: true }, '', window.location.href);
+        // 监听返回事件
+        window.addEventListener('popstate', function(event) {
+            // 优先关闭可能打开的弹窗/大图
+            var overlays = document.querySelectorAll('.photo-viewer.active, .add-overlay.active');
+            if (overlays.length > 0) {
+                overlays.forEach(function(ov) { ov.classList.remove('active'); });
+                // 阻止默认返回行为，重新推入状态
+                history.pushState({ fromSubPage: true }, '', window.location.href);
+                return;
+            }
+            // 如果没有弹窗，直接跳转到首页
+            window.location.href = '/';
+        });
+    })();
+
     /*]]>*/
 </script>
 </body>
