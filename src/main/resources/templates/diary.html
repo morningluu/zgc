@@ -188,6 +188,29 @@
     function closeAddForm() {
         document.getElementById('addOverlay').classList.remove('active');
     }
+
+    // ========== 手机端返回键直接跳转首页（新增） ==========
+    (function() {
+        // 如果当前已经是首页，不做处理
+        if (window.location.pathname === '/' || window.location.pathname === '') {
+            return;
+        }
+        // 替换当前历史状态，使返回时不会回到当前页面
+        history.replaceState({ fromSubPage: true }, '', window.location.href);
+        // 监听返回事件
+        window.addEventListener('popstate', function(event) {
+            // 优先关闭可能打开的弹窗（写日记弹窗）
+            var overlays = document.querySelectorAll('.add-overlay.active');
+            if (overlays.length > 0) {
+                overlays.forEach(function(ov) { ov.classList.remove('active'); });
+                // 阻止默认返回行为，重新推入状态
+                history.pushState({ fromSubPage: true }, '', window.location.href);
+                return;
+            }
+            // 如果没有弹窗，直接跳转到首页
+            window.location.href = '/';
+        });
+    })();
 </script>
 
 </body>
