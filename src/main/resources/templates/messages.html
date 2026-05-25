@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时光留言 - 赵高钏的成长手册</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🌱</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: "Noto Sans SC", sans-serif; background: linear-gradient(180deg, #FFF8F5 0%, #F0F0FF 30%, #FFF8F0 100%); color: #5D4E6D; min-height: 100vh; }
+        .main-nav { position: sticky; top: 0; z-index: 1000; background: rgba(255,255,255,0.82); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(200,180,220,0.18); padding: 0 20px; }
+        .nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+        .nav-brand { display: flex; align-items: center; gap: 8px; text-decoration: none; font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.3em; font-weight: 700; background: linear-gradient(135deg, #FF9AB2, #B8A9D4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .nav-brand span { -webkit-text-fill-color: initial; }
+        .nav-links { display: flex; gap: 4px; align-items: center; }
+        .nav-link { display: flex; align-items: center; gap: 4px; padding: 8px 14px; border-radius: 25px; text-decoration: none; color: #5D4E6D; font-size: 0.88em; font-weight: 500; transition: all 0.3s; }
+        .nav-link:hover { background: rgba(255,180,190,0.2); }
+        .nav-link.active { background: rgba(210,200,230,0.25); font-weight: 700; }
+        .nav-toggle { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 8px; }
+        .nav-toggle span { width: 22px; height: 2px; background: #5D4E6D; border-radius: 2px; }
+
+        .page-container { max-width: 750px; margin: 0 auto; padding: 30px 20px 60px; }
+        .page-header { text-align: center; margin-bottom: 24px; }
+        .page-header h1 { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 2.2em; }
+
+        .add-section { text-align: center; margin-bottom: 28px; }
+        .btn-add { display: inline-block; padding: 10px 28px; border-radius: 25px; font-weight: 600; font-size: 0.95em; text-decoration: none; cursor: pointer; border: none; font-family: inherit; transition: all 0.3s; }
+        .btn-add-login { background: linear-gradient(135deg, #FFB5C2, #FFD4B8); color: white; box-shadow: 0 4px 16px rgba(255,180,160,0.3); }
+        .btn-add-active { background: linear-gradient(135deg, #B5E8D5, #B8D8F8); color: #5D7E6D; box-shadow: 0 4px 16px rgba(180,220,200,0.3); }
+        .btn-add:hover { transform: translateY(-2px); }
+
+        .add-form-wrap { display: none; max-width: 500px; margin: 0 auto 30px; background: rgba(255,255,255,0.9); border-radius: 20px; padding: 24px; box-shadow: 0 6px 24px rgba(180,160,200,0.1); }
+        .add-form-wrap input, .add-form-wrap textarea { width: 100%; padding: 10px 14px; margin-bottom: 10px; border: 2px solid #eee; border-radius: 12px; font-family: inherit; font-size: 0.9em; outline: none; }
+        .add-form-wrap input:focus, .add-form-wrap textarea:focus { border-color: #FFB5C2; }
+        .btn-submit { width: 100%; padding: 12px; background: linear-gradient(135deg, #B5E8D5, #B8D8F8); border: none; border-radius: 25px; color: #5D7E6D; font-weight: 600; cursor: pointer; font-family: inherit; font-size: 1em; }
+
+        .message-card { background: rgba(255,255,255,0.82); border-radius: 20px; padding: 24px; box-shadow: 0 4px 20px rgba(180,160,200,0.08); margin-bottom: 18px; transition: all 0.3s; border-left: 4px solid transparent; position: relative; animation: fadeInUp 0.5s ease-out both; }
+        .message-card:nth-child(odd) { border-left-color: #FFB5C2; }
+        .message-card:nth-child(even) { border-left-color: #B5E8D5; }
+        .message-card:hover { box-shadow: 0 8px 28px rgba(180,160,200,0.18); transform: translateY(-2px); }
+        .msg-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .msg-avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3em; }
+        .msg-author { font-weight: 600; }
+        .msg-date { font-size: 0.78em; color: #B8A9D4; }
+        .msg-content { color: #6D5E7D; line-height: 1.7; }
+        .msg-delete { position: absolute; top: 16px; right: 16px; background: rgba(255,180,180,0.3); color: #D48888; border: none; padding: 5px 14px; border-radius: 20px; font-size: 0.85em; cursor: pointer; text-decoration: none; font-weight: 600; transition: all 0.3s; }
+        .msg-delete:hover { background: #FF6B6B; color: white; }
+
+        .main-footer { text-align: center; padding: 40px 20px; background: linear-gradient(180deg, transparent, rgba(200,180,220,0.12)); }
+        .footer-text { font-family: "ZCOOL KuaiLe", sans-serif; color: #8B7D9B; }
+
+        #backToTop { position: fixed; bottom: 30px; right: 30px; z-index: 999; width: 46px; height: 46px; border-radius: 50%; border: none; background: rgba(255,255,255,0.9); box-shadow: 0 4px 16px rgba(0,0,0,0.1); font-size: 1.3em; cursor: pointer; display: none; transition: all 0.3s; }
+        #backToTop:hover { transform: scale(1.1); }
+
+        @keyframes fadeInUp { from{opacity:0;transform:translateY(25px)} to{opacity:1;transform:translateY(0)} }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; background: rgba(255,255,255,0.96); flex-direction: column; padding: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.05); }
+            .nav-links.active { display: flex; }
+            .nav-toggle { display: flex; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="main-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-brand"><span>🌱</span> 留言</a>
+        <div class="nav-links" id="navLinks">
+            <a href="/" class="nav-link">🏠 首页</a>
+            <a href="/gallery" class="nav-link">📷 相册</a>
+            <a href="/growth" class="nav-link">📊 数据</a>
+            <a href="/diary" class="nav-link">📝 日记</a>
+            <a href="/messages" class="nav-link active">💌 留言</a>
+            <a sec:authorize="!isAuthenticated()" href="/login" class="nav-link">🔐 登录</a>
+            <a sec:authorize="isAuthenticated()" href="/logout" class="nav-link">🚪 退出</a>
+        </div>
+        <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('active')">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</nav>
+
+<div class="page-container">
+    <div class="page-header">
+        <h1>💌 时光留言</h1>
+        <p style="color:#8B7D9B;">家人温暖的寄语，留给未来的你</p>
+    </div>
+
+    <div class="add-section">
+        <a sec:authorize="!isAuthenticated()" href="/login" class="btn-add btn-add-login">＋ 写下留言（需登录）</a>
+        <button sec:authorize="isAuthenticated()" class="btn-add btn-add-active"
+                onclick="document.getElementById('addFormWrap').style.display='block'">＋ 写下留言</button>
+    </div>
+
+    <div class="add-form-wrap" id="addFormWrap">
+        <form action="/messages/add" method="post" onsubmit="setTimeout(function(){document.getElementById('addFormWrap').style.display='none';},500)">
+            <input type="text" name="title" placeholder="称呼（如：爸爸）" required>
+            <textarea name="description" placeholder="写下你想对宝宝说的话..." rows="3"></textarea>
+            <input type="date" name="recordDate" required>
+            <button type="submit" class="btn-submit">发布留言</button>
+        </form>
+    </div>
+
+    <div th:if="${#lists.isEmpty(records)}" style="text-align:center;padding:60px;color:#8B7D9B;">
+        <div style="font-size:3em;margin-bottom:12px;">💌</div>
+        <p>还没有留言，写下第一条吧</p>
+    </div>
+
+    <div class="message-card" th:each="record, iterStat : ${records}" th:style="'animation-delay:' + ${iterStat.index * 0.08} + 's'">
+        <a sec:authorize="isAuthenticated()" class="msg-delete" th:href="@{/delete/{id}(id=${record.id})}" onclick="return confirm('确定删除这条留言吗？')">🗑</a>
+        <div class="msg-header">
+            <div class="msg-avatar"
+                 th:style="'background:' + (${#strings.contains(record.title, '爸爸') || #strings.contains(record.title, '爷爷') || #strings.contains(record.title, '外公') || #strings.contains(record.title, '哥哥') || #strings.contains(record.title, '弟弟') || #strings.contains(record.title, '叔叔') || #strings.contains(record.title, '舅舅') || #strings.contains(record.title, '姨父') || #strings.contains(record.title, '姑父')} ? 'linear-gradient(135deg,#B8D8F8,#A8D0EE)' : 'linear-gradient(135deg,#FFB5C2,#FFD4B8)')">
+                <span th:text="${#strings.contains(record.title, '爸爸') || #strings.contains(record.title, '爷爷') || #strings.contains(record.title, '外公') || #strings.contains(record.title, '哥哥') || #strings.contains(record.title, '弟弟') || #strings.contains(record.title, '叔叔') || #strings.contains(record.title, '舅舅') || #strings.contains(record.title, '姨父') || #strings.contains(record.title, '姑父')} ? '👨' : '👩'">💝</span>
+            </div>
+            <div>
+                <div class="msg-author" th:text="${record.title}">作者</div>
+                <div class="msg-date" th:text="${#temporals.format(record.recordDate, 'yyyy年MM月dd日')}">日期</div>
+            </div>
+        </div>
+        <div class="msg-content" th:text="${record.description}">留言内容</div>
+    </div>
+</div>
+
+<footer class="main-footer"><p class="footer-text">用爱与温暖，记录每一个珍贵的成长瞬间</p></footer>
+<button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆</button>
+
+<script>
+    window.addEventListener('scroll',function(){document.getElementById('backToTop').style.display=window.scrollY>300?'block':'none';});
+    document.querySelectorAll('#navLinks .nav-link').forEach(function(l){l.addEventListener('click',function(){document.getElementById('navLinks').classList.remove('active');});});
+</script>
+
+</body>
+</html>

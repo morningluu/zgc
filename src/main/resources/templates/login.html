@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 赵高钏的成长记录手册</title>
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "Noto Sans SC", sans-serif;
+            background: linear-gradient(180deg, #FFF8F5 0%, #F8F0FF 50%, #FFF8F0 100%);
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        /* 装饰 */
+        .decorations { position: fixed; pointer-events: none; top: 0; left: 0; right: 0; bottom: 0; z-index: 0; }
+        .deco { position: absolute; }
+        .cloud { background: white; border-radius: 50px; opacity: 0.5; }
+        .cloud::before, .cloud::after { content: ''; position: absolute; background: white; border-radius: 50%; }
+        .cloud-1 { width: 100px; height: 40px; top: 12%; left: 8%; animation: floatCloud 10s infinite ease-in-out; }
+        .cloud-1::before { width: 50px; height: 50px; top: -25px; left: 20px; }
+        .cloud-1::after { width: 40px; height: 40px; top: -15px; left: 55px; }
+        .cloud-2 { width: 80px; height: 32px; top: 22%; right: 10%; animation: floatCloud 12s infinite ease-in-out 3s; }
+        .cloud-2::before { width: 40px; height: 40px; top: -18px; left: 15px; }
+        .cloud-2::after { width: 32px; height: 32px; top: -10px; left: 45px; }
+        .star { font-size: 1.4em; animation: twinkle 3s infinite; }
+        .star-1 { top: 18%; left: 20%; }
+        .star-2 { top: 30%; right: 18%; animation-delay: 1s; }
+        .star-3 { bottom: 25%; left: 15%; animation-delay: 2s; }
+
+        .login-wrapper { position: relative; z-index: 1; width: 400px; padding: 20px; }
+        .login-card {
+            background: rgba(255,255,255,0.85); backdrop-filter: blur(16px);
+            border-radius: 28px; padding: 44px 36px;
+            box-shadow: 0 16px 48px rgba(180,160,200,0.18);
+            border: 1px solid rgba(255,255,255,0.6);
+            animation: fadeInUp 0.6s ease-out;
+        }
+        .login-card .lc-icon { text-align: center; font-size: 3em; margin-bottom: 12px; animation: bounce 2s infinite; }
+        .login-card h2 {
+            font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.6em;
+            text-align: center; color: #5D4E6D; margin-bottom: 28px;
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block; font-size: 0.85em; color: #8B7D9B;
+            font-weight: 500; margin-bottom: 6px;
+        }
+        .form-group input {
+            width: 100%; padding: 13px 16px;
+            border: 2px solid rgba(200,180,220,0.3);
+            border-radius: 16px; font-size: 0.95em;
+            background: rgba(255,255,255,0.7);
+            color: #5D4E6D; outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            font-family: "Noto Sans SC", sans-serif;
+        }
+        .form-group input:focus {
+            border-color: #FFB5C2;
+            box-shadow: 0 0 0 4px rgba(255,180,190,0.12);
+        }
+        .btn-login {
+            width: 100%; padding: 14px;
+            background: linear-gradient(135deg, #FFB5C2, #FFD4B8);
+            border: none; border-radius: 25px;
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            font-size: 1.1em; color: white; font-weight: 700;
+            cursor: pointer; letter-spacing: 0.06em;
+            box-shadow: 0 6px 20px rgba(255,180,160,0.35);
+            transition: all 0.3s; margin-top: 8px;
+        }
+        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(255,180,160,0.45); }
+        .msg { text-align: center; margin-top: 16px; font-size: 0.9em; font-weight: 500; }
+        .msg.error { color: #E88B8B; }
+        .msg.success { color: #7AB88B; }
+
+        @keyframes floatCloud { 0%,100%{transform:translateX(0)} 50%{transform:translateX(16px)} }
+        @keyframes twinkle { 0%,100%{opacity:0.3} 50%{opacity:0.7} }
+        @keyframes fadeInUp { from{opacity:0;transform:translateY(25px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+    </style>
+</head>
+<body>
+
+<div class="decorations">
+    <span class="deco cloud cloud-1"></span>
+    <span class="deco cloud cloud-2"></span>
+    <span class="deco star star-1">⭐</span>
+    <span class="deco star star-2">🌟</span>
+    <span class="deco star star-3">✨</span>
+</div>
+
+<div class="login-wrapper">
+    <div class="login-card">
+        <div class="lc-icon">🌱</div>
+        <h2>登录</h2>
+        <form th:action="@{/login}" method="post">
+            <div class="form-group">
+                <label>用户名</label>
+                <input type="text" name="username" required placeholder="请输入用户名">
+            </div>
+            <div class="form-group">
+                <label>密码</label>
+                <input type="password" name="password" required placeholder="请输入密码">
+            </div>
+            <button type="submit" class="btn-login">进入成长手册</button>
+            <div th:if="${param.error}" class="msg error">用户名或密码错误，请重试</div>
+            <div th:if="${param.logout}" class="msg success">已安全退出，下次再见</div>
+        </form>
+        <div style="margin-top: 20px; color: #666; text-align: center;">
+        还没有账号？<a href="/register" style="color: #E8788A; text-decoration: none; font-weight: bold;">立即注册</a>
+    </div>
+    </div>
+</div>
+
+</body>
+</html>

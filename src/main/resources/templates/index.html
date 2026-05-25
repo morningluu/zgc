@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>赵高钏的成长记录手册</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🌱</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: "Noto Sans SC", sans-serif; background: linear-gradient(180deg, #FFF8F5 0%, #F8F0FF 30%, #F0F8FF 60%, #FFF8F0 100%); background-attachment: fixed; color: #5D4E6D; min-height: 100vh; overflow-x: hidden; }
+        .main-nav { position: sticky; top: 0; z-index: 1000; background: rgba(255,255,255,0.82); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(200,180,220,0.18); padding: 0 20px; }
+        .nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+        .nav-brand { display: flex; align-items: center; gap: 8px; text-decoration: none; font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.3em; font-weight: 700; background: linear-gradient(135deg, #FF9AB2, #B8A9D4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .nav-brand .brand-emoji { font-size: 1.4em; animation: bounce 2s infinite; -webkit-text-fill-color: initial; }
+        .nav-links { display: flex; gap: 4px; align-items: center; }
+        .nav-link { display: flex; align-items: center; gap: 4px; padding: 8px 14px; border-radius: 25px; text-decoration: none; color: #5D4E6D; font-size: 0.88em; font-weight: 500; transition: all 0.3s; white-space: nowrap; }
+        .nav-link:hover { background: rgba(255,180,190,0.2); transform: translateY(-2px); }
+        .nav-link.active { background: rgba(255,180,190,0.25); font-weight: 700; }
+        .nav-toggle { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 8px; }
+        .nav-toggle span { width: 22px; height: 2px; background: #5D4E6D; border-radius: 2px; }
+
+        /* ===== Hero区域 ===== */
+        .hero { text-align: center; padding: 50px 20px 30px; position: relative; }
+        .hero-badge { display: inline-block; background: linear-gradient(135deg, #FFB5C2, #FF9AB2); color: white; padding: 10px 28px; border-radius: 50px; font-weight: 700; font-size: 0.9em; box-shadow: 0 6px 24px rgba(255,154,178,0.4); margin-bottom: 20px; letter-spacing: 0.04em; }
+        .hero-title { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 2.8em; font-weight: 700; color: #E8788A; margin-bottom: 12px; line-height: 1.3; }
+        .hero-subtitle { color: #9B8DAB; font-size: 0.95em; margin-bottom: 24px; font-weight: 400; }
+        .hero-info-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+        .hero-age { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.85); padding: 12px 24px; border-radius: 20px; font-weight: 500; box-shadow: 0 4px 16px rgba(0,0,0,0.05); font-size: 0.9em; color: #6D5E7D; }
+        .hero-age .age-number { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.5em; color: #E8788A; font-weight: 700; }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px 60px; }
+        .quick-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 40px; }
+        .quick-card { background: rgba(255,255,255,0.82); backdrop-filter: blur(10px); border-radius: 20px; padding: 24px 14px; text-align: center; text-decoration: none; color: #5D4E6D; box-shadow: 0 6px 24px rgba(180,160,200,0.1); transition: all 0.35s; }
+        .quick-card:hover { transform: translateY(-6px); box-shadow: 0 14px 36px rgba(180,160,200,0.22); }
+        .quick-card .qc-icon { font-size: 2.5em; display: block; margin-bottom: 10px; }
+        .quick-card .qc-title { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.1em; margin-bottom: 4px; color: #5D4E6D; }
+        .quick-card .qc-desc { font-size: 0.78em; color: #9B8DAB; }
+
+        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+        .section-header h2 { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.5em; color: #5D4E6D; }
+        .record-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+        .record-card { background: rgba(255,255,255,0.82); backdrop-filter: blur(10px); border-radius: 20px; overflow: hidden; box-shadow: 0 6px 24px rgba(180,160,200,0.1); transition: all 0.35s; position: relative; }
+        .record-card:hover { transform: translateY(-4px); box-shadow: 0 14px 36px rgba(180,160,200,0.22); }
+        .record-card img { width: 100%; height: 200px; object-fit: cover; }
+        .record-card .rc-body { padding: 16px 18px; }
+        .record-card .rc-date { font-size: 0.78em; color: #B8A9D4; font-weight: 500; margin-bottom: 2px; }
+        .record-card .rc-title { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.1em; margin-bottom: 4px; color: #5D4E6D; }
+        .record-card .rc-desc { font-size: 0.85em; color: #8B7D9B; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .record-card .rc-tag { display: inline-block; font-size: 0.72em; padding: 2px 10px; border-radius: 12px; font-weight: 600; margin-bottom: 6px; }
+        .tag-gallery { background: #FFE0E8; color: #E8788A; }
+        .tag-growth { background: #E0F5EB; color: #5D8A6E; }
+        .tag-diary { background: #FFF0E0; color: #C08050; }
+        .tag-messages { background: #E8E0F5; color: #7B68A0; }
+        .rc-delete { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); color: #E8788A; border: none; padding: 4px 12px; border-radius: 15px; font-size: 0.8em; cursor: pointer; text-decoration: none; font-weight: 600; opacity: 0; transition: all 0.3s; }
+        .record-card:hover .rc-delete { opacity: 1; }
+        .rc-delete:hover { background: #E8788A; color: white; }
+
+        .empty-state { text-align: center; padding: 50px; color: #8B7D9B; }
+        .empty-state .empty-icon { font-size: 3.5em; margin-bottom: 12px; }
+        .main-footer { text-align: center; padding: 40px 20px; background: linear-gradient(180deg, transparent, rgba(200,180,220,0.12)); }
+        .footer-text { font-family: "ZCOOL KuaiLe", sans-serif; color: #9B8DAB; font-size: 0.95em; }
+
+        #backToTop { position: fixed; bottom: 30px; right: 30px; z-index: 999; width: 46px; height: 46px; border-radius: 50%; border: none; background: rgba(255,255,255,0.9); box-shadow: 0 4px 16px rgba(0,0,0,0.1); font-size: 1.3em; cursor: pointer; display: none; transition: all 0.3s; }
+        #backToTop:hover { transform: scale(1.1); }
+
+        @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; background: rgba(255,255,255,0.96); flex-direction: column; padding: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.05); }
+            .nav-links.active { display: flex; }
+            .nav-toggle { display: flex; }
+            .hero-title { font-size: 2em; }
+            .quick-grid { grid-template-columns: repeat(2, 1fr); }
+            .record-grid { grid-template-columns: 1fr; }
+            .rc-delete { opacity: 1; }
+            .hero-info-row { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="main-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-brand"><span class="brand-emoji">🌱</span> 首页</a>
+        <div class="nav-links" id="navLinks">
+            <a href="/" class="nav-link active">🏠 首页</a>
+            <a href="/gallery" class="nav-link">📷 相册</a>
+            <a href="/growth" class="nav-link">📊 数据</a>
+            <a href="/diary" class="nav-link">📝 日记</a>
+            <a href="/messages" class="nav-link">💌 留言</a>
+            <a sec:authorize="!isAuthenticated()" href="/login" class="nav-link">🔐 登录</a>
+            <a sec:authorize="isAuthenticated()" href="/logout" class="nav-link">🚪 退出</a>
+        </div>
+        <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('active')">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</nav>
+
+<section class="hero">
+    <div class="hero-badge">记录每一个珍贵瞬间</div>
+    <h1 class="hero-title">赵高钏的成长记录手册</h1>
+    <p class="hero-subtitle">用爱与温暖，陪伴宝宝快乐长大</p>
+    <div class="hero-info-row">
+        <div class="hero-age"><span>🎈 今天宝宝</span><span class="age-number" id="ageNumber">--</span></div>
+        <div class="hero-age"><span>🎂 下一次生日倒计时</span><span class="age-number" id="birthdayCountdown">--</span><span>天</span></div>
+    </div>
+</section>
+
+<div class="container">
+    <div class="quick-grid">
+        <a href="/gallery" class="quick-card"><span class="qc-icon">📷</span><div class="qc-title">相册图集</div><div class="qc-desc">珍藏每一张笑脸</div></a>
+        <a href="/growth" class="quick-card"><span class="qc-icon">📊</span><div class="qc-title">成长数据</div><div class="qc-desc">身高体重记录</div></a>
+        <a href="/diary" class="quick-card"><span class="qc-icon">📝</span><div class="qc-title">趣事日记</div><div class="qc-desc">点滴美好文字</div></a>
+        <a href="/messages" class="quick-card"><span class="qc-icon">💌</span><div class="qc-title">时光留言</div><div class="qc-desc">家人的温暖寄语</div></a>
+    </div>
+
+    <div class="section-header"><h2>🌟 最新成长记录</h2></div>
+
+    <div th:if="${#lists.isEmpty(records)}" class="empty-state">
+        <div class="empty-icon">📸</div>
+        <p>还没有成长记录哦</p>
+        <p style="font-size:0.9em;">登录后开始记录宝宝的每一个珍贵瞬间吧</p>
+    </div>
+
+    <div class="record-grid">
+        <div class="record-card" th:each="record : ${records}">
+            <a sec:authorize="isAuthenticated()" class="rc-delete"
+               th:href="@{/delete/{id}(id=${record.id})}"
+               onclick="return confirm('确定删除吗？')">🗑</a>
+            <img th:if="${record.photoPath != null}" th:src="@{${record.photoPath}}" alt="照片"
+                 onerror="this.style.display='none'">
+            <div class="rc-body">
+                <span class="rc-tag" th:classappend="${record.category == 'gallery' ? 'tag-gallery' : (record.category == 'growth' ? 'tag-growth' : (record.category == 'diary' ? 'tag-diary' : 'tag-messages'))}"
+                      th:text="${record.category == 'gallery' ? '📷 相册' : (record.category == 'growth' ? '📊 数据' : (record.category == 'diary' ? '📝 日记' : '💌 留言'))}">分类</span>
+                <div class="rc-date" th:text="${#temporals.format(record.recordDate, 'yyyy年MM月dd日')}">日期</div>
+                <div class="rc-title" th:text="${record.title}">标题</div>
+                <div class="rc-desc" th:text="${record.description}">描述</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="main-footer"><p class="footer-text">用爱与温暖，记录每一个珍贵的成长瞬间</p></footer>
+
+<button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆</button>
+
+<script>
+    (function() {
+        var birthday = new Date(2017, 1, 24);
+        var now = new Date();
+        var y = now.getFullYear() - birthday.getFullYear();
+        var m = now.getMonth() - birthday.getMonth();
+        var d = now.getDate() - birthday.getDate();
+        if (d < 0) { m--; d += new Date(now.getFullYear(), now.getMonth(), 0).getDate(); }
+        if (m < 0) { y--; m += 12; }
+        document.getElementById('ageNumber').textContent = y + '岁' + m + '个月' + d + '天';
+
+        var nextBirthday = new Date(now.getFullYear(), 1, 24);
+        if (now > nextBirthday) nextBirthday.setFullYear(nextBirthday.getFullYear() + 1);
+        document.getElementById('birthdayCountdown').textContent = Math.ceil((nextBirthday - now) / (1000*60*60*24));
+    })();
+
+    window.addEventListener('scroll', function() { document.getElementById('backToTop').style.display = window.scrollY > 300 ? 'block' : 'none'; });
+    document.querySelectorAll('#navLinks .nav-link').forEach(function(l) { l.addEventListener('click', function() { document.getElementById('navLinks').classList.remove('active'); }); });
+</script>
+
+</body>
+</html>

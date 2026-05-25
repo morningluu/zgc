@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册 - 赵高钏的成长手册</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🌱</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: "Noto Sans SC", sans-serif;
+            background: linear-gradient(180deg, #FFF8F5 0%, #F8F0FF 30%, #F0F8FF 60%, #FFF8F0 100%);
+            background-attachment: fixed;
+            color: #5D4E6D;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 浮动装饰 - 与首页同款 */
+        .floating-decor {
+            position: fixed;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.25;
+            font-size: 2em;
+            animation: floatAround 8s ease-in-out infinite;
+        }
+        .floating-decor:nth-child(1) { top: 8%; left: 8%; animation-delay: 0s; font-size: 2.5em; }
+        .floating-decor:nth-child(2) { top: 15%; right: 10%; animation-delay: -2s; font-size: 2em; }
+        .floating-decor:nth-child(3) { bottom: 12%; left: 12%; animation-delay: -4s; font-size: 2.2em; }
+        .floating-decor:nth-child(4) { bottom: 18%; right: 8%; animation-delay: -6s; font-size: 1.8em; }
+
+        @keyframes floatAround {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-20px) rotate(5deg); }
+            50% { transform: translateY(-10px) rotate(-3deg); }
+            75% { transform: translateY(-25px) rotate(8deg); }
+        }
+
+        .register-box {
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(20px);
+            padding: 40px 36px;
+            border-radius: 24px;
+            box-shadow: 0 8px 40px rgba(180, 160, 200, 0.18), 0 2px 8px rgba(0, 0, 0, 0.04);
+            width: 400px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(200, 180, 220, 0.18);
+        }
+
+        .register-box h1 {
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            font-size: 2em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FF9AB2, #B8A9D4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+        }
+
+        .register-box .subtitle {
+            color: #9B8DAB;
+            font-size: 0.88em;
+            margin-bottom: 28px;
+            font-weight: 400;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            color: #6D5E7D;
+            font-weight: 500;
+            margin-bottom: 6px;
+            font-size: 0.85em;
+            letter-spacing: 0.3px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid rgba(200, 180, 220, 0.25);
+            border-radius: 16px;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            outline: none;
+            background: rgba(255, 255, 255, 0.7);
+            color: #5D4E6D;
+            font-family: "Noto Sans SC", sans-serif;
+        }
+
+        .input-group input:focus {
+            border-color: #FF9AB2;
+            background: white;
+            box-shadow: 0 0 0 5px rgba(255, 154, 178, 0.08);
+        }
+
+        .input-group input::placeholder {
+            color: #B8A9D4;
+            font-size: 0.85em;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #FFB5C2, #FF9AB2);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.05em;
+            font-weight: 700;
+            font-family: "Noto Sans SC", sans-serif;
+            cursor: pointer;
+            transition: all 0.35s ease;
+            margin-top: 8px;
+            letter-spacing: 0.04em;
+            box-shadow: 0 6px 24px rgba(255, 154, 178, 0.35);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 36px rgba(255, 154, 178, 0.5);
+            background: linear-gradient(135deg, #FF9AB2, #E8788A);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 16px rgba(255, 154, 178, 0.3);
+        }
+
+        .error {
+            color: #E8788A;
+            margin-top: 16px;
+            font-weight: 500;
+            background: #FFE0E8;
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-size: 0.85em;
+            border-left: 3px solid #FF9AB2;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+        }
+
+        .login-link {
+            margin-top: 24px;
+            color: #9B8DAB;
+            font-size: 0.88em;
+            padding-top: 20px;
+            border-top: 1px dashed rgba(200, 180, 220, 0.3);
+        }
+
+        .login-link a {
+            color: #E8788A;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .login-link a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #E8788A;
+            border-radius: 2px;
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .login-link a:hover::after {
+            transform: scaleX(1);
+        }
+
+        /* 返回首页 */
+        .back-home {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #B8A9D4;
+            text-decoration: none;
+            font-size: 0.85em;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .back-home:hover {
+            color: #E8788A;
+            transform: translateX(-4px);
+        }
+
+        /* 响应式 */
+        @media (max-width: 480px) {
+            .register-box {
+                width: 92%;
+                padding: 30px 22px;
+                border-radius: 20px;
+            }
+            .register-box h1 {
+                font-size: 1.6em;
+            }
+            .floating-decor {
+                font-size: 1.2em !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- 与首页同款的浮动装饰 -->
+<div class="floating-decor">🌸</div>
+<div class="floating-decor">🍼</div>
+<div class="floating-decor">🌟</div>
+<div class="floating-decor">🎀</div>
+
+<div class="register-box">
+    <a href="/" class="back-home">← 返回首页</a>
+    <h1>🌟 注册账号</h1>
+    <p class="subtitle">记录宝宝每一个珍贵瞬间</p>
+
+    <form th:action="@{/register}" method="post">
+        <div class="input-group">
+            <label>👤 用户名</label>
+            <input type="text" name="username" required placeholder="取个好听的名字吧~" minlength="4">
+        </div>
+        <div class="input-group">
+            <label>🔒 密码</label>
+            <input type="password" name="password" required placeholder="设置一个安全密码" minlength="6">
+        </div>
+        <div class="input-group">
+            <label>💕 确认密码</label>
+            <input type="password" name="confirmPassword" required placeholder="再输入一次密码哦">
+        </div>
+        <button type="submit">✨ 马上注册</button>
+        <div th:if="${error}" class="error">💢 <span th:text="${error}"></span></div>
+    </form>
+
+    <div class="login-link">
+        已经有账号啦？<a href="/login">点这里登录</a> 👈
+    </div>
+</div>
+
+</body>
+</html>

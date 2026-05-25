@@ -1,0 +1,183 @@
+更改我的网站的字体，要求好加载，童趣风格<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>添加记录 - 赵高钏的成长记录手册</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "Noto Sans SC", sans-serif;
+            background: linear-gradient(180deg, #FFF8F5 0%, #F8F0FF 100%);
+            color: #5D4E6D; min-height: 100vh;
+        }
+        .main-nav {
+            position: sticky; top: 0; z-index: 1000;
+            background: rgba(255,255,255,0.82); backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(200,180,220,0.18); padding: 0 20px;
+        }
+        .nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+        .nav-brand { display: flex; align-items: center; gap: 8px; text-decoration: none; font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.3em; font-weight: 700; background: linear-gradient(135deg, #FF9AB2, #B8A9D4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .nav-brand span { -webkit-text-fill-color: initial; }
+        .nav-links { display: flex; gap: 4px; }
+        .nav-link { display: flex; align-items: center; gap: 4px; padding: 8px 14px; border-radius: 25px; text-decoration: none; color: #5D4E6D; font-size: 0.88em; font-weight: 500; transition: all 0.3s; }
+        .nav-link:hover { background: rgba(255,180,190,0.2); }
+        .nav-link.active { background: rgba(255,180,190,0.25); font-weight: 700; }
+
+        .page-container { max-width: 860px; margin: 0 auto; padding: 30px 20px 60px; }
+
+        /* 分类选择 */
+        .category-tabs {
+            display: flex; gap: 10px; flex-wrap: wrap;
+            justify-content: center; margin-bottom: 28px;
+        }
+        .category-tab {
+            padding: 10px 22px; border-radius: 25px;
+            text-decoration: none; font-weight: 600; font-size: 0.9em;
+            transition: all 0.3s; background: rgba(255,255,255,0.7);
+            color: #5D4E6D; border: 2px solid transparent;
+        }
+        .category-tab:hover { background: rgba(255,180,190,0.2); }
+        .category-tab.active {
+            background: linear-gradient(135deg, #FFB5C2, #FFD4B8);
+            color: white; border-color: transparent;
+        }
+
+        .panel {
+            background: rgba(255,255,255,0.82); backdrop-filter: blur(10px);
+            border-radius: 24px; padding: 32px; margin-bottom: 28px;
+            box-shadow: 0 6px 24px rgba(180,160,200,0.1);
+            animation: fadeInUp 0.5s ease-out;
+        }
+        .panel h2 { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.4em; margin-bottom: 22px; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-size: 0.85em; color: #8B7D9B; font-weight: 500; margin-bottom: 6px; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 12px 16px;
+            border: 2px solid rgba(200,180,220,0.3);
+            border-radius: 16px; font-size: 0.95em;
+            background: rgba(255,255,255,0.7);
+            color: #5D4E6D; outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            font-family: "Noto Sans SC", sans-serif;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            border-color: #FFB5C2;
+            box-shadow: 0 0 0 4px rgba(255,180,190,0.1);
+        }
+        .form-group textarea { resize: vertical; min-height: 90px; }
+        .btn-submit {
+            padding: 12px 32px;
+            background: linear-gradient(135deg, #B5E8D5, #B8D8F8);
+            border: none; border-radius: 25px;
+            font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1em;
+            color: #5D7E6D; font-weight: 700; cursor: pointer;
+            box-shadow: 0 4px 16px rgba(180,220,200,0.35);
+            transition: all 0.3s; width: 100%;
+        }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(180,220,200,0.45); }
+
+        .record-list { list-style: none; }
+        .record-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid rgba(200,180,220,0.2); }
+        .record-item:last-child { border-bottom: none; }
+        .record-info { display: flex; gap: 20px; align-items: baseline; flex-wrap: wrap; }
+        .record-title { font-weight: 600; }
+        .record-date { color: #B8A9D4; font-size: 0.85em; }
+        .record-category {
+            font-size: 0.78em; background: rgba(200,180,220,0.2);
+            padding: 2px 10px; border-radius: 12px; color: #8B7D9B;
+        }
+        .btn-delete {
+            background: rgba(255,180,180,0.2); border: 1px solid rgba(255,150,150,0.3);
+            color: #D48888; text-decoration: none; padding: 6px 18px;
+            border-radius: 20px; font-size: 0.85em; transition: all 0.3s; white-space: nowrap;
+        }
+        .btn-delete:hover { background: rgba(255,150,150,0.3); border-color: #E88B8B; }
+
+        .empty-hint { text-align: center; color: #8B7D9B; padding: 30px; }
+
+        @keyframes fadeInUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+        @media (max-width: 768px) {
+            .nav-links { gap: 2px; }
+            .nav-link { padding: 6px 10px; font-size: 0.8em; }
+            .category-tabs { gap: 6px; }
+            .category-tab { padding: 8px 14px; font-size: 0.82em; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="main-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-brand"><span>🌱</span> ZGC 成长乐园</a>
+        <div class="nav-links">
+            <a href="/" class="nav-link">🏠 首页</a>
+            <a href="/gallery" class="nav-link">📷 相册</a>
+            <a href="/growth" class="nav-link">📊 数据</a>
+            <a href="/diary" class="nav-link">📝 日记</a>
+            <a href="/messages" class="nav-link">💌 留言</a>
+            <a href="/logout" class="nav-link">退出</a>
+        </div>
+    </div>
+</nav>
+
+<div class="page-container">
+
+    <!-- 分类标签 -->
+    <div class="category-tabs">
+        <a href="/admin/upload?category=gallery" class="category-tab" th:classappend="${currentCategory == 'gallery' ? 'active' : ''}">📷 相册</a>
+        <a href="/admin/upload?category=growth" class="category-tab" th:classappend="${currentCategory == 'growth' ? 'active' : ''}">📊 成长数据</a>
+        <a href="/admin/upload?category=diary" class="category-tab" th:classappend="${currentCategory == 'diary' ? 'active' : ''}">📝 趣事日记</a>
+        <a href="/admin/upload?category=messages" class="category-tab" th:classappend="${currentCategory == 'messages' ? 'active' : ''}">💌 时光留言</a>
+    </div>
+
+    <!-- 添加记录 -->
+    <div class="panel">
+        <h2>添加记录 - <span th:text="${categoryName}">分类</span></h2>
+        <form method="post" th:action="@{/admin/upload}" enctype="multipart/form-data">
+            <!-- 隐藏的分类字段 -->
+            <input type="hidden" name="category" th:value="${currentCategory}">
+
+            <div class="form-group">
+                <label>标题 *</label>
+                <input type="text" name="title" required placeholder="输入标题...">
+            </div>
+            <div class="form-group">
+                <label>日期 *</label>
+                <input type="date" name="recordDate" required>
+            </div>
+            <div class="form-group">
+                <label>描述</label>
+                <textarea name="description" placeholder="写一些描述..."></textarea>
+            </div>
+            <div class="form-group" th:if="${currentCategory == 'gallery'}">
+                <label>选择照片</label>
+                <input type="file" name="photo" accept="image/*">
+            </div>
+            <button type="submit" class="btn-submit">发布记录</button>
+        </form>
+    </div>
+
+    <!-- 该分类下的已有记录 -->
+    <div class="panel">
+        <h2>已有记录</h2>
+        <div th:if="${#lists.isEmpty(records)}" class="empty-hint">
+            还没有记录，在上方添加第一条吧
+        </div>
+        <ul class="record-list" th:if="${!#lists.isEmpty(records)}">
+            <li class="record-item" th:each="record : ${records}">
+                <div class="record-info">
+                    <span class="record-title" th:text="${record.title}">标题</span>
+                    <span class="record-date" th:text="${#temporals.format(record.recordDate, 'yyyy/MM/dd')}">日期</span>
+                    <span class="record-category" th:text="${record.category}">分类</span>
+                </div>
+                <a class="btn-delete" th:href="@{/admin/delete/{id}(id=${record.id})}"
+                   onclick="return confirm('确定删除这条记录吗？')">删除</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>
