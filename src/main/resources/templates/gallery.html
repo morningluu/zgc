@@ -356,11 +356,11 @@
     </div>
 </div>
 
-<!-- 批量上传弹窗 - 动态按钮文字 -->
+<!-- 批量上传弹窗 - 带图片压缩 -->
 <div class="add-overlay" id="addOverlay" onclick="if(event.target===this)closeAddForm()">
     <div class="add-card">
         <h3>✨ 添加新照片</h3>
-        <p class="form-subtitle">可一次选择多张照片，共享标题和日期</p>
+        <p class="form-subtitle">可一次选择多张照片，自动压缩后上传</p>
         <div class="field-group">
             <div class="field-label">📝 照片标题 <span style="font-weight:normal;color:#B8A9D4;">(选填)</span></div>
             <input type="text" id="batchTitle" placeholder="如：宝宝第一次走路">
@@ -379,10 +379,11 @@
         <div class="field-group">
             <div class="field-label">🖼️ 选择照片 <span class="required">*必填 (可多选)</span></div>
             <div class="file-upload-wrap">
-                <input type="file" id="batchFiles" accept="image/*" multiple onchange="updateUploadButtonText(this)">
+                <input type="file" id="batchFiles" accept="image/*" multiple onchange="handleFilesSelect(this)">
                 <div class="file-upload-box">📷 点击选择照片（可多选）</div>
             </div>
             <div class="file-name-display" id="fileNamesDisplay" style="font-size:0.75rem;color:#E8788A;margin-top:6px;display:none;"></div>
+            <div class="compress-progress" id="compressProgress" style="font-size:0.7rem;color:#5DCFA0;display:none;margin-top:6px;">压缩中...</div>
         </div>
         <button type="button" class="btn-submit" id="uploadBtn" onclick="submitBatchPhotos()">✨ 发布照片</button>
     </div>
@@ -398,6 +399,10 @@
         return (b.recordDate || '').localeCompare(a.recordDate || '');
     });
 
+    // 存储压缩后的文件 Blob 数组
+    var compressedFiles = [];
+    var isCompressing = false;
+
     function showToast(msg) {
         var toast = document.getElementById('toastMsg');
         toast.textContent = msg;
@@ -410,42 +415,109 @@
         callback();
     }
 
-    // ---------- 批量上传相关 ----------
-    function updateUploadButtonText(input) {
-        var btn = document.getElementById('uploadBtn');
-        var display = document.getElementById('fileNamesDisplay');
-        var count = input.files.length;
-        if (count === 0) {
-            btn.innerHTML = '✨ 发布照片';
-            display.style.display = 'none';
-        } else {
-            btn.innerHTML = '✨ 批量发布 (' + count + ' 张)';
-            var names = [];
-            for (var i = 0; i < count; i++) names.push(input.files[i].name);
-            display.textContent = '📎 已选择 ' + count + ' 个文件：' + names.join(', ');
-            display.style.display = 'block';
-        }
+    // 图片压缩函数
+    function compressImage(file, maxWidth = 1200, quality = 0.7) {
+        return new Promise(function(resolve, reject) {
+            if (!file.type.match(/image.*/)) {
+                resolve(file); // 非图片直接返回
+                return;
+            }
+            var reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function(e) {
+                var img = new Image();
+                img.src = e.target.result;
+                img.onload = function() {
+                    var width = img.width;
+                    var height = img.height;
+                    var canvas = document.createElement('canvas');
+                    if (width > maxWidth) {
+                        height = (height * maxWidth) / width;
+                        width = maxWidth;
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    var ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    canvas.toBlob(function(blob) {
+                        // 创建新的文件对象，保留原始文件名（扩展名改为 .jpg）
+                        var compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, '.jpg'), { type: 'image/jpeg' });
+                        resolve(compressedFile);
+                    }, 'image/jpeg', quality);
+                };
+                img.onerror = reject;
+            };
+            reader.onerror = reject;
+        });
     }
+
+    // 处理文件选择：压缩所有选中的图片
+    window.handleFilesSelect = async function(input) {
+        var files = Array.from(input.files);
+        if (files.length === 0) {
+            compressedFiles = [];
+            document.getElementById('uploadBtn').innerHTML = '✨ 发布照片';
+            document.getElementById('fileNamesDisplay').style.display = 'none';
+            document.getElementById('compressProgress').style.display = 'none';
+            return;
+        }
+
+        // 显示进度提示
+        var progressDiv = document.getElementById('compressProgress');
+        progressDiv.style.display = 'block';
+        progressDiv.innerHTML = '⏳ 正在压缩图片 (' + files.length + ' 张)...';
+        var uploadBtn = document.getElementById('uploadBtn');
+        uploadBtn.disabled = true;
+        uploadBtn.style.opacity = '0.6';
+        isCompressing = true;
+
+        var compressed = [];
+        for (var i = 0; i < files.length; i++) {
+            try {
+                var compressedFile = await compressImage(files[i]);
+                compressed.push(compressedFile);
+                progressDiv.innerHTML = '⏳ 压缩中 ' + (i+1) + '/' + files.length;
+            } catch (err) {
+                console.error('压缩失败', err);
+                compressed.push(files[i]); // 失败则用原文件
+            }
+        }
+        compressedFiles = compressed;
+
+        // 更新界面
+        progressDiv.style.display = 'none';
+        uploadBtn.disabled = false;
+        uploadBtn.style.opacity = '1';
+        isCompressing = false;
+
+        // 显示文件名
+        var display = document.getElementById('fileNamesDisplay');
+        var names = files.map(function(f) { return f.name; });
+        display.textContent = '📎 已选择 ' + files.length + ' 个文件（已压缩）';
+        display.style.display = 'block';
+
+        uploadBtn.innerHTML = '✨ 批量发布 (' + files.length + ' 张)';
+    };
 
     window.submitBatchPhotos = function() {
         if (!isAuthenticated) { window.location.href = '/login'; return; }
-        var files = document.getElementById('batchFiles').files;
-        if (!files.length) { showToast('请选择至少一张照片'); return; }
+        if (isCompressing) { showToast('图片还在压缩中，请稍后'); return; }
+        if (!compressedFiles.length) { showToast('请选择至少一张照片'); return; }
         var recordDate = document.getElementById('batchDate').value;
         if (!recordDate) { showToast('请选择拍摄日期'); return; }
         var title = document.getElementById('batchTitle').value;
         var description = document.getElementById('batchDesc').value;
 
-        var total = files.length;
+        var total = compressedFiles.length;
         var completed = 0;
         var errors = 0;
 
-        for (var i = 0; i < files.length; i++) {
+        for (var i = 0; i < compressedFiles.length; i++) {
             var fd = new FormData();
             fd.append('title', title);
             fd.append('description', description);
             fd.append('recordDate', recordDate);
-            fd.append('photo', files[i]);
+            fd.append('photo', compressedFiles[i]);
             fetch('/gallery/add', { method: 'POST', body: fd })
                 .then(function(res) {
                     if (res.ok) completed++;
@@ -776,10 +848,15 @@
     };
 
     window.openAddForm = function() {
-        // 每次打开弹窗时重置按钮文字和文件列表
+        // 重置状态
         document.getElementById('batchFiles').value = '';
         document.getElementById('fileNamesDisplay').style.display = 'none';
         document.getElementById('uploadBtn').innerHTML = '✨ 发布照片';
+        document.getElementById('uploadBtn').disabled = false;
+        document.getElementById('uploadBtn').style.opacity = '1';
+        document.getElementById('compressProgress').style.display = 'none';
+        compressedFiles = [];
+        isCompressing = false;
         document.getElementById('addOverlay').classList.add('active');
     };
     window.closeAddForm = function() { document.getElementById('addOverlay').classList.remove('active'); };
