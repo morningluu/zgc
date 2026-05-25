@@ -303,6 +303,13 @@
             window.location.href = '/';
         });
     })();
+      // 登录跳转时不留下历史记录（解决返回时看到登录页）
+document.querySelectorAll('a[href="/login"]').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        location.replace('/login');
+    });
+});
 </script>
 
 </body>
