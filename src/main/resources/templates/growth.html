@@ -33,16 +33,45 @@
         .btn-add-active { background: linear-gradient(135deg, #B5E8D5, #B8D8F8); color: #5D7E6D; box-shadow: 0 4px 16px rgba(180,220,200,0.3); }
         .btn-add:hover { transform: translateY(-2px); }
 
-        .add-form-wrap { display: none; max-width: 520px; margin: 0 auto 24px; background: rgba(255,255,255,0.9); border-radius: 20px; padding: 28px; box-shadow: 0 6px 24px rgba(180,160,200,0.1); }
+        /* 与相册完全一致的添加弹窗样式 */
+        .add-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); z-index: 300; display: none;
+            align-items: center; justify-content: center; backdrop-filter: blur(6px);
+        }
+        .add-overlay.active { display: flex; }
+        .add-card {
+            background: white; border-radius: 28px; padding: 32px 24px;
+            width: 90vw; max-width: 420px; color: #5D4E6D;
+            max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .add-card h3 { font-family: "ZCOOL KuaiLe", sans-serif; text-align: center; margin-bottom: 6px; font-size: 1.4em; color: #E8788A; }
+        .add-card .form-subtitle { text-align: center; color: #B8A9D4; font-size: 0.8em; margin-bottom: 24px; }
+        .field-group { margin-bottom: 18px; }
+        .field-label { font-size: 0.85em; font-weight: 600; color: #8B7D9B; margin-bottom: 6px; }
+        .add-card input, .add-card textarea {
+            width: 100%; padding: 12px 14px; border: 1.5px solid #f0e6f6; border-radius: 20px;
+            font-family: inherit; font-size: 0.95em; outline: none; background: #FFFAFD;
+        }
         .form-row { display: flex; gap: 12px; }
-        .form-row .form-group { flex: 1; }
-        .form-group { margin-bottom: 14px; }
-        .form-group label { display: block; font-size: 0.82em; color: #8B7D9B; font-weight: 600; margin-bottom: 4px; }
-        .form-group .required { color: #FF9AB2; }
-        .form-group input { width: 100%; padding: 10px 14px; border: 2px solid #eee; border-radius: 12px; font-family: inherit; font-size: 0.9em; outline: none; }
-        .form-group input:focus { border-color: #FFB5C2; }
-        .form-group .unit { font-size: 0.78em; color: #B8A9D4; }
-        .btn-submit { width: 100%; padding: 12px; background: linear-gradient(135deg, #B5E8D5, #B8D8F8); border: none; border-radius: 25px; color: #5D7E6D; font-weight: 600; cursor: pointer; font-family: inherit; font-size: 1em; margin-top: 6px; }
+        .form-row .field-group { flex: 1; }
+        .custom-date-wrap { position: relative; }
+        .custom-date-wrap input[type="date"] {
+            width: 100%; padding: 12px 14px; border: 1.5px solid #f0e6f6; border-radius: 20px;
+            background: #FFFAFD; cursor: pointer;
+        }
+        .custom-date-wrap .date-icon {
+            position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+            pointer-events: none; font-size: 1.2em; color: #FF9AB2;
+        }
+        .btn-submit {
+            width: 100%; padding: 14px; background: linear-gradient(135deg, #FFB5C2, #FF9AB2);
+            border: none; border-radius: 40px; color: white; font-weight: 700;
+            font-size: 1em; cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,154,178,0.4); }
 
         .chart-card { background: rgba(255,255,255,0.85); border-radius: 20px; padding: 24px; box-shadow: 0 6px 24px rgba(180,160,200,0.1); margin-bottom: 24px; }
         .chart-card h3 { font-family: "ZCOOL KuaiLe", sans-serif; margin-bottom: 16px; text-align: center; }
@@ -77,6 +106,7 @@
             .data-card { padding: 12px 6px; }
             .data-card .dc-value { font-size: 1.3em; }
             .form-row { flex-direction: column; gap: 0; }
+            .add-card { padding: 28px 20px; }
         }
     </style>
 </head>
@@ -108,36 +138,7 @@
 
     <div class="add-section">
         <a sec:authorize="!isAuthenticated()" href="/login" class="btn-add btn-add-login">＋ 添加数据（需登录）</a>
-        <button sec:authorize="isAuthenticated()" class="btn-add btn-add-active"
-                onclick="document.getElementById('addFormWrap').style.display='block'">＋ 添加数据</button>
-    </div>
-
-    <div class="add-form-wrap" id="addFormWrap">
-        <form action="/growth/add" method="post" onsubmit="setTimeout(function(){document.getElementById('addFormWrap').style.display='none';},500)">
-            <div class="form-group">
-                <label>📅 测量日期 <span class="required">*</span></label>
-                <input type="date" name="recordDate" required>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>📏 身高 <span class="unit">(cm)</span></label>
-                    <input type="number" name="heightCm" step="0.1" placeholder="如：85.5">
-                </div>
-                <div class="form-group">
-                    <label>⚖️ 体重 <span class="unit">(kg)</span></label>
-                    <input type="number" name="weightKg" step="0.1" placeholder="如：12.5">
-                </div>
-            </div>
-            <div class="form-group">
-                <label>📝 备注 <span class="unit">(选填)</span></label>
-                <input type="text" name="title" placeholder="如：3月体检">
-            </div>
-            <div class="form-group">
-                <label>👤 记录人 <span class="required">*</span></label>
-                <input type="text" name="recordedBy" placeholder="如：妈妈" required>
-            </div>
-            <button type="submit" class="btn-submit">保存数据</button>
-        </form>
+        <button sec:authorize="isAuthenticated()" class="btn-add btn-add-active" onclick="openAddForm()">＋ 添加数据</button>
     </div>
 
     <div class="data-cards">
@@ -175,6 +176,42 @@
 
 <footer class="main-footer"><p class="footer-text">用爱与温暖，记录每一个珍贵的成长瞬间</p></footer>
 <button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆</button>
+
+<!-- 与相册风格一致的添加数据弹窗 -->
+<div class="add-overlay" id="addOverlay" onclick="if(event.target===this)closeAddForm()">
+    <div class="add-card">
+        <h3>📊 添加成长数据</h3>
+        <p class="form-subtitle">记录宝宝身高体重，见证每一步成长</p>
+        <form action="/growth/add" method="post" onsubmit="setTimeout(function(){closeAddForm(); window.location.reload();}, 500)">
+            <div class="field-group">
+                <div class="field-label">📅 测量日期 <span class="required">*必填</span></div>
+                <div class="custom-date-wrap">
+                    <input type="date" name="recordDate" required>
+                    <span class="date-icon">📆</span>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="field-group">
+                    <div class="field-label">📏 身高 <span class="unit">(cm)</span></div>
+                    <input type="number" name="heightCm" step="0.1" placeholder="如：85.5">
+                </div>
+                <div class="field-group">
+                    <div class="field-label">⚖️ 体重 <span class="unit">(kg)</span></div>
+                    <input type="number" name="weightKg" step="0.1" placeholder="如：12.5">
+                </div>
+            </div>
+            <div class="field-group">
+                <div class="field-label">📝 备注 <span class="unit">(选填)</span></div>
+                <input type="text" name="title" placeholder="如：3月体检">
+            </div>
+            <div class="field-group">
+                <div class="field-label">👤 记录人 <span class="required">*必填</span></div>
+                <input type="text" name="recordedBy" placeholder="如：妈妈" required>
+            </div>
+            <button type="submit" class="btn-submit">✨ 保存数据</button>
+        </form>
+    </div>
+</div>
 
 <script th:inline="javascript">
     (function() {
@@ -235,6 +272,14 @@
 
     window.addEventListener('scroll', function() { document.getElementById('backToTop').style.display = window.scrollY > 300 ? 'block' : 'none'; });
     document.querySelectorAll('#navLinks .nav-link').forEach(function(l) { l.addEventListener('click', function() { document.getElementById('navLinks').classList.remove('active'); }); });
+
+    // 打开和关闭弹窗函数
+    function openAddForm() {
+        document.getElementById('addOverlay').classList.add('active');
+    }
+    function closeAddForm() {
+        document.getElementById('addOverlay').classList.remove('active');
+    }
 </script>
 
 </body>
