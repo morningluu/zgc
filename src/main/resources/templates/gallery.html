@@ -9,7 +9,6 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🌱</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        /* 样式与之前完全一致，无改动（略）—— 实际应用时保留完整样式 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body, div, p, span, h1, h2, h3, h4, a, button, .nav-link, .tl-header, .footer-text, .gallery-title, .viewer-info-top, .viewer-desc-left {
             -webkit-user-select: none !important;
@@ -264,50 +263,98 @@
         }
         Promise.all(uploadPromises).then(function() { closeAddForm(); setTimeout(function() { location.reload(); }, 500); }).catch(function() { closeAddForm(); setTimeout(function() { location.reload(); }, 500); }).finally(function() { isSubmitting = false; });
     };
-    // 幻灯片无限循环（原有代码保持不变，省略重复内容，实际已包含）
+    // 幻灯片无限循环（完整实现）
     var featuredRecords = records.filter(function(r) { return r.featured; });
     var slideshowRecords = featuredRecords.length > 0 ? featuredRecords : records;
     var originalSlideCount = slideshowRecords.length;
     var currentSlideIndex = 1;
     var touchStartX_s = 0, touchStartY_s = 0, endX_s = 0, endY_s = 0;
     var autoTimer = null;
-    function buildSlideshow() { /* 原有代码，此处省略，实际保留 */ /* 略 */ }
-    function updateSlideDots(realIndex) { /* 略 */ }
-    function getRealIndexFromVisual(visualIdx) { /* 略 */ }
-    function setSlideTransform(visualIdx, withAnimation) { /* 略 */ }
-    function goToRealSlide(realIdx) { /* 略 */ }
-    function nextSlide() { /* 略 */ }
-    function prevSlide() { /* 略 */ }
-    function resetAutoPlay() { /* 略 */ }
-    // 为了节省篇幅，以上函数保持原有实现，本处不作改动（实际使用需保留完整代码）
-    // 由于代码长度限制，此处不再重复原函数体，但最终部署时确保全部完整。
-    // 下面是相册渲染及预加载核心代码
+    function buildSlideshow() {
+        var container = document.getElementById('slidesContainer');
+        var dotsContainer = document.getElementById('dotsContainer');
+        if (!container || originalSlideCount === 0) return;
+        container.innerHTML = '';
+        dotsContainer.innerHTML = '';
+        var lastClone = slideshowRecords[originalSlideCount - 1];
+        var firstClone = slideshowRecords[0];
+        var slideLast = document.createElement('div');
+        slideLast.className = 'slide';
+        if (lastClone.photoPath) slideLast.style.backgroundImage = 'url("' + lastClone.photoPath + '")';
+        container.appendChild(slideLast);
+        for (var i = 0; i < originalSlideCount; i++) {
+            var r = slideshowRecords[i];
+            var slide = document.createElement('div');
+            slide.className = 'slide';
+            if (r.photoPath) slide.style.backgroundImage = 'url("' + r.photoPath + '")';
+            container.appendChild(slide);
+        }
+        var slideFirstClone = document.createElement('div');
+        slideFirstClone.className = 'slide';
+        if (firstClone.photoPath) slideFirstClone.style.backgroundImage = 'url("' + firstClone.photoPath + '")';
+        container.appendChild(slideFirstClone);
+        for (var j = 0; j < originalSlideCount; j++) {
+            var dot = document.createElement('span');
+            dot.className = 'dot' + (j === 0 ? ' active' : '');
+            dot.onclick = (function(idx) { return function() { goToRealSlide(idx); }; })(j);
+            dotsContainer.appendChild(dot);
+        }
+        document.getElementById('scrollHint').style.display = 'block';
+        container.style.transition = 'none';
+        container.style.transform = 'translateX(-100%)';
+        container.offsetHeight;
+        container.style.transition = 'transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1)';
+        updateSlideDots(0);
+    }
+    function updateSlideDots(realIndex) { var dots = document.querySelectorAll('.dot'); dots.forEach(function(d,i){ d.classList.toggle('active', i===realIndex); }); }
+    function getRealIndexFromVisual(visualIdx) { if (visualIdx === 0) return originalSlideCount-1; if (visualIdx === originalSlideCount+1) return 0; return visualIdx-1; }
+    function setSlideTransform(visualIdx, withAnimation) {
+        var container = document.getElementById('slidesContainer');
+        if (!container) return;
+        if (!withAnimation) container.style.transition = 'none';
+        container.style.transform = 'translateX(-' + (visualIdx * 100) + '%)';
+        if (!withAnimation) { container.offsetHeight; container.style.transition = 'transform 0.4s cubic-bezier(0.2,0.9,0.4,1.1)'; }
+        var realIndex = getRealIndexFromVisual(visualIdx);
+        updateSlideDots(realIndex);
+        currentSlideIndex = visualIdx;
+    }
+    function goToRealSlide(realIdx) { if (realIdx<0 || realIdx>=originalSlideCount) return; var targetVisual = realIdx+1; setSlideTransform(targetVisual, true); resetAutoPlay(); }
+    function nextSlide() { if (originalSlideCount<=1) return; var nextVisual = currentSlideIndex+1, maxVisual = originalSlideCount+1; if (nextVisual>maxVisual) { setSlideTransform(1,false); setTimeout(function(){ setSlideTransform(2,true); },20); } else { setSlideTransform(nextVisual,true); } resetAutoPlay(); }
+    function prevSlide() { if (originalSlideCount<=1) return; var prevVisual = currentSlideIndex-1; if (prevVisual<0) { setSlideTransform(originalSlideCount+1,false); setTimeout(function(){ setSlideTransform(originalSlideCount,true); },20); } else { setSlideTransform(prevVisual,true); } resetAutoPlay(); }
+    function resetAutoPlay() { if (autoTimer) clearInterval(autoTimer); if (originalSlideCount>1) { autoTimer = setInterval(function(){ if(!document.hidden) nextSlide(); },4000); } }
+    var slideshowEl = document.getElementById('slideshowSection');
+    if (slideshowEl && originalSlideCount>0) {
+        slideshowEl.addEventListener('touchstart', function(e){ touchStartX_s = e.touches[0].clientX; touchStartY_s = e.touches[0].clientY; });
+        slideshowEl.addEventListener('touchend', function(e){ endX_s = e.changedTouches[0].clientX; endY_s = e.changedTouches[0].clientY; var diffX = touchStartX_s - endX_s, diffY = touchStartY_s - endY_s; if(Math.abs(diffX)>Math.abs(diffY) && Math.abs(diffX)>40) { diffX>0 ? nextSlide() : prevSlide(); } });
+    }
+    buildSlideshow();
+    resetAutoPlay();
+    // 相册渲染 + 原图预加载（缩略图加载后立即预加载原图，大图瞬间显示）
     if (records.length) {
         var groups = {};
         records.forEach(function(r) { var d = r.recordDate; if (!d) return; var year = d.substring(0,4), month = d.substring(5,7), ym = year + '年' + parseInt(month) + '月'; if (!groups[ym]) groups[ym] = []; groups[ym].push(r); });
-        var keysWithNum = Object.keys(groups).map(function(ym) { var year = parseInt(ym.substring(0,4)), month = parseInt(ym.substring(5, ym.indexOf('月'))); return { key: ym, num: year * 12 + month }; });
-        keysWithNum.sort(function(a,b) { return b.num - a.num; });
-        var keys = keysWithNum.map(function(item) { return item.key; });
+        var keysWithNum = Object.keys(groups).map(function(ym) { var year = parseInt(ym.substring(0,4)), month = parseInt(ym.substring(5, ym.indexOf('月'))); return { key: ym, num: year*12+month }; });
+        keysWithNum.sort(function(a,b){ return b.num - a.num; });
+        var keys = keysWithNum.map(function(item){ return item.key; });
         var html = '';
         keys.forEach(function(k) {
-            var ageText = getAgeForMonth(groups[k]);
-            var ageHtml = ageText ? '<span class="tl-age">(' + ageText + ')</span>' : '';
+            var ageText = getAgeForMonth(groups[k]), ageHtml = ageText ? '<span class="tl-age">('+ageText+')</span>' : '';
             html += '<div class="tl-section"><div class="tl-header">' + k + ' · ' + groups[k].length + ' 张' + ageHtml + '</div><div class="tl-grid">';
             groups[k].forEach(function(r) {
                 var src = r.photoPath || '', dd = r.recordDate ? r.recordDate.substring(5) : '', isF = r.featured, fid = r.id;
-                html += '<div class="tl-photo" data-id="' + fid + '" onclick="openViewer(' + fid + ')" oncontextmenu="return false">';
-                html += '<img class="lazy-img" data-src="' + src + '" alt="">';
+                html += '<div class="tl-photo" data-id="'+fid+'" onclick="openViewer('+fid+')" oncontextmenu="return false">';
+                html += '<img class="lazy-img" data-src="'+src+'" alt="">';
                 if (isF) html += '<span class="featured-star">⭐</span>';
-                html += '<span class="tl-date-tag">' + dd + '</span>';
+                html += '<span class="tl-date-tag">'+dd+'</span>';
                 html += '<div class="photo-actions" onclick="event.stopPropagation();">';
-                html += '<button class="pa-btn featured" onclick="event.stopPropagation(); requireLogin(function(){ toggleFeaturedById(' + fid + '); })">' + (isF ? '取消精选' : '⭐ 精选') + '</button>';
-                html += '<button class="pa-btn danger" onclick="event.stopPropagation(); requireLogin(function(){ deleteById(' + fid + '); })">🗑 删除</button>';
+                html += '<button class="pa-btn featured" onclick="event.stopPropagation(); requireLogin(function(){ toggleFeaturedById('+fid+'); })">'+(isF?'取消精选':'⭐ 精选')+'</button>';
+                html += '<button class="pa-btn danger" onclick="event.stopPropagation(); requireLogin(function(){ deleteById('+fid+'); })">🗑 删除</button>';
                 html += '</div></div>';
             });
             html += '</div></div>';
         });
         document.getElementById('timelineContent').innerHTML = html;
-        // 懒加载缩略图 + 预加载原图
+        // 懒加载 + 原图预加载
         var observer = new IntersectionObserver(function(entries) {
             entries.forEach(function(entry) {
                 if (entry.isIntersecting) {
@@ -317,10 +364,10 @@
                         img.src = src;
                         img.classList.add('loaded');
                         img.removeAttribute('data-src');
-                        // 预加载原图：创建隐藏 Image 对象
+                        // 关键优化：立即预加载原图
                         var originalUrl = src;
-                        var preloadImg = new Image();
-                        preloadImg.src = originalUrl;
+                        var preload = new Image();
+                        preload.src = originalUrl;
                     }
                     observer.unobserve(img);
                 }
@@ -331,33 +378,16 @@
         var photos = document.querySelectorAll('.tl-photo');
         var longPressTimer = null;
         photos.forEach(function(photo) {
-            photo.addEventListener('touchstart', function() { longPressTimer = setTimeout(function() { photo.classList.add('long-press'); }, 600); });
+            photo.addEventListener('touchstart', function() { longPressTimer = setTimeout(function() { photo.classList.add('long-press'); },600); });
             photo.addEventListener('touchend', function() { clearTimeout(longPressTimer); });
             photo.addEventListener('touchmove', function() { clearTimeout(longPressTimer); photo.classList.remove('long-press'); });
         });
-        document.addEventListener('click', function(e) { if (!e.target.closest('.tl-photo')) photos.forEach(function(p) { p.classList.remove('long-press'); }); });
+        document.addEventListener('click', function(e) { if (!e.target.closest('.tl-photo')) photos.forEach(function(p){ p.classList.remove('long-press'); }); });
     }
-    // 大图浏览轨道动态加载（不预先填充所有图片）
+    // 大图浏览极速加载（利用缓存，瞬间显示）
     var viewerTrack = document.getElementById('viewerTrack');
     var viewerIndex = 0;
     var touchStartX_v = 0, touchStartY_v = 0, touchStartTime_v = 0;
-    // 动态构建大图轨道：不直接填充所有图片，而是动态生成当前需要显示的图片
-    function buildViewerTrackForIndex(index) {
-        if (!viewerTrack) return;
-        // 清空轨道
-        viewerTrack.innerHTML = '';
-        // 只创建当前图片的 slide
-        var slide = document.createElement('div');
-        slide.className = 'viewer-slide';
-        var img = document.createElement('img');
-        var r = records[index];
-        img.src = r.photoPath || '';
-        img.alt = r.title || '';
-        slide.appendChild(img);
-        viewerTrack.appendChild(slide);
-        // 为了滑动，还需要预先创建前后邻接的 slide（简化处理：不创建，因为 setViewerPosition 会重新构建）
-        // 但为了保证滑动体验，我们会在滑动时动态重建轨道
-    }
     function updateViewerInfo() {
         var r = records[viewerIndex];
         if (!r) return;
@@ -372,7 +402,7 @@
         if (index >= records.length) index = records.length - 1;
         if (index === viewerIndex && !withAnimation) return;
         viewerIndex = index;
-        // 重新构建轨道，只加载当前图片
+        // 动态加载当前图片，并预加载前后图片
         viewerTrack.innerHTML = '';
         var slide = document.createElement('div');
         slide.className = 'viewer-slide';
@@ -382,80 +412,53 @@
         img.alt = r.title || '';
         slide.appendChild(img);
         viewerTrack.appendChild(slide);
-        viewerTrack.style.transition = 'none';
-        viewerTrack.style.transform = 'translateX(0)';
-        viewerTrack.offsetHeight;
-        viewerTrack.style.transition = 'transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1)';
+        if (withAnimation === false) {
+            viewerTrack.style.transition = 'none';
+            viewerTrack.style.transform = 'translateX(0)';
+            viewerTrack.offsetHeight;
+            viewerTrack.style.transition = 'transform 0.4s cubic-bezier(0.2,0.9,0.4,1.1)';
+        } else {
+            viewerTrack.style.transform = 'translateX(0)';
+        }
         updateViewerInfo();
-        // 预加载前后图片的原图
-        if (viewerIndex + 1 < records.length) {
-            var nextImg = new Image();
-            nextImg.src = records[viewerIndex + 1].photoPath;
-        }
-        if (viewerIndex - 1 >= 0) {
-            var prevImg = new Image();
-            prevImg.src = records[viewerIndex - 1].photoPath;
-        }
+        // 预加载前后原图（已缓存则立即显示）
+        if (viewerIndex + 1 < records.length) { var nextImg = new Image(); nextImg.src = records[viewerIndex+1].photoPath; }
+        if (viewerIndex - 1 >= 0) { var prevImg = new Image(); prevImg.src = records[viewerIndex-1].photoPath; }
     }
     window.openViewer = function(id) {
         var idx = -1;
-        for (var i = 0; i < records.length; i++) {
-            if (records[i].id === id) { idx = i; break; }
-        }
+        for (var i=0;i<records.length;i++) { if (records[i].id === id) { idx = i; break; } }
         if (idx === -1) return;
         viewerIndex = idx;
         setViewerPosition(viewerIndex, false);
         document.getElementById('photoViewer').classList.add('active');
     };
-    window.viewerPrev = function() {
-        if (viewerIndex <= 0) { showToast('已经是第一张了'); return; }
-        setViewerPosition(viewerIndex - 1, true);
-    };
-    window.viewerNext = function() {
-        if (viewerIndex >= records.length - 1) { showToast('已经是最后一张了'); return; }
-        setViewerPosition(viewerIndex + 1, true);
-    };
+    window.viewerPrev = function() { if (viewerIndex > 0) setViewerPosition(viewerIndex-1, true); else showToast('已经是第一张了'); };
+    window.viewerNext = function() { if (viewerIndex < records.length-1) setViewerPosition(viewerIndex+1, true); else showToast('已经是最后一张了'); };
     window.closeViewer = function() { document.getElementById('photoViewer').classList.remove('active'); };
     var viewerContainer = document.getElementById('photoViewer');
     if (viewerContainer) {
-        viewerContainer.addEventListener('touchstart', function(e) {
-            if (e.target.closest('button')) return;
-            touchStartX_v = e.touches[0].clientX;
-            touchStartY_v = e.touches[0].clientY;
-            touchStartTime_v = Date.now();
-        }, { passive: true });
+        viewerContainer.addEventListener('touchstart', function(e) { if (e.target.closest('button')) return; touchStartX_v = e.touches[0].clientX; touchStartY_v = e.touches[0].clientY; touchStartTime_v = Date.now(); }, { passive: true });
         viewerContainer.addEventListener('touchend', function(e) {
             var diffX = touchStartX_v - e.changedTouches[0].clientX;
             var diffY = touchStartY_v - e.changedTouches[0].clientY;
             var deltaTime = Date.now() - touchStartTime_v;
             var threshold = (deltaTime < 200 && Math.abs(diffX) > 30) ? 30 : 50;
-            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > threshold) {
-                if (diffX > 0) window.viewerNext(); else window.viewerPrev();
-            } else {
-                setViewerPosition(viewerIndex, true);
-            }
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > threshold) { diffX > 0 ? window.viewerNext() : window.viewerPrev(); }
+            else { setViewerPosition(viewerIndex, true); }
         });
     }
     window.addEventListener('resize', function() { if (document.getElementById('photoViewer').classList.contains('active')) setViewerPosition(viewerIndex, false); });
-    document.addEventListener('keydown', function(e) {
-        if (document.getElementById('photoViewer').classList.contains('active')) {
-            if (e.key === 'ArrowLeft') viewerPrev();
-            if (e.key === 'ArrowRight') viewerNext();
-            if (e.key === 'Escape') closeViewer();
-        }
-        if (e.key === 'Escape') closeAddForm();
-    });
+    document.addEventListener('keydown', function(e) { if (document.getElementById('photoViewer').classList.contains('active')) { if (e.key === 'ArrowLeft') viewerPrev(); if (e.key === 'ArrowRight') viewerNext(); if (e.key === 'Escape') closeViewer(); } if (e.key === 'Escape') closeAddForm(); });
     document.getElementById('featuredBtn').onclick = function() { requireLogin(function() { var r = records[viewerIndex]; if (r) toggleFeaturedById(r.id); }); };
     document.getElementById('deleteBtn').onclick = function() { requireLogin(function() { var r = records[viewerIndex]; if (r) deleteById(r.id); }); };
-    window.toggleFeaturedById = function(id) { fetch('/gallery/toggle-featured/' + id, { method: 'POST' }).then(function() { location.reload(); }); };
-    window.deleteById = function(id) { if (confirm('确定删除吗？')) { window.location.href = '/delete/' + id; } };
+    window.toggleFeaturedById = function(id) { fetch('/gallery/toggle-featured/'+id, { method: 'POST' }).then(function() { location.reload(); }); };
+    window.deleteById = function(id) { if (confirm('确定删除吗？')) { window.location.href = '/delete/'+id; } };
     window.openAddForm = function() { document.getElementById('batchFiles').value = ''; document.getElementById('fileNamesDisplay').style.display = 'none'; document.getElementById('uploadBtn').innerHTML = '✨ 发布照片'; document.getElementById('uploadBtn').disabled = false; document.getElementById('uploadBtn').style.opacity = '1'; document.getElementById('compressProgress').style.display = 'none'; compressedFiles = []; fileHashes.clear(); isCompressing = false; isSubmitting = false; document.getElementById('addOverlay').classList.add('active'); };
     window.closeAddForm = function() { document.getElementById('addOverlay').classList.remove('active'); };
     document.querySelectorAll('#navLinks .nav-link').forEach(function(l) { l.addEventListener('click', function() { document.getElementById('navLinks').classList.remove('active'); }); });
     (function() { if (window.location.pathname === '/' || window.location.pathname === '') return; history.replaceState({ fromSubPage: true }, '', window.location.href); window.addEventListener('popstate', function(event) { var overlays = document.querySelectorAll('.photo-viewer.active, .add-overlay.active'); if (overlays.length > 0) { overlays.forEach(function(ov) { ov.classList.remove('active'); }); history.pushState({ fromSubPage: true }, '', window.location.href); return; } window.location.href = '/'; }); })();
     document.querySelectorAll('a[href="/login"]').forEach(function(link) { link.addEventListener('click', function(e) { e.preventDefault(); location.replace('/login'); }); });
-    // 补充幻灯片函数（为避免代码不完整，保留原有定义，此处略）
-    // 实际使用时，需将幻灯片函数完整粘贴，因消息长度限制，此处省略，但最终部署需确保完整。
     /*]]>*/
 </script>
 </body>
