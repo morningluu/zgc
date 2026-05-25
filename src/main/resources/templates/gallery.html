@@ -412,7 +412,7 @@
     }
 
     function requireLogin(callback) {
-        if (!isAuthenticated) { window.location.href = '/login'; return; }
+        if (!isAuthenticated) { location.replace('/login'); return; }
         callback();
     }
 
@@ -520,7 +520,7 @@
     };
 
     window.submitBatchPhotos = function() {
-        if (!isAuthenticated) { window.location.href = '/login'; return; }
+        if (!isAuthenticated) { location.replace('/login'); return; }
         if (isCompressing) { showToast('图片还在压缩中，请稍后'); return; }
         if (!compressedFiles.length) { showToast('请选择至少一张照片'); return; }
         var recordDate = document.getElementById('batchDate').value;
@@ -556,7 +556,7 @@
         });
     };
 
-    // ---------- 幻灯片等原有代码（保留）----------
+    // ---------- 幻灯片无限循环 ----------
     var featuredRecords = records.filter(function(r) { return r.featured; });
     var slideshowRecords = featuredRecords.length > 0 ? featuredRecords : records;
     var originalSlideCount = slideshowRecords.length;
@@ -684,19 +684,31 @@
     buildSlideshow();
     resetAutoPlay();
 
+    // ---------- 相册分组渲染（修正月份排序） ----------
     if (records.length) {
-        function getYearMonth(d) {
-            if (!d) return '未知';
-            var p = d.split('-');
-            return p[0] + '年' + parseInt(p[1]) + '月';
-        }
+        // 1. 按年月分组
         var groups = {};
         records.forEach(function(r) {
-            var ym = getYearMonth(r.recordDate);
+            var d = r.recordDate;
+            if (!d) return;
+            var year = d.substring(0, 4);
+            var month = d.substring(5, 7);
+            var ym = year + '年' + parseInt(month) + '月';
             if (!groups[ym]) groups[ym] = [];
             groups[ym].push(r);
         });
-        var keys = Object.keys(groups).sort(function(a, b) { return b.localeCompare(a); });
+
+        // 2. 将年月转换为可排序的数值（年*12 + 月），然后降序
+        var keysWithNum = Object.keys(groups).map(function(ym) {
+            var year = parseInt(ym.substring(0, 4));
+            var month = parseInt(ym.substring(5, ym.indexOf('月')));
+            var num = year * 12 + month;
+            return { key: ym, num: num };
+        });
+        keysWithNum.sort(function(a, b) { return b.num - a.num; });
+        var keys = keysWithNum.map(function(item) { return item.key; });
+
+        // 3. 生成 HTML
         var html = '';
         keys.forEach(function(k) {
             html += '<div class="tl-section"><div class="tl-header">' + k + ' · ' + groups[k].length + ' 张</div><div class="tl-grid">';
@@ -718,6 +730,7 @@
         });
         document.getElementById('timelineContent').innerHTML = html;
 
+        // 长按菜单绑定
         var photos = document.querySelectorAll('.tl-photo');
         var longPressTimer = null;
         photos.forEach(function(photo) {
@@ -732,6 +745,7 @@
         });
     }
 
+    // ---------- 大图浏览 ----------
     var viewerTrack = document.getElementById('viewerTrack');
     var viewerIndex = 0;
     var touchStartX_v = 0, touchStartY_v = 0, touchStartTime_v = 0;
@@ -879,37 +893,29 @@
         l.addEventListener('click', function() { document.getElementById('navLinks').classList.remove('active'); });
     });
 
-    // ========== 手机端返回键直接跳转首页（新增） ==========
+    // ========== 手机端返回键直接跳转首页 ==========
     (function() {
-        // 如果当前已经是首页（避免死循环），不做处理
-        if (window.location.pathname === '/' || window.location.pathname === '') {
-            return;
-        }
-        // 替换当前历史状态，使返回时不会回到当前页面
+        if (window.location.pathname === '/' || window.location.pathname === '') return;
         history.replaceState({ fromSubPage: true }, '', window.location.href);
-        // 监听返回事件
         window.addEventListener('popstate', function(event) {
-            // 优先关闭可能打开的弹窗/大图
             var overlays = document.querySelectorAll('.photo-viewer.active, .add-overlay.active');
             if (overlays.length > 0) {
                 overlays.forEach(function(ov) { ov.classList.remove('active'); });
-                // 阻止默认返回行为，重新推入状态
                 history.pushState({ fromSubPage: true }, '', window.location.href);
                 return;
             }
-            // 如果没有弹窗，直接跳转到首页
             window.location.href = '/';
         });
     })();
 
-    /*]]>*/
-      // 登录跳转时不留下历史记录（解决返回时看到登录页）
-document.querySelectorAll('a[href="/login"]').forEach(function(link) {
-    link.addEventListener('click', function(e) {
-        e.preventDefault();
-        location.replace('/login');
+    // 拦截登录链接，使用 replace 避免历史记录
+    document.querySelectorAll('a[href="/login"]').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            location.replace('/login');
+        });
     });
-});
+    /*]]>*/
 </script>
 </body>
 </html>
