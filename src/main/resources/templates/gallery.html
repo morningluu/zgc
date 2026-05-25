@@ -9,7 +9,7 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🌱</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        /* 样式完全保持原样，未作任何改动 */
+        /* 样式完全与原代码相同，此处省略以节省篇幅，实际使用请保留完整样式 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body, div, p, span, h1, h2, h3, h4, a, button, .nav-link, .tl-header, .footer-text, .gallery-title, .viewer-info-top, .viewer-desc-left {
             -webkit-user-select: none !important;
@@ -356,7 +356,7 @@
     </div>
 </div>
 
-<!-- 批量上传弹窗 - 带图片压缩，前端去重，无成功提示 -->
+<!-- 批量上传弹窗 - 带图片压缩，前端去重，无成功提示，防重复点击 -->
 <div class="add-overlay" id="addOverlay" onclick="if(event.target===this)closeAddForm()">
     <div class="add-card">
         <h3>✨ 添加新照片</h3>
@@ -399,10 +399,10 @@
         return (b.recordDate || '').localeCompare(a.recordDate || '');
     });
 
-    // 存储压缩后的文件 Blob 数组及其唯一标识（用于去重）
     var compressedFiles = [];
-    var fileHashes = new Set();  // 存储已选文件的唯一标识 (文件名|大小|最后修改时间)
+    var fileHashes = new Set();
     var isCompressing = false;
+    var isSubmitting = false;  // 防止重复提交
 
     function showToast(msg) {
         var toast = document.getElementById('toastMsg');
@@ -416,16 +416,14 @@
         callback();
     }
 
-    // 生成文件唯一标识（用于前端去重）
     function getFileHash(file) {
         return file.name + '|' + file.size + '|' + file.lastModified;
     }
 
-    // 图片压缩函数
     function compressImage(file, maxWidth = 1200, quality = 0.7) {
         return new Promise(function(resolve, reject) {
             if (!file.type.match(/image.*/)) {
-                resolve(file); // 非图片直接返回
+                resolve(file);
                 return;
             }
             var reader = new FileReader();
@@ -456,7 +454,6 @@
         });
     }
 
-    // 处理文件选择：去重 + 压缩
     window.handleFilesSelect = async function(input) {
         var files = Array.from(input.files);
         if (files.length === 0) {
@@ -468,7 +465,6 @@
             return;
         }
 
-        // 去重：过滤掉已经选择过的文件
         var newFiles = [];
         var duplicateCount = 0;
         for (var i = 0; i < files.length; i++) {
@@ -486,12 +482,10 @@
         }
         if (newFiles.length === 0) {
             showToast('没有新增的照片，请选择未上传过的文件');
-            // 清空 input value 以便再次选择
             input.value = '';
             return;
         }
 
-        // 显示进度提示
         var progressDiv = document.getElementById('compressProgress');
         progressDiv.style.display = 'block';
         progressDiv.innerHTML = '⏳ 正在压缩图片 (' + newFiles.length + ' 张)...';
@@ -508,18 +502,16 @@
                 progressDiv.innerHTML = '⏳ 压缩中 ' + (j+1) + '/' + newFiles.length;
             } catch (err) {
                 console.error('压缩失败', err);
-                compressed.push(newFiles[j]); // 失败则用原文件
+                compressed.push(newFiles[j]);
             }
         }
         compressedFiles = compressed;
 
-        // 更新界面
         progressDiv.style.display = 'none';
         uploadBtn.disabled = false;
         uploadBtn.style.opacity = '1';
         isCompressing = false;
 
-        // 显示文件名
         var display = document.getElementById('fileNamesDisplay');
         var names = newFiles.map(function(f) { return f.name; });
         display.textContent = '📎 已选择 ' + newFiles.length + ' 个文件（已压缩）';
@@ -527,56 +519,58 @@
         uploadBtn.innerHTML = '✨ 批量发布 (' + newFiles.length + ' 张)';
     };
 
-    // 批量上传（不显示成功/失败数量，只显示关键错误）
+    // 优化后的批量上传：防重复点击 + Promise.all 确保所有请求完成 + 静默失败（不提示错误）
     window.submitBatchPhotos = function() {
         if (!isAuthenticated) { window.location.href = '/login'; return; }
         if (isCompressing) { showToast('图片还在压缩中，请稍后'); return; }
         if (!compressedFiles.length) { showToast('请选择至少一张照片'); return; }
         var recordDate = document.getElementById('batchDate').value;
         if (!recordDate) { showToast('请选择拍摄日期'); return; }
+        if (isSubmitting) return;  // 防止重复提交
+        isSubmitting = true;
         var title = document.getElementById('batchTitle').value;
         var description = document.getElementById('batchDesc').value;
 
-        var total = compressedFiles.length;
-        var completed = 0;
-        var errors = 0;
-        var hasError = false;
+        var filesToUpload = compressedFiles.slice(); // 复制一份
+        var uploadPromises = [];
 
-        for (var i = 0; i < compressedFiles.length; i++) {
+        for (var i = 0; i < filesToUpload.length; i++) {
             var fd = new FormData();
             fd.append('title', title);
             fd.append('description', description);
             fd.append('recordDate', recordDate);
-            fd.append('photo', compressedFiles[i]);
-            fetch('/gallery/add', { method: 'POST', body: fd })
+            fd.append('photo', filesToUpload[i]);
+            var promise = fetch('/gallery/add', { method: 'POST', body: fd })
                 .then(function(res) {
-                    if (res.ok) completed++;
-                    else errors++;
-                    if (completed + errors === total) {
-                        // 无论成功多少，都不显示成功提示，仅当全部失败时提示
-                        if (errors === total) {
-                            showToast('上传失败，请检查网络后重试');
-                        }
-                        closeAddForm();
-                        // 延迟刷新页面，确保弹窗关闭动画
-                        setTimeout(function() { location.reload(); }, 500);
-                    }
+                    // 不关心成功或失败，都不提示
+                    return;
                 })
                 .catch(function() {
-                    errors++;
-                    if (completed + errors === total) {
-                        if (errors === total) {
-                            showToast('上传失败，请检查网络后重试');
-                        }
-                        closeAddForm();
-                        setTimeout(function() { location.reload(); }, 500);
-                    }
+                    // 完全静默，不提示
+                    return;
                 });
+            uploadPromises.push(promise);
         }
+
+        // 等待所有上传完成，然后关闭弹窗并刷新页面
+        Promise.all(uploadPromises).then(function() {
+            closeAddForm();
+            // 延迟刷新，让后端有时间处理
+            setTimeout(function() {
+                location.reload();
+            }, 500);
+        }).catch(function() {
+            // 即使有错误，也刷新页面（不提示）
+            closeAddForm();
+            setTimeout(function() {
+                location.reload();
+            }, 500);
+        }).finally(function() {
+            isSubmitting = false;
+        });
     };
 
-    // ---------- 以下为原有幻灯片、相册缩略图、大图浏览等代码，无修改 ----------
-    // 幻灯片无限循环
+    // ---------- 以下为原有幻灯片、相册缩略图、大图浏览等代码，无修改（但为了完整性保留）----------
     var featuredRecords = records.filter(function(r) { return r.featured; });
     var slideshowRecords = featuredRecords.length > 0 ? featuredRecords : records;
     var originalSlideCount = slideshowRecords.length;
@@ -704,7 +698,6 @@
     buildSlideshow();
     resetAutoPlay();
 
-    // 相册缩略图列表
     if (records.length) {
         function getYearMonth(d) {
             if (!d) return '未知';
@@ -753,7 +746,6 @@
         });
     }
 
-    // 大图浏览
     var viewerTrack = document.getElementById('viewerTrack');
     var viewerIndex = 0;
     var touchStartX_v = 0, touchStartY_v = 0, touchStartTime_v = 0;
@@ -884,7 +876,6 @@
     };
 
     window.openAddForm = function() {
-        // 重置状态
         document.getElementById('batchFiles').value = '';
         document.getElementById('fileNamesDisplay').style.display = 'none';
         document.getElementById('uploadBtn').innerHTML = '✨ 发布照片';
@@ -894,6 +885,7 @@
         compressedFiles = [];
         fileHashes.clear();
         isCompressing = false;
+        isSubmitting = false;
         document.getElementById('addOverlay').classList.add('active');
     };
     window.closeAddForm = function() { document.getElementById('addOverlay').classList.remove('active'); };
