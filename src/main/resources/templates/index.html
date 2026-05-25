@@ -71,10 +71,7 @@
         .tag-growth { background: #E0F5EB; color: #5D8A6E; }
         .tag-diary { background: #FFF0E0; color: #C08050; }
         .tag-messages { background: #E8E0F5; color: #7B68A0; }
-        .rc-delete { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); color: #E8788A; border: none; padding: 4px 12px; border-radius: 15px; font-size: 0.8em; cursor: pointer; text-decoration: none; font-weight: 600; opacity: 0; transition: all 0.3s; }
-        .record-card:hover .rc-delete { opacity: 1; }
-        .rc-delete:hover { background: #E8788A; color: white; }
-
+        /* 首页不显示删除按钮，因此样式保留但不影响（按钮已被移除） */
         .empty-state { text-align: center; padding: 50px; color: #8B7D9B; }
         .empty-state .empty-icon { font-size: 3.5em; margin-bottom: 12px; }
         .main-footer { text-align: center; padding: 40px 20px; background: linear-gradient(180deg, transparent, rgba(200,180,220,0.12)); }
@@ -92,7 +89,6 @@
             .hero-title { font-size: 2em; }
             .quick-grid { grid-template-columns: repeat(2, 1fr); }
             .record-grid { grid-template-columns: 1fr; }
-            .rc-delete { opacity: 1; }
             .hero-info-row { flex-direction: column; align-items: center; }
         }
     </style>
@@ -147,8 +143,7 @@
 
     <div class="record-grid" id="recordsContainer">
         <div class="record-card" th:each="record : ${records}" data-id="${record.id}">
-            <!-- 删除按钮改为异步调用 -->
-            <button sec:authorize="isAuthenticated()" class="rc-delete" th:data-id="${record.id}" onclick="deleteRecord(this, event)">🗑</button>
+            <!-- 注意：首页不显示删除按钮，删除请到对应的相册/数据/日记/留言页面操作 -->
             <img th:if="${record.photoPath != null}" th:src="@{${record.photoPath}}" alt="照片"
                  onerror="this.style.display='none'">
             <div class="rc-body">
@@ -188,26 +183,6 @@
     window.addEventListener('scroll', function() { document.getElementById('backToTop').style.display = window.scrollY > 300 ? 'block' : 'none'; });
     // 移动端菜单关闭
     document.querySelectorAll('#navLinks .nav-link').forEach(function(l) { l.addEventListener('click', function() { document.getElementById('navLinks').classList.remove('active'); }); });
-
-    // 异步删除记录（不跳转，避免影响返回历史）
-    window.deleteRecord = function(btn, event) {
-        event.stopPropagation();
-        if (!confirm('确定删除这条记录吗？')) return;
-        var id = btn.getAttribute('data-id');
-        var card = btn.closest('.record-card');
-        fetch('/delete/' + id, { method: 'POST' })  // 假设后端支持 POST /delete/{id}
-            .then(function(response) {
-                if (response.ok) {
-                    // 删除成功后刷新页面（简单可靠）
-                    location.reload();
-                } else {
-                    alert('删除失败，请重试');
-                }
-            })
-            .catch(function() {
-                alert('网络错误，删除失败');
-            });
-    };
 
     // ========== 二次确认退出（手机端） ==========
     var toastMsg = document.getElementById('toastMsg');
