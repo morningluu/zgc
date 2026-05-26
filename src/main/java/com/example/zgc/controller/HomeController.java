@@ -10,7 +10,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Controller
@@ -42,10 +44,11 @@ public class HomeController {
     }
 
     @PostMapping("/gallery/add")
-    public String addGallery(@RequestParam String title,
-                             @RequestParam String description,
-                             @RequestParam String recordDate,
-                             @RequestParam(required = false) MultipartFile photo) throws IOException {
+    @ResponseBody
+    public Map<String, Object> addGallery(@RequestParam String title,
+                                          @RequestParam String description,
+                                          @RequestParam String recordDate,
+                                          @RequestParam(required = false) MultipartFile photo) throws IOException {
         GrowthRecord record = new GrowthRecord();
         record.setCategory("gallery");
         record.setTitle(title);
@@ -55,7 +58,15 @@ public class HomeController {
             record.setPhotoPath(savePhoto(photo));
         }
         recordService.save(record);
-        return "redirect:/gallery";
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("id", record.getId());
+        result.put("photoPath", record.getPhotoPath());
+        result.put("recordDate", record.getRecordDate().toString());
+        result.put("title", record.getTitle());
+        result.put("description", record.getDescription());
+        result.put("featured", record.isFeatured());
+        return result;
     }
 
     @PostMapping("/gallery/toggle-featured/{id}")
@@ -140,15 +151,15 @@ public class HomeController {
         return "redirect:/messages";
     }
 
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
+    @ResponseBody
     public String deleteRecord(@PathVariable Long id) {
         GrowthRecord record = recordService.findById(id);
         if (record != null) {
-            String category = record.getCategory();
             recordService.delete(id);
-            return "redirect:/" + category;
+            return "ok";
         }
-        return "redirect:/";
+        return "error";
     }
 
     private String savePhoto(MultipartFile photo) throws IOException {
