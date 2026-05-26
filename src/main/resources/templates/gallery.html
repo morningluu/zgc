@@ -17,8 +17,28 @@
         }
         input, textarea { -webkit-user-select: text !important; user-select: text !important; }
         html { scroll-snap-type: y mandatory; overflow-y: scroll; height: 100vh; scroll-behavior: smooth; }
-        body { font-family: "Noto Sans SC", sans-serif; background: linear-gradient(180deg, #FFF8F5 0%, #F8F0FF 30%, #F0F8FF 60%, #FFF8F0 100%); color: #5D4E6D; }
-        .toast-message { position: fixed; bottom: 30%; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); color: white; padding: 10px 20px; border-radius: 40px; font-size: 0.9rem; z-index: 1000; pointer-events: none; white-space: nowrap; backdrop-filter: blur(8px); transition: opacity 0.3s; opacity: 0; }
+        body {
+            font-family: "Noto Sans SC", sans-serif;
+            background: linear-gradient(180deg, #FFF8F5 0%, #F8F0FF 30%, #F0F8FF 60%, #FFF8F0 100%);
+            color: #5D4E6D;
+        }
+        .toast-message {
+            position: fixed;
+            bottom: 30%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            z-index: 1000;
+            pointer-events: none;
+            white-space: nowrap;
+            backdrop-filter: blur(8px);
+            transition: opacity 0.3s;
+            opacity: 0;
+        }
         .toast-message.show { opacity: 1; }
         .main-nav { position: fixed; top: 0; z-index: 100; width: 100%; background: rgba(255,255,255,0.85); backdrop-filter: blur(15px); padding: 0 20px; border-bottom: 1px solid rgba(200,180,220,0.18); height: 56px; }
         .nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 56px; }
@@ -30,73 +50,244 @@
         .nav-link.active { background: rgba(255,154,178,0.2); color: #E8788A; font-weight: 700; }
         .nav-toggle { display: none; flex-direction: column; gap: 4px; background: none; border: none; cursor: pointer; }
         .nav-toggle span { width: 20px; height: 2px; background: #5D4E6D; border-radius: 2px; }
-        .slideshow-section { scroll-snap-align: start; scroll-snap-stop: always; position: relative; width: 100%; height: 100vh; overflow: hidden; background: #FFF8F5; touch-action: pan-y; }
-        .slides-container { display: flex; height: 100%; transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1); will-change: transform; }
-        .slide { min-width: 100%; height: 100%; background-size: contain; background-position: center; background-repeat: no-repeat; background-color: #FFF8F5; }
-        .dots { position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 3; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(200,180,220,0.4); cursor: pointer; transition: all 0.3s; }
+        .slideshow-section {
+            scroll-snap-align: start; scroll-snap-stop: always;
+            position: relative; width: 100%; height: 100vh; overflow: hidden;
+            background: #FFF8F5; touch-action: pan-y;
+        }
+        .slides-container {
+            display: flex; height: 100%;
+            transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            will-change: transform;
+        }
+        .slide {
+            min-width: 100%; height: 100%;
+            background-size: contain; background-position: center; background-repeat: no-repeat;
+            background-color: #FFF8F5;
+        }
+        .dots {
+            position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 10px; z-index: 3;
+        }
+        .dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: rgba(200,180,220,0.4); cursor: pointer; transition: all 0.3s;
+        }
         .dot.active { background: #FF9AB2; box-shadow: 0 0 8px rgba(255,154,178,0.4); transform: scale(1.2); }
-        .scroll-hint { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 3; text-align: center; animation: floatHint 2s infinite; }
+        .scroll-hint {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            z-index: 3; text-align: center; animation: floatHint 2s infinite;
+        }
         .scroll-hint span { font-size: 1.8em; display: block; color: #B8A9D4; }
         .scroll-hint p { font-size: 0.7em; color: #B8A9D4; margin-top: 2px; }
         @keyframes floatHint { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
-        .gallery-section { scroll-snap-align: start; scroll-snap-stop: always; background: linear-gradient(180deg, #FFF8F5, #F8F0FF, #FFF8F0); padding: 76px 20px 60px; min-height: 100vh; }
+        .gallery-section {
+            scroll-snap-align: start; scroll-snap-stop: always;
+            background: linear-gradient(180deg, #FFF8F5, #F8F0FF, #FFF8F0);
+            padding: 76px 20px 60px; min-height: 100vh;
+        }
         .gallery-inner { max-width: 1000px; margin: 0 auto; }
         .gallery-header { text-align: center; margin-bottom: 30px; }
         .gallery-title { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.8em; color: #E8788A; }
         .tl-section { margin-bottom: 30px; }
-        .tl-header { display: flex; align-items: baseline; gap: 10px; padding-bottom: 10px; margin-bottom: 12px; border-bottom: 2px solid rgba(200,180,220,0.3); font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.1em; color: #E8788A; }
+        .tl-header {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+            border-bottom: 2px solid rgba(200,180,220,0.3);
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            font-size: 1.1em;
+            color: #E8788A;
+        }
         .tl-header .tl-age { font-size: 0.75rem; color: #B8A9D4; font-weight: normal; margin-left: 8px; }
         .tl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 6px; }
-        .tl-photo { aspect-ratio: 1; border-radius: 10px; overflow: hidden; background: #f0f0f0; background-image: radial-gradient(circle at 30% 40%, rgba(200,200,200,0.2) 2%, transparent 2.5%); background-size: 20px 20px; position: relative; cursor: pointer; transition: transform 0.2s; }
+        .tl-photo {
+            aspect-ratio: 1; border-radius: 10px; overflow: hidden;
+            background: #f0f0f0;
+            background-image: radial-gradient(circle at 30% 40%, rgba(200,200,200,0.2) 2%, transparent 2.5%);
+            background-size: 20px 20px;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
         .tl-photo:active { transform: scale(0.96); }
-        .tl-photo img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity 0.25s ease; }
+        .tl-photo img {
+            width: 100%; height: 100%; object-fit: cover;
+            display: block;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
         .tl-photo img.loaded { opacity: 1; }
-        .tl-photo .tl-date-tag { position: absolute; bottom: 4px; right: 4px; background: rgba(0,0,0,0.5); color: white; font-size: 0.65em; padding: 2px 8px; border-radius: 10px; pointer-events: none; z-index: 2; }
-        .tl-photo .featured-star { position: absolute; top: 4px; left: 4px; font-size: 0.9em; pointer-events: none; text-shadow: 0 0 2px rgba(0,0,0,0.3); z-index: 2; }
-        .tl-photo .photo-actions { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; opacity: 0; transition: opacity 0.25s; pointer-events: none; border-radius: 10px; z-index: 3; }
+        .tl-photo .tl-date-tag {
+            position: absolute; bottom: 4px; right: 4px;
+            background: rgba(0,0,0,0.5); color: white;
+            font-size: 0.65em; padding: 2px 8px; border-radius: 10px;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .tl-photo .featured-star {
+            position: absolute; top: 4px; left: 4px; font-size: 0.9em;
+            pointer-events: none; text-shadow: 0 0 2px rgba(0,0,0,0.3);
+            z-index: 2;
+        }
+        .tl-photo .photo-actions {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7); display: flex;
+            flex-direction: column;
+            align-items: center; justify-content: center; gap: 16px;
+            opacity: 0; transition: opacity 0.25s; pointer-events: none;
+            border-radius: 10px;
+            z-index: 3;
+        }
         .tl-photo.long-press .photo-actions { opacity: 1; pointer-events: auto; }
-        .photo-actions .pa-btn { background: rgba(255,255,255,0.95); border: none; color: #5D4E6D; padding: 12px 24px; border-radius: 40px; font-size: 1rem; font-weight: 600; cursor: pointer; white-space: nowrap; min-width: 120px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        .photo-actions .pa-btn {
+            background: rgba(255,255,255,0.95); border: none;
+            color: #5D4E6D; padding: 12px 24px; border-radius: 40px;
+            font-size: 1rem; font-weight: 600; cursor: pointer;
+            white-space: nowrap;
+            min-width: 120px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
         .photo-actions .pa-btn.danger { color: #E8788A; background: #fff0f0; }
         .photo-actions .pa-btn.featured { color: #E8788A; }
-        .btn-add-fab { position: fixed; bottom: 30px; right: 20px; z-index: 50; background: linear-gradient(135deg, #FFB5C2, #FF9AB2); color: white; padding: 12px 18px; border-radius: 25px; border: none; display: flex; align-items: center; gap: 6px; font-size: 0.9em; font-weight: 600; cursor: pointer; box-shadow: 0 6px 20px rgba(255,154,178,0.4); transition: all 0.3s; text-decoration: none; }
+        .btn-add-fab {
+            position: fixed; bottom: 30px; right: 20px; z-index: 50;
+            background: linear-gradient(135deg, #FFB5C2, #FF9AB2);
+            color: white; padding: 12px 18px;
+            border-radius: 25px; border: none;
+            display: flex; align-items: center; gap: 6px;
+            font-size: 0.9em; font-weight: 600; cursor: pointer;
+            box-shadow: 0 6px 20px rgba(255,154,178,0.4);
+            transition: all 0.3s; text-decoration: none;
+        }
         .btn-add-fab:active { transform: scale(0.96); }
         .empty-state { text-align: center; padding: 80px 20px; color: #8B7D9B; }
         .main-footer { text-align: center; padding: 30px 20px; background: #FFF8F0; }
         .footer-text { font-family: "ZCOOL KuaiLe", sans-serif; color: #8B7D9B; font-size: 0.9em; }
-        .photo-viewer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.94); z-index: 200; display: none; flex-direction: column; touch-action: pan-y; }
+        .photo-viewer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.94); z-index: 200; display: none;
+            flex-direction: column;
+            touch-action: pan-y;
+        }
         .photo-viewer.active { display: flex; }
-        .viewer-track-container { flex: 1; position: relative; overflow: hidden; width: 100%; }
-        .viewer-track { display: flex; height: 100%; transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1); will-change: transform; }
-        .viewer-slide { min-width: 100vw; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
-        .viewer-slide img { max-width: 95vw; max-height: 70vh; object-fit: contain; border-radius: 8px; pointer-events: none; }
-        .viewer-info-top { position: absolute; top: 24px; left: 20px; z-index: 15; color: white; background: rgba(0,0,0,0.35); backdrop-filter: blur(8px); padding: 8px 16px; border-radius: 30px; max-width: 70%; pointer-events: none; }
+        .viewer-track-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
+        .viewer-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            will-change: transform;
+        }
+        .viewer-slide {
+            min-width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        .viewer-slide img {
+            max-width: 95vw;
+            max-height: 70vh;
+            object-fit: contain;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+        .viewer-info-top {
+            position: absolute; top: 24px; left: 20px; z-index: 15;
+            color: white; background: rgba(0,0,0,0.35); backdrop-filter: blur(8px);
+            padding: 8px 16px; border-radius: 30px;
+            max-width: 70%; pointer-events: none;
+        }
         .viewer-info-top .vi-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 2px; }
         .viewer-info-top .vi-date { font-size: 0.75rem; opacity: 0.8; }
-        .viewer-desc-left { position: absolute; bottom: 100px; left: 20px; z-index: 15; color: rgba(255,255,255,0.9); background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); padding: 8px 16px; border-radius: 24px; font-size: 0.85rem; max-width: 70%; line-height: 1.3; pointer-events: none; }
-        .viewer-close { position: absolute; top: 18px; right: 18px; background: rgba(255,255,255,0.15); border: none; color: white; font-size: 1.3em; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 20; }
-        .viewer-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.15); border: none; color: white; font-size: 2em; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 20; }
+        .viewer-desc-left {
+            position: absolute; bottom: 100px; left: 20px; z-index: 15;
+            color: rgba(255,255,255,0.9); background: rgba(0,0,0,0.4); backdrop-filter: blur(8px);
+            padding: 8px 16px; border-radius: 24px; font-size: 0.85rem;
+            max-width: 70%; line-height: 1.3; pointer-events: none;
+        }
+        .viewer-close {
+            position: absolute; top: 18px; right: 18px;
+            background: rgba(255,255,255,0.15); border: none;
+            color: white; font-size: 1.3em; width: 40px; height: 40px;
+            border-radius: 50%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; z-index: 20;
+        }
+        .viewer-nav {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: rgba(255,255,255,0.15); border: none;
+            color: white; font-size: 2em; width: 44px; height: 44px;
+            border-radius: 50%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 20;
+        }
         .viewer-nav.prev { left: 16px; }
         .viewer-nav.next { right: 16px; }
-        .viewer-actions { position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); display: flex; gap: 18px; z-index: 20; }
-        .viewer-actions .va-btn { background: rgba(20,20,30,0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 12px 28px; border-radius: 40px; font-size: 0.95rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
+        .viewer-actions {
+            position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 18px; z-index: 20;
+        }
+        .viewer-actions .va-btn {
+            background: rgba(20,20,30,0.8); backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white; padding: 12px 28px; border-radius: 40px;
+            font-size: 0.95rem; font-weight: 600; cursor: pointer;
+            white-space: nowrap;
+        }
         .viewer-actions .va-btn.danger { border-color: rgba(255,107,107,0.6); }
         .viewer-actions .va-btn.featured { border-color: rgba(255,154,178,0.6); }
-        .add-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 300; display: none; align-items: center; justify-content: center; backdrop-filter: blur(6px); }
+        .add-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); z-index: 300; display: none;
+            align-items: center; justify-content: center; backdrop-filter: blur(6px);
+        }
         .add-overlay.active { display: flex; }
-        .add-card { background: white; border-radius: 28px; padding: 32px 24px; width: 90vw; max-width: 420px; color: #5D4E6D; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .add-card {
+            background: white; border-radius: 28px; padding: 32px 24px;
+            width: 90vw; max-width: 420px; color: #5D4E6D;
+            max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
         .add-card h3 { font-family: "ZCOOL KuaiLe", sans-serif; text-align: center; margin-bottom: 6px; font-size: 1.4em; color: #E8788A; }
         .add-card .form-subtitle { text-align: center; color: #B8A9D4; font-size: 0.8em; margin-bottom: 24px; }
         .field-group { margin-bottom: 18px; }
         .field-label { font-size: 0.85em; font-weight: 600; color: #8B7D9B; margin-bottom: 6px; }
-        .add-card input, .add-card textarea { width: 100%; padding: 12px 14px; border: 1.5px solid #f0e6f6; border-radius: 20px; font-family: inherit; font-size: 0.95em; outline: none; background: #FFFAFD; }
+        .add-card input, .add-card textarea {
+            width: 100%; padding: 12px 14px; border: 1.5px solid #f0e6f6; border-radius: 20px;
+            font-family: inherit; font-size: 0.95em; outline: none; background: #FFFAFD;
+        }
         .custom-date-wrap { position: relative; }
-        .custom-date-wrap input[type="date"] { width: 100%; padding: 12px 14px; border: 1.5px solid #f0e6f6; border-radius: 20px; background: #FFFAFD; cursor: pointer; }
-        .custom-date-wrap .date-icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; font-size: 1.2em; color: #FF9AB2; }
+        .custom-date-wrap input[type="date"] {
+            width: 100%; padding: 12px 14px; border: 1.5px solid #f0e6f6; border-radius: 20px;
+            background: #FFFAFD; cursor: pointer;
+        }
+        .custom-date-wrap .date-icon {
+            position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+            pointer-events: none; font-size: 1.2em; color: #FF9AB2;
+        }
         .file-upload-wrap { position: relative; }
-        .file-upload-wrap input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2; }
-        .file-upload-box { padding: 24px 12px; border: 2px dashed #FFD4E0; border-radius: 24px; text-align: center; background: #FFF5F8; }
-        .btn-submit { width: 100%; padding: 14px; background: linear-gradient(135deg, #FFB5C2, #FF9AB2); border: none; border-radius: 40px; color: white; font-weight: 700; font-size: 1em; cursor: pointer; transition: all 0.3s; }
+        .file-upload-wrap input[type="file"] {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0; cursor: pointer; z-index: 2;
+        }
+        .file-upload-box {
+            padding: 24px 12px; border: 2px dashed #FFD4E0; border-radius: 24px;
+            text-align: center; background: #FFF5F8;
+        }
+        .btn-submit {
+            width: 100%; padding: 14px; background: linear-gradient(135deg, #FFB5C2, #FF9AB2);
+            border: none; border-radius: 40px; color: white; font-weight: 700;
+            font-size: 1em; cursor: pointer;
+            transition: all 0.3s;
+        }
         .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,154,178,0.4); }
         @media (max-width: 768px) {
             .nav-links { display: none; position: absolute; top: 56px; left: 0; right: 0; background: rgba(255,255,255,0.98); flex-direction: column; padding: 12px; border-radius: 0 0 20px 20px; }
@@ -166,13 +357,14 @@
 </div>
 <script th:inline="javascript">
     /*<![CDATA[*/
+    // --------------------------- 数据与工具函数 --------------------------
     var rawRecords = /*[[${records}]]*/ [];
     var isAuthenticated = /*[[${#authorization.expression('isAuthenticated()')}]]*/ false;
     var records = rawRecords.slice().sort(function(a, b) {
         if (a.recordDate === b.recordDate) return (b.id || 0) - (a.id || 0);
         return (b.recordDate || '').localeCompare(a.recordDate || '');
     });
-    var BIRTHDAY = new Date(2017, 1, 24);
+    var BIRTHDAY = new Date(2017, 1, 24); // 2017年2月24日
     function getAgeFromDate(dateStr) {
         if (!dateStr) return '';
         var parts = dateStr.split('-');
@@ -189,9 +381,21 @@
         var firstRecord = recordsInMonth[0];
         return getAgeFromDate(firstRecord.recordDate);
     }
-    var compressedFiles = [], fileHashes = new Set(), isCompressing = false, isSubmitting = false;
-    function showToast(msg) { var toast = document.getElementById('toastMsg'); toast.textContent = msg; toast.classList.add('show'); setTimeout(function() { toast.classList.remove('show'); }, 1500); }
-    function requireLogin(callback) { if (!isAuthenticated) { location.replace('/login'); return; } callback(); }
+    function showToast(msg) {
+        var toast = document.getElementById('toastMsg');
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(function() { toast.classList.remove('show'); }, 1500);
+    }
+    function requireLogin(callback) {
+        if (!isAuthenticated) { location.replace('/login'); return; }
+        callback();
+    }
+    // --------------------------- 图片压缩与批量上传（无刷新） --------------------------
+    var compressedFiles = [];
+    var fileHashes = new Set();
+    var isCompressing = false;
+    var isSubmitting = false;
     function getFileHash(file) { return file.name + '|' + file.size + '|' + file.lastModified; }
     function compressImage(file, maxWidth = 1200, quality = 0.7) {
         return new Promise(function(resolve, reject) {
@@ -219,9 +423,19 @@
     }
     window.handleFilesSelect = async function(input) {
         var files = Array.from(input.files);
-        if (files.length === 0) { compressedFiles = []; fileHashes.clear(); document.getElementById('uploadBtn').innerHTML = '✨ 发布照片'; document.getElementById('fileNamesDisplay').style.display = 'none'; document.getElementById('compressProgress').style.display = 'none'; return; }
+        if (files.length === 0) {
+            compressedFiles = []; fileHashes.clear();
+            document.getElementById('uploadBtn').innerHTML = '✨ 发布照片';
+            document.getElementById('fileNamesDisplay').style.display = 'none';
+            document.getElementById('compressProgress').style.display = 'none';
+            return;
+        }
         var newFiles = [], duplicateCount = 0;
-        for (var i = 0; i < files.length; i++) { var hash = getFileHash(files[i]); if (!fileHashes.has(hash)) { fileHashes.add(hash); newFiles.push(files[i]); } else { duplicateCount++; } }
+        for (var i = 0; i < files.length; i++) {
+            var hash = getFileHash(files[i]);
+            if (!fileHashes.has(hash)) { fileHashes.add(hash); newFiles.push(files[i]); }
+            else duplicateCount++;
+        }
         if (duplicateCount > 0) showToast('已忽略 ' + duplicateCount + ' 个重复文件');
         if (newFiles.length === 0) { showToast('没有新增的照片，请选择未上传过的文件'); input.value = ''; return; }
         var progressDiv = document.getElementById('compressProgress');
@@ -233,15 +447,15 @@
         var compressed = [];
         for (var j = 0; j < newFiles.length; j++) {
             try { var compressedFile = await compressImage(newFiles[j]); compressed.push(compressedFile); progressDiv.innerHTML = '⏳ 压缩中 ' + (j+1) + '/' + newFiles.length; }
-            catch (err) { console.error('压缩失败', err); compressed.push(newFiles[j]); }
+            catch (err) { compressed.push(newFiles[j]); }
         }
         compressedFiles = compressed;
         progressDiv.style.display = 'none';
         uploadBtn.disabled = false; uploadBtn.style.opacity = '1';
         isCompressing = false;
-        var display = document.getElementById('fileNamesDisplay');
-        display.textContent = '📎 已选择 ' + newFiles.length + ' 个文件（已压缩）';
-        display.style.display = 'block';
+        var displayDiv = document.getElementById('fileNamesDisplay');
+        displayDiv.textContent = '📎 已选择 ' + newFiles.length + ' 个文件（已压缩）';
+        displayDiv.style.display = 'block';
         uploadBtn.innerHTML = '✨ 批量发布 (' + newFiles.length + ' 张)';
     };
     window.submitBatchPhotos = function() {
@@ -252,18 +466,133 @@
         if (!recordDate) { showToast('请选择拍摄日期'); return; }
         if (isSubmitting) return;
         isSubmitting = true;
-        var title = document.getElementById('batchTitle').value, description = document.getElementById('batchDesc').value;
+        var title = document.getElementById('batchTitle').value;
+        var description = document.getElementById('batchDesc').value;
         var filesToUpload = compressedFiles.slice();
         var uploadPromises = [];
         for (var i = 0; i < filesToUpload.length; i++) {
             var fd = new FormData();
-            fd.append('title', title); fd.append('description', description); fd.append('recordDate', recordDate); fd.append('photo', filesToUpload[i]);
-            var promise = fetch('/gallery/add', { method: 'POST', body: fd }).then(function() { return; }).catch(function() { return; });
+            fd.append('title', title);
+            fd.append('description', description);
+            fd.append('recordDate', recordDate);
+            fd.append('photo', filesToUpload[i]);
+            var promise = fetch('/gallery/add', { method: 'POST', body: fd })
+                .then(function(response) {
+                    if (response.ok) return response.json();
+                    else return null;
+                })
+                .catch(function() { return null; });
             uploadPromises.push(promise);
         }
-        Promise.all(uploadPromises).then(function() { closeAddForm(); setTimeout(function() { location.reload(); }, 500); }).catch(function() { closeAddForm(); setTimeout(function() { location.reload(); }, 500); }).finally(function() { isSubmitting = false; });
+        Promise.all(uploadPromises).then(function(results) {
+            closeAddForm();
+            var newRecords = results.filter(function(r) { return r !== null; });
+            if (newRecords.length > 0) {
+                records = newRecords.concat(records);
+                renderFullGallery();
+                showToast('成功添加 ' + newRecords.length + ' 张照片');
+            } else {
+                showToast('上传失败，请重试');
+            }
+            compressedFiles = [];
+            fileHashes.clear();
+            isSubmitting = false;
+        });
     };
-    // 幻灯片无限循环（完整实现）
+    // --------------------------- 删除/精选（无刷新） --------------------------
+    window.deleteById = function(id) {
+        if (!confirm('确定删除吗？')) return;
+        fetch('/delete/' + id, { method: 'POST' }).then(function(response) {
+            if (response.ok) {
+                var index = records.findIndex(function(r) { return r.id == id; });
+                if (index !== -1) records.splice(index, 1);
+                renderFullGallery();
+                showToast('已删除');
+            } else {
+                showToast('删除失败');
+            }
+        }).catch(function() { showToast('网络错误'); });
+    };
+    window.toggleFeaturedById = function(id) {
+        fetch('/gallery/toggle-featured/' + id, { method: 'POST' }).then(function(response) {
+            if (response.ok) {
+                var record = records.find(function(r) { return r.id == id; });
+                if (record) record.featured = !record.featured;
+                renderFullGallery();
+                showToast(record.featured ? '已设为精选' : '已取消精选');
+            } else {
+                showToast('操作失败');
+            }
+        }).catch(function() { showToast('网络错误'); });
+    };
+    // --------------------------- 全局相册渲染（无刷新，保留懒加载/预加载） --------------------------
+    function renderFullGallery() {
+        var groups = {};
+        records.forEach(function(r) {
+            var d = r.recordDate;
+            if (!d) return;
+            var year = d.substring(0,4), month = d.substring(5,7), ym = year + '年' + parseInt(month) + '月';
+            if (!groups[ym]) groups[ym] = [];
+            groups[ym].push(r);
+        });
+        var keysWithNum = Object.keys(groups).map(function(ym) {
+            var year = parseInt(ym.substring(0,4)), month = parseInt(ym.substring(5, ym.indexOf('月')));
+            return { key: ym, num: year*12+month };
+        });
+        keysWithNum.sort(function(a,b){ return b.num - a.num; });
+        var keys = keysWithNum.map(function(item){ return item.key; });
+        var html = '';
+        keys.forEach(function(k) {
+            var ageText = getAgeForMonth(groups[k]), ageHtml = ageText ? '<span class="tl-age">('+ageText+')</span>' : '';
+            html += '<div class="tl-section"><div class="tl-header">' + k + ' · ' + groups[k].length + ' 张' + ageHtml + '</div><div class="tl-grid">';
+            groups[k].forEach(function(r) {
+                var src = r.photoPath || '', dd = r.recordDate ? r.recordDate.substring(5) : '', isF = r.featured, fid = r.id;
+                html += '<div class="tl-photo" data-id="'+fid+'" onclick="openViewer('+fid+')" oncontextmenu="return false">';
+                html += '<img class="lazy-img" data-src="'+src+'" alt="">';
+                if (isF) html += '<span class="featured-star">⭐</span>';
+                html += '<span class="tl-date-tag">'+dd+'</span>';
+                html += '<div class="photo-actions" onclick="event.stopPropagation();">';
+                html += '<button class="pa-btn featured" onclick="event.stopPropagation(); requireLogin(function(){ toggleFeaturedById('+fid+'); })">'+(isF?'取消精选':'⭐ 精选')+'</button>';
+                html += '<button class="pa-btn danger" onclick="event.stopPropagation(); requireLogin(function(){ deleteById('+fid+'); })">🗑 删除</button>';
+                html += '</div></div>';
+            });
+            html += '</div></div>';
+        });
+        document.getElementById('timelineContent').innerHTML = html;
+        // 懒加载 + 原图预加载
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    var img = entry.target;
+                    var src = img.getAttribute('data-src');
+                    if (src) {
+                        img.src = src;
+                        img.classList.add('loaded');
+                        img.removeAttribute('data-src');
+                        var preload = new Image();
+                        preload.src = src;
+                    }
+                    observer.unobserve(img);
+                }
+            });
+        }, { rootMargin: '100px' });
+        document.querySelectorAll('.lazy-img').forEach(function(img) { observer.observe(img); });
+        // 长按菜单绑定
+        var photos = document.querySelectorAll('.tl-photo');
+        var longPressTimer = null;
+        photos.forEach(function(photo) {
+            photo.addEventListener('touchstart', function() { longPressTimer = setTimeout(function() { photo.classList.add('long-press'); },600); });
+            photo.addEventListener('touchend', function() { clearTimeout(longPressTimer); });
+            photo.addEventListener('touchmove', function() { clearTimeout(longPressTimer); photo.classList.remove('long-press'); });
+        });
+        document.addEventListener('click', function(e) { if (!e.target.closest('.tl-photo')) photos.forEach(function(p){ p.classList.remove('long-press'); }); });
+        // 重新触发大图轨道更新（如果需要）
+        if (document.getElementById('photoViewer').classList.contains('active')) {
+            var currentId = records[viewerIndex] ? records[viewerIndex].id : null;
+            if (currentId) openViewer(currentId);
+        }
+    }
+    // --------------------------- 幻灯片无限循环（完整） --------------------------
     var featuredRecords = records.filter(function(r) { return r.featured; });
     var slideshowRecords = featuredRecords.length > 0 ? featuredRecords : records;
     var originalSlideCount = slideshowRecords.length;
@@ -329,62 +658,7 @@
     }
     buildSlideshow();
     resetAutoPlay();
-    // 相册渲染 + 原图预加载（缩略图加载后立即预加载原图，大图瞬间显示）
-    if (records.length) {
-        var groups = {};
-        records.forEach(function(r) { var d = r.recordDate; if (!d) return; var year = d.substring(0,4), month = d.substring(5,7), ym = year + '年' + parseInt(month) + '月'; if (!groups[ym]) groups[ym] = []; groups[ym].push(r); });
-        var keysWithNum = Object.keys(groups).map(function(ym) { var year = parseInt(ym.substring(0,4)), month = parseInt(ym.substring(5, ym.indexOf('月'))); return { key: ym, num: year*12+month }; });
-        keysWithNum.sort(function(a,b){ return b.num - a.num; });
-        var keys = keysWithNum.map(function(item){ return item.key; });
-        var html = '';
-        keys.forEach(function(k) {
-            var ageText = getAgeForMonth(groups[k]), ageHtml = ageText ? '<span class="tl-age">('+ageText+')</span>' : '';
-            html += '<div class="tl-section"><div class="tl-header">' + k + ' · ' + groups[k].length + ' 张' + ageHtml + '</div><div class="tl-grid">';
-            groups[k].forEach(function(r) {
-                var src = r.photoPath || '', dd = r.recordDate ? r.recordDate.substring(5) : '', isF = r.featured, fid = r.id;
-                html += '<div class="tl-photo" data-id="'+fid+'" onclick="openViewer('+fid+')" oncontextmenu="return false">';
-                html += '<img class="lazy-img" data-src="'+src+'" alt="">';
-                if (isF) html += '<span class="featured-star">⭐</span>';
-                html += '<span class="tl-date-tag">'+dd+'</span>';
-                html += '<div class="photo-actions" onclick="event.stopPropagation();">';
-                html += '<button class="pa-btn featured" onclick="event.stopPropagation(); requireLogin(function(){ toggleFeaturedById('+fid+'); })">'+(isF?'取消精选':'⭐ 精选')+'</button>';
-                html += '<button class="pa-btn danger" onclick="event.stopPropagation(); requireLogin(function(){ deleteById('+fid+'); })">🗑 删除</button>';
-                html += '</div></div>';
-            });
-            html += '</div></div>';
-        });
-        document.getElementById('timelineContent').innerHTML = html;
-        // 懒加载 + 原图预加载
-        var observer = new IntersectionObserver(function(entries) {
-            entries.forEach(function(entry) {
-                if (entry.isIntersecting) {
-                    var img = entry.target;
-                    var src = img.getAttribute('data-src');
-                    if (src) {
-                        img.src = src;
-                        img.classList.add('loaded');
-                        img.removeAttribute('data-src');
-                        // 关键优化：立即预加载原图
-                        var originalUrl = src;
-                        var preload = new Image();
-                        preload.src = originalUrl;
-                    }
-                    observer.unobserve(img);
-                }
-            });
-        }, { rootMargin: '100px' });
-        document.querySelectorAll('.lazy-img').forEach(function(img) { observer.observe(img); });
-        // 长按菜单绑定
-        var photos = document.querySelectorAll('.tl-photo');
-        var longPressTimer = null;
-        photos.forEach(function(photo) {
-            photo.addEventListener('touchstart', function() { longPressTimer = setTimeout(function() { photo.classList.add('long-press'); },600); });
-            photo.addEventListener('touchend', function() { clearTimeout(longPressTimer); });
-            photo.addEventListener('touchmove', function() { clearTimeout(longPressTimer); photo.classList.remove('long-press'); });
-        });
-        document.addEventListener('click', function(e) { if (!e.target.closest('.tl-photo')) photos.forEach(function(p){ p.classList.remove('long-press'); }); });
-    }
-    // 大图浏览极速加载（利用缓存，瞬间显示）
+    // --------------------------- 大图浏览（极速加载 + 预加载） --------------------------
     var viewerTrack = document.getElementById('viewerTrack');
     var viewerIndex = 0;
     var touchStartX_v = 0, touchStartY_v = 0, touchStartTime_v = 0;
@@ -402,7 +676,6 @@
         if (index >= records.length) index = records.length - 1;
         if (index === viewerIndex && !withAnimation) return;
         viewerIndex = index;
-        // 动态加载当前图片，并预加载前后图片
         viewerTrack.innerHTML = '';
         var slide = document.createElement('div');
         slide.className = 'viewer-slide';
@@ -421,7 +694,6 @@
             viewerTrack.style.transform = 'translateX(0)';
         }
         updateViewerInfo();
-        // 预加载前后原图（已缓存则立即显示）
         if (viewerIndex + 1 < records.length) { var nextImg = new Image(); nextImg.src = records[viewerIndex+1].photoPath; }
         if (viewerIndex - 1 >= 0) { var prevImg = new Image(); prevImg.src = records[viewerIndex-1].photoPath; }
     }
@@ -449,16 +721,44 @@
         });
     }
     window.addEventListener('resize', function() { if (document.getElementById('photoViewer').classList.contains('active')) setViewerPosition(viewerIndex, false); });
-    document.addEventListener('keydown', function(e) { if (document.getElementById('photoViewer').classList.contains('active')) { if (e.key === 'ArrowLeft') viewerPrev(); if (e.key === 'ArrowRight') viewerNext(); if (e.key === 'Escape') closeViewer(); } if (e.key === 'Escape') closeAddForm(); });
+    document.addEventListener('keydown', function(e) {
+        if (document.getElementById('photoViewer').classList.contains('active')) { if (e.key === 'ArrowLeft') viewerPrev(); if (e.key === 'ArrowRight') viewerNext(); if (e.key === 'Escape') closeViewer(); }
+        if (e.key === 'Escape') closeAddForm();
+    });
     document.getElementById('featuredBtn').onclick = function() { requireLogin(function() { var r = records[viewerIndex]; if (r) toggleFeaturedById(r.id); }); };
     document.getElementById('deleteBtn').onclick = function() { requireLogin(function() { var r = records[viewerIndex]; if (r) deleteById(r.id); }); };
-    window.toggleFeaturedById = function(id) { fetch('/gallery/toggle-featured/'+id, { method: 'POST' }).then(function() { location.reload(); }); };
-    window.deleteById = function(id) { if (confirm('确定删除吗？')) { window.location.href = '/delete/'+id; } };
-    window.openAddForm = function() { document.getElementById('batchFiles').value = ''; document.getElementById('fileNamesDisplay').style.display = 'none'; document.getElementById('uploadBtn').innerHTML = '✨ 发布照片'; document.getElementById('uploadBtn').disabled = false; document.getElementById('uploadBtn').style.opacity = '1'; document.getElementById('compressProgress').style.display = 'none'; compressedFiles = []; fileHashes.clear(); isCompressing = false; isSubmitting = false; document.getElementById('addOverlay').classList.add('active'); };
+    window.openAddForm = function() {
+        document.getElementById('batchFiles').value = '';
+        document.getElementById('fileNamesDisplay').style.display = 'none';
+        document.getElementById('uploadBtn').innerHTML = '✨ 发布照片';
+        document.getElementById('uploadBtn').disabled = false;
+        document.getElementById('uploadBtn').style.opacity = '1';
+        document.getElementById('compressProgress').style.display = 'none';
+        compressedFiles = [];
+        fileHashes.clear();
+        isCompressing = false;
+        isSubmitting = false;
+        document.getElementById('addOverlay').classList.add('active');
+    };
     window.closeAddForm = function() { document.getElementById('addOverlay').classList.remove('active'); };
     document.querySelectorAll('#navLinks .nav-link').forEach(function(l) { l.addEventListener('click', function() { document.getElementById('navLinks').classList.remove('active'); }); });
-    (function() { if (window.location.pathname === '/' || window.location.pathname === '') return; history.replaceState({ fromSubPage: true }, '', window.location.href); window.addEventListener('popstate', function(event) { var overlays = document.querySelectorAll('.photo-viewer.active, .add-overlay.active'); if (overlays.length > 0) { overlays.forEach(function(ov) { ov.classList.remove('active'); }); history.pushState({ fromSubPage: true }, '', window.location.href); return; } window.location.href = '/'; }); })();
+    // --------------------------- 手机返回键直接跳首页 --------------------------
+    (function() {
+        if (window.location.pathname === '/' || window.location.pathname === '') return;
+        history.replaceState({ fromSubPage: true }, '', window.location.href);
+        window.addEventListener('popstate', function(event) {
+            var overlays = document.querySelectorAll('.photo-viewer.active, .add-overlay.active');
+            if (overlays.length > 0) {
+                overlays.forEach(function(ov) { ov.classList.remove('active'); });
+                history.pushState({ fromSubPage: true }, '', window.location.href);
+                return;
+            }
+            window.location.href = '/';
+        });
+    })();
     document.querySelectorAll('a[href="/login"]').forEach(function(link) { link.addEventListener('click', function(e) { e.preventDefault(); location.replace('/login'); }); });
+    // 初始渲染相册
+    renderFullGallery();
     /*]]>*/
 </script>
 </body>
