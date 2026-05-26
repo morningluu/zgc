@@ -16,7 +16,8 @@
             -webkit-touch-callout: none !important;
         }
         input, textarea { -webkit-user-select: text !important; user-select: text !important; }
-        html { scroll-snap-type: y mandatory; overflow-y: scroll; height: 100vh; scroll-behavior: smooth; }
+        /* 移除强制滚动吸附与平滑滚动，避免夸克等浏览器滑动回弹 */
+        html { overflow-y: auto; height: 100vh; }
         body {
             font-family: "Noto Sans SC", sans-serif;
             background: linear-gradient(180deg, #FFF8F5 0%, #F8F0FF 30%, #F0F8FF 60%, #FFF8F0 100%);
@@ -51,7 +52,8 @@
         .nav-toggle { display: none; flex-direction: column; gap: 4px; background: none; border: none; cursor: pointer; }
         .nav-toggle span { width: 20px; height: 2px; background: #5D4E6D; border-radius: 2px; }
         .slideshow-section {
-            scroll-snap-align: start; scroll-snap-stop: always;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
             position: relative; width: 100%; height: 100vh; overflow: hidden;
             background: #FFF8F5; touch-action: pan-y;
         }
@@ -81,10 +83,14 @@
         .scroll-hint span { font-size: 1.8em; display: block; color: #B8A9D4; }
         .scroll-hint p { font-size: 0.7em; color: #B8A9D4; margin-top: 2px; }
         @keyframes floatHint { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
+        /* 优化滚动区域 */
         .gallery-section {
-            scroll-snap-align: start; scroll-snap-stop: always;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
             background: linear-gradient(180deg, #FFF8F5, #F8F0FF, #FFF8F0);
-            padding: 76px 20px 60px; min-height: 100vh;
+            padding: 76px 20px 60px;
+            min-height: 100vh;
+            -webkit-overflow-scrolling: touch;
         }
         .gallery-inner { max-width: 1000px; margin: 0 auto; }
         .gallery-header { text-align: center; margin-bottom: 30px; }
@@ -357,14 +363,13 @@
 </div>
 <script th:inline="javascript">
     /*<![CDATA[*/
-    // --------------------------- 数据与工具函数 --------------------------
     var rawRecords = /*[[${records}]]*/ [];
     var isAuthenticated = /*[[${#authorization.expression('isAuthenticated()')}]]*/ false;
     var records = rawRecords.slice().sort(function(a, b) {
         if (a.recordDate === b.recordDate) return (b.id || 0) - (a.id || 0);
         return (b.recordDate || '').localeCompare(a.recordDate || '');
     });
-    var BIRTHDAY = new Date(2017, 1, 24); // 2017年2月24日
+    var BIRTHDAY = new Date(2017, 1, 24);
     function getAgeFromDate(dateStr) {
         if (!dateStr) return '';
         var parts = dateStr.split('-');
@@ -391,7 +396,7 @@
         if (!isAuthenticated) { location.replace('/login'); return; }
         callback();
     }
-    // --------------------------- 图片压缩与批量上传（无刷新） --------------------------
+    // 图片压缩与批量上传（无刷新）
     var compressedFiles = [];
     var fileHashes = new Set();
     var isCompressing = false;
@@ -499,7 +504,7 @@
             isSubmitting = false;
         });
     };
-    // --------------------------- 删除/精选（无刷新） --------------------------
+    // 异步删除（不刷新页面）
     window.deleteById = function(id) {
         if (!confirm('确定删除吗？')) return;
         fetch('/delete/' + id, { method: 'POST' }).then(function(response) {
@@ -513,6 +518,7 @@
             }
         }).catch(function() { showToast('网络错误'); });
     };
+    // 异步精选切换
     window.toggleFeaturedById = function(id) {
         fetch('/gallery/toggle-featured/' + id, { method: 'POST' }).then(function(response) {
             if (response.ok) {
@@ -525,7 +531,7 @@
             }
         }).catch(function() { showToast('网络错误'); });
     };
-    // --------------------------- 全局相册渲染（无刷新，保留懒加载/预加载） --------------------------
+    // 全局相册渲染（无刷新）
     function renderFullGallery() {
         var groups = {};
         records.forEach(function(r) {
@@ -559,7 +565,6 @@
             html += '</div></div>';
         });
         document.getElementById('timelineContent').innerHTML = html;
-        // 懒加载 + 原图预加载
         var observer = new IntersectionObserver(function(entries) {
             entries.forEach(function(entry) {
                 if (entry.isIntersecting) {
@@ -577,7 +582,6 @@
             });
         }, { rootMargin: '100px' });
         document.querySelectorAll('.lazy-img').forEach(function(img) { observer.observe(img); });
-        // 长按菜单绑定
         var photos = document.querySelectorAll('.tl-photo');
         var longPressTimer = null;
         photos.forEach(function(photo) {
@@ -586,13 +590,8 @@
             photo.addEventListener('touchmove', function() { clearTimeout(longPressTimer); photo.classList.remove('long-press'); });
         });
         document.addEventListener('click', function(e) { if (!e.target.closest('.tl-photo')) photos.forEach(function(p){ p.classList.remove('long-press'); }); });
-        // 重新触发大图轨道更新（如果需要）
-        if (document.getElementById('photoViewer').classList.contains('active')) {
-            var currentId = records[viewerIndex] ? records[viewerIndex].id : null;
-            if (currentId) openViewer(currentId);
-        }
     }
-    // --------------------------- 幻灯片无限循环（完整） --------------------------
+    // 幻灯片无限循环（完整）
     var featuredRecords = records.filter(function(r) { return r.featured; });
     var slideshowRecords = featuredRecords.length > 0 ? featuredRecords : records;
     var originalSlideCount = slideshowRecords.length;
@@ -632,7 +631,7 @@
         container.style.transition = 'none';
         container.style.transform = 'translateX(-100%)';
         container.offsetHeight;
-        container.style.transition = 'transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1)';
+        container.style.transition = 'transform 0.4s cubic-bezier(0.2,0.9,0.4,1.1)';
         updateSlideDots(0);
     }
     function updateSlideDots(realIndex) { var dots = document.querySelectorAll('.dot'); dots.forEach(function(d,i){ d.classList.toggle('active', i===realIndex); }); }
@@ -658,10 +657,11 @@
     }
     buildSlideshow();
     resetAutoPlay();
-    // --------------------------- 大图浏览（极速加载 + 预加载） --------------------------
+    // 大图浏览（多级返回）
     var viewerTrack = document.getElementById('viewerTrack');
     var viewerIndex = 0;
     var touchStartX_v = 0, touchStartY_v = 0, touchStartTime_v = 0;
+    var viewerHistoryStateAdded = false;
     function updateViewerInfo() {
         var r = records[viewerIndex];
         if (!r) return;
@@ -698,16 +698,24 @@
         if (viewerIndex - 1 >= 0) { var prevImg = new Image(); prevImg.src = records[viewerIndex-1].photoPath; }
     }
     window.openViewer = function(id) {
-        var idx = -1;
-        for (var i=0;i<records.length;i++) { if (records[i].id === id) { idx = i; break; } }
+        var idx = records.findIndex(function(r) { return r.id == id; });
         if (idx === -1) return;
         viewerIndex = idx;
         setViewerPosition(viewerIndex, false);
         document.getElementById('photoViewer').classList.add('active');
+        if (!viewerHistoryStateAdded) {
+            history.pushState({ viewerOpen: true }, '', window.location.href);
+            viewerHistoryStateAdded = true;
+        }
+    };
+    window.closeViewer = function() {
+        document.getElementById('photoViewer').classList.remove('active');
+        if (viewerHistoryStateAdded) {
+            viewerHistoryStateAdded = false;
+        }
     };
     window.viewerPrev = function() { if (viewerIndex > 0) setViewerPosition(viewerIndex-1, true); else showToast('已经是第一张了'); };
     window.viewerNext = function() { if (viewerIndex < records.length-1) setViewerPosition(viewerIndex+1, true); else showToast('已经是最后一张了'); };
-    window.closeViewer = function() { document.getElementById('photoViewer').classList.remove('active'); };
     var viewerContainer = document.getElementById('photoViewer');
     if (viewerContainer) {
         viewerContainer.addEventListener('touchstart', function(e) { if (e.target.closest('button')) return; touchStartX_v = e.touches[0].clientX; touchStartY_v = e.touches[0].clientY; touchStartTime_v = Date.now(); }, { passive: true });
@@ -742,22 +750,24 @@
     };
     window.closeAddForm = function() { document.getElementById('addOverlay').classList.remove('active'); };
     document.querySelectorAll('#navLinks .nav-link').forEach(function(l) { l.addEventListener('click', function() { document.getElementById('navLinks').classList.remove('active'); }); });
-    // --------------------------- 手机返回键直接跳首页 --------------------------
-    (function() {
-        if (window.location.pathname === '/' || window.location.pathname === '') return;
-        history.replaceState({ fromSubPage: true }, '', window.location.href);
-        window.addEventListener('popstate', function(event) {
-            var overlays = document.querySelectorAll('.photo-viewer.active, .add-overlay.active');
-            if (overlays.length > 0) {
-                overlays.forEach(function(ov) { ov.classList.remove('active'); });
-                history.pushState({ fromSubPage: true }, '', window.location.href);
-                return;
-            }
+    // 全局返回处理：大图打开时优先关闭大图，否则相册内按返回跳转到首页
+    window.addEventListener('popstate', function(event) {
+        var viewer = document.getElementById('photoViewer');
+        if (viewer.classList.contains('active')) {
+            closeViewer();
+            history.pushState({ viewerOpen: true }, '', window.location.href);
+            viewerHistoryStateAdded = true;
+            event.preventDefault();
+            return;
+        }
+        if (window.location.pathname !== '/' && window.location.pathname !== '') {
             window.location.href = '/';
-        });
-    })();
+        }
+    });
+    if (window.location.pathname !== '/' && window.location.pathname !== '') {
+        history.replaceState({ fromSubPage: true }, '', window.location.href);
+    }
     document.querySelectorAll('a[href="/login"]').forEach(function(link) { link.addEventListener('click', function(e) { e.preventDefault(); location.replace('/login'); }); });
-    // 初始渲染相册
     renderFullGallery();
     /*]]>*/
 </script>
