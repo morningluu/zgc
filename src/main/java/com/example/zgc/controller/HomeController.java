@@ -1,214 +1,154 @@
-package com.example.zgc.controller;
+package com.example.zgc.model;
 
-import com.example.zgc.model.GrowthRecord;
-import com.example.zgc.service.GrowthRecordService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
-import java.io.IOException;
+import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
-@Controller
-public class HomeController {
-
-    private final GrowthRecordService recordService;
-
-    public HomeController(GrowthRecordService recordService) {
-        this.recordService = recordService;
+@Entity
+@Table(name = "growth_records")
+public class GrowthRecord {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(nullable = false)
+    private String category;
+    
+    private String title;
+    
+    @Column(length = 1000)
+    private String description;
+    
+    @Column(name = "record_date")
+    private LocalDate recordDate;
+    
+    // 身体数据字段
+    @Column(name = "height_cm")
+    private Double heightCm;
+    
+    @Column(name = "weight_kg")
+    private Double weightKg;
+    
+    // 成绩字段
+    private Double chinese;
+    private Double math;
+    private Double english;
+    
+    // 记录人
+    @Column(name = "recorded_by")
+    private String recordedBy;
+    
+    // 照片相关
+    @Column(name = "photo_path")
+    private String photoPath;
+    
+    private boolean featured = false;
+    
+    // 构造函数
+    public GrowthRecord() {}
+    
+    // Getter 和 Setter 方法
+    public Long getId() {
+        return id;
     }
-
-    @GetMapping("/")
-    public String home(Model model) {
-        List<GrowthRecord> records = recordService.findAllByOrderByRecordDateDesc();
-        model.addAttribute("records", records);
-        return "index";
+    
+    public void setId(Long id) {
+        this.id = id;
     }
-
-    @GetMapping("/login")
-    public String loginPage() {
-        return "login";
+    
+    public String getCategory() {
+        return category;
     }
-
-    @GetMapping("/gallery")
-    public String gallery(Model model) {
-        List<GrowthRecord> records = recordService.findByCategory("gallery");
-        model.addAttribute("records", records);
-        return "gallery";
+    
+    public void setCategory(String category) {
+        this.category = category;
     }
-
-    @PostMapping("/gallery/add")
-    @ResponseBody
-    public Map<String, Object> addGallery(@RequestParam String title,
-                                          @RequestParam String description,
-                                          @RequestParam String recordDate,
-                                          @RequestParam(required = false) MultipartFile photo) throws IOException {
-        GrowthRecord record = new GrowthRecord();
-        record.setCategory("gallery");
-        record.setTitle(title);
-        record.setDescription(description);
-        record.setRecordDate(LocalDate.parse(recordDate));
-        if (photo != null && !photo.isEmpty()) {
-            record.setPhotoPath(savePhoto(photo));
-        }
-        recordService.save(record);
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("id", record.getId());
-        result.put("photoPath", record.getPhotoPath());
-        result.put("recordDate", record.getRecordDate().toString());
-        result.put("title", record.getTitle());
-        result.put("description", record.getDescription());
-        result.put("featured", record.isFeatured());
-        return result;
+    
+    public String getTitle() {
+        return title;
     }
-
-    @PostMapping("/gallery/toggle-featured/{id}")
-    @ResponseBody
-    public String toggleFeatured(@PathVariable Long id) {
-        GrowthRecord record = recordService.findById(id);
-        if (record != null) {
-            record.setFeatured(!record.isFeatured());
-            recordService.save(record);
-            return "ok";
-        }
-        return "error";
+    
+    public void setTitle(String title) {
+        this.title = title;
     }
-
-    @GetMapping("/growth")
-    public String growth(Model model) {
-        List<GrowthRecord> records = recordService.findByCategory("growth");
-        List<GrowthRecord> scoreRecords = recordService.findByCategory("score");
-        model.addAttribute("records", records);
-        model.addAttribute("scoreRecords", scoreRecords);
-        return "growth";
+    
+    public String getDescription() {
+        return description;
     }
-
-    @PostMapping("/growth/add")
-    public String addGrowth(@RequestParam String title,
-                            @RequestParam(required = false) String description,
-                            @RequestParam String recordDate,
-                            @RequestParam(required = false) String heightCm,
-                            @RequestParam(required = false) String weightKg,
-                            @RequestParam String recordedBy) {
-        GrowthRecord record = new GrowthRecord();
-        record.setCategory("growth");
-        record.setTitle(title);
-        record.setDescription(description);
-        record.setRecordDate(LocalDate.parse(recordDate));
-        if (heightCm != null && !heightCm.trim().isEmpty()) {
-            record.setHeightCm(Double.parseDouble(heightCm));
-        }
-        if (weightKg != null && !weightKg.trim().isEmpty()) {
-            record.setWeightKg(Double.parseDouble(weightKg));
-        }
-        record.setRecordedBy(recordedBy);
-        recordService.save(record);
-        return "redirect:/growth";
+    
+    public void setDescription(String description) {
+        this.description = description;
     }
-
-    @PostMapping("/growth/addScore")
-    public String addScore(@RequestParam String title,
-                           @RequestParam String recordDate,
-                           @RequestParam(required = false) String chinese,
-                           @RequestParam(required = false) String math,
-                           @RequestParam(required = false) String english,
-                           @RequestParam String recordedBy) {
-        GrowthRecord record = new GrowthRecord();
-        record.setCategory("score");
-        record.setTitle(title);
-        record.setRecordDate(LocalDate.parse(recordDate));
-        if (chinese != null && !chinese.trim().isEmpty()) {
-            record.setChinese(Double.parseDouble(chinese));
-        }
-        if (math != null && !math.trim().isEmpty()) {
-            record.setMath(Double.parseDouble(math));
-        }
-        if (english != null && !english.trim().isEmpty()) {
-            record.setEnglish(Double.parseDouble(english));
-        }
-        record.setRecordedBy(recordedBy);
-        recordService.save(record);
-        return "redirect:/growth";
+    
+    public LocalDate getRecordDate() {
+        return recordDate;
     }
-
-    @GetMapping("/diary")
-    public String diary(Model model) {
-        List<GrowthRecord> records = recordService.findByCategory("diary");
-        model.addAttribute("records", records);
-        return "diary";
+    
+    public void setRecordDate(LocalDate recordDate) {
+        this.recordDate = recordDate;
     }
-
-    @PostMapping("/diary/add")
-    public String addDiary(@RequestParam String title,
-                           @RequestParam String description,
-                           @RequestParam String recordDate) {
-        GrowthRecord record = new GrowthRecord();
-        record.setCategory("diary");
-        record.setTitle(title);
-        record.setDescription(description);
-        record.setRecordDate(LocalDate.parse(recordDate));
-        recordService.save(record);
-        return "redirect:/diary";
+    
+    public Double getHeightCm() {
+        return heightCm;
     }
-
-    @GetMapping("/messages")
-    public String messages(Model model) {
-        List<GrowthRecord> records = recordService.findByCategory("messages");
-        model.addAttribute("records", records);
-        return "messages";
+    
+    public void setHeightCm(Double heightCm) {
+        this.heightCm = heightCm;
     }
-
-    @PostMapping("/messages/add")
-    public String addMessage(@RequestParam String title,
-                             @RequestParam String description,
-                             @RequestParam String recordDate) {
-        GrowthRecord record = new GrowthRecord();
-        record.setCategory("messages");
-        record.setTitle(title);
-        record.setDescription(description);
-        record.setRecordDate(LocalDate.parse(recordDate));
-        recordService.save(record);
-        return "redirect:/messages";
+    
+    public Double getWeightKg() {
+        return weightKg;
     }
-
-    @PostMapping("/delete/{id}")
-    @ResponseBody
-    public String deleteRecord(@PathVariable Long id) {
-        GrowthRecord record = recordService.findById(id);
-        if (record != null) {
-            recordService.delete(id);
-            return "ok";
-        }
-        return "error";
+    
+    public void setWeightKg(Double weightKg) {
+        this.weightKg = weightKg;
     }
-
-    @PostMapping("/deleteScore/{id}")
-    @ResponseBody
-    public String deleteScoreRecord(@PathVariable Long id) {
-        GrowthRecord record = recordService.findById(id);
-        if (record != null && "score".equals(record.getCategory())) {
-            recordService.delete(id);
-            return "ok";
-        }
-        return "error";
+    
+    public Double getChinese() {
+        return chinese;
     }
-
-    private String savePhoto(MultipartFile photo) throws IOException {
-        String uploadDir = System.getProperty("user.dir") + File.separator + "uploads";
-        File dir = new File(uploadDir);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-        String fileName = UUID.randomUUID() + "_" + photo.getOriginalFilename();
-        File dest = new File(uploadDir + File.separator + fileName);
-        photo.transferTo(dest);
-        return "/uploads/" + fileName;
+    
+    public void setChinese(Double chinese) {
+        this.chinese = chinese;
+    }
+    
+    public Double getMath() {
+        return math;
+    }
+    
+    public void setMath(Double math) {
+        this.math = math;
+    }
+    
+    public Double getEnglish() {
+        return english;
+    }
+    
+    public void setEnglish(Double english) {
+        this.english = english;
+    }
+    
+    public String getRecordedBy() {
+        return recordedBy;
+    }
+    
+    public void setRecordedBy(String recordedBy) {
+        this.recordedBy = recordedBy;
+    }
+    
+    public String getPhotoPath() {
+        return photoPath;
+    }
+    
+    public void setPhotoPath(String photoPath) {
+        this.photoPath = photoPath;
+    }
+    
+    public boolean isFeatured() {
+        return featured;
+    }
+    
+    public void setFeatured(boolean featured) {
+        this.featured = featured;
     }
 }
