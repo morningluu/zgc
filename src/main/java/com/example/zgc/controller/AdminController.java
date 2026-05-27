@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.time.LocalDate;
 
 @Controller
@@ -36,6 +37,7 @@ public class AdminController {
         record.setTitle(title);
         record.setDescription(description);
         record.setRecordDate(LocalDate.parse(recordDate));
+        record.setCategory("gallery");
 
         if (!photo.isEmpty()) {
             String photoPath = fileStorageService.saveFile(photo);
@@ -46,6 +48,7 @@ public class AdminController {
         return "redirect:/admin/upload";
     }
 
+    // ✅ 修改：删除后重定向
     @GetMapping("/delete/{id}")
     public String deleteRecord(@PathVariable Long id) {
         recordService.delete(id);
