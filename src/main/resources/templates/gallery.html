@@ -62,6 +62,107 @@
             position: relative;
         }
 
+        /* ========== 加载界面 ========== */
+        .loading-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(175deg, #FFF8F5, #FEF0F5, #F8F0FF);
+            z-index: 9999;
+            display: flex;
+            align-items: center; justify-content: center;
+            transition: opacity 0.5s ease, visibility 0.5s;
+            opacity: 1; visibility: visible;
+            flex-direction: column;
+        }
+        .loading-overlay.hidden {
+            opacity: 0; visibility: hidden; pointer-events: none;
+        }
+        .loading-card {
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-xl);
+            padding: 40px 30px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            width: 260px;
+            position: relative;
+            z-index: 2;
+        }
+        .loading-logo {
+            font-size: 3.5em;
+            animation: logoBounce 1.5s ease-in-out infinite;
+        }
+        @keyframes logoBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .loading-text {
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            font-size: 1.2em;
+            color: var(--accent-color);
+            letter-spacing: 0.04em;
+        }
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: #f0e0e8;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(135deg, #FFB5C2, #FF9AB2);
+            border-radius: 10px;
+            transition: width 0.2s ease;
+            box-shadow: 0 0 12px rgba(255,154,178,0.4);
+        }
+        .progress-percent {
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+        .loading-decor {
+            position: absolute;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .loading-cloud {
+            position: absolute;
+            background: rgba(255,255,255,0.6);
+            border-radius: 50%;
+            filter: blur(25px);
+            animation: cloudFloat 6s linear infinite;
+        }
+        .loading-cloud1 { width: 160px; height: 80px; top: 8%; left: 5%; opacity: 0.5; }
+        .loading-cloud2 { width: 140px; height: 70px; bottom: 12%; right: 8%; opacity: 0.45; animation-delay: -3s; }
+        @keyframes cloudFloat {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(30px); }
+            100% { transform: translateX(0); }
+        }
+        .loading-sparkle {
+            position: absolute;
+            width: 6px; height: 6px;
+            background: #FFD8A8;
+            border-radius: 50%;
+            animation: sparkleFloat 3s ease-in-out infinite;
+            box-shadow: 0 0 10px 3px rgba(255,216,168,0.6);
+        }
+        .loading-sparkle1 { top: 20%; left: 15%; animation-delay: 0s; }
+        .loading-sparkle2 { top: 65%; left: 80%; animation-delay: -1.2s; }
+        .loading-sparkle3 { top: 40%; left: 70%; animation-delay: -2.4s; }
+        @keyframes sparkleFloat {
+            0%, 100% { opacity: 0.4; transform: translateY(0); }
+            50% { opacity: 1; transform: translateY(-12px); }
+        }
+
+        /* ========== 原有样式 ========== */
         @keyframes skeleton-shimmer-vertical {
             0% { background-position: 0 200%; }
             100% { background-position: 0 -200%; }
@@ -73,18 +174,18 @@
         }
 
         .bg-decorations { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
-        .cloud { position: absolute; background: rgba(255,255,255,0.55); border-radius: 50%; filter: blur(30px); animation: cloudFloat linear infinite; will-change: transform; }
+        .cloud { position: absolute; background: rgba(255,255,255,0.55); border-radius: 50%; filter: blur(30px); animation: cloudFloatPage linear infinite; will-change: transform; }
         .cloud:nth-child(1) { width: 180px; height: 90px; top: 6%; left: -5%; animation-duration: 28s; opacity: 0.5; }
         .cloud:nth-child(2) { width: 140px; height: 70px; top: 18%; right: -8%; animation-duration: 34s; animation-delay: -12s; opacity: 0.45; }
         .cloud:nth-child(3) { width: 200px; height: 100px; top: 55%; left: 30%; animation-duration: 38s; animation-delay: -20s; opacity: 0.35; }
         .cloud:nth-child(4) { width: 120px; height: 60px; top: 72%; right: 15%; animation-duration: 30s; animation-delay: -6s; opacity: 0.4; }
-        @keyframes cloudFloat { 0%{transform:translateX(0) translateY(0)} 25%{transform:translateX(40px) translateY(-18px)} 50%{transform:translateX(10px) translateY(-6px)} 75%{transform:translateX(-20px) translateY(-22px)} 100%{transform:translateX(0) translateY(0)} }
-        .sparkle { position: absolute; width: 4px; height: 4px; background: #FFD8A8; border-radius: 50%; animation: sparkleFloat 5s ease-in-out infinite; box-shadow: 0 0 8px 2px rgba(255,216,168,0.6); will-change: transform, opacity; }
+        @keyframes cloudFloatPage { 0%{transform:translateX(0) translateY(0)} 25%{transform:translateX(40px) translateY(-18px)} 50%{transform:translateX(10px) translateY(-6px)} 75%{transform:translateX(-20px) translateY(-22px)} 100%{transform:translateX(0) translateY(0)} }
+        .sparkle { position: absolute; width: 4px; height: 4px; background: #FFD8A8; border-radius: 50%; animation: sparkleFloatPage 5s ease-in-out infinite; box-shadow: 0 0 8px 2px rgba(255,216,168,0.6); will-change: transform, opacity; }
         .sparkle:nth-child(5) { top: 12%; left: 18%; animation-delay: 0s; background: #FFE0C0; box-shadow: 0 0 10px 3px rgba(255,224,192,0.7); width: 5px; height: 5px; }
         .sparkle:nth-child(6) { top: 25%; left: 75%; animation-delay: -1.8s; background: #FFD4B8; box-shadow: 0 0 7px 2px rgba(255,212,184,0.55); width: 3px; height: 3px; }
         .sparkle:nth-child(7) { top: 48%; left: 8%; animation-delay: -3.2s; background: #FFECD0; box-shadow: 0 0 9px 3px rgba(255,236,208,0.65); }
         .sparkle:nth-child(8) { top: 68%; left: 82%; animation-delay: -4.5s; background: #FFE8CC; box-shadow: 0 0 6px 2px rgba(255,232,204,0.5); width: 3px; height: 3px; }
-        @keyframes sparkleFloat { 0%,100%{opacity:0.3;transform:translateY(0) scale(1)} 30%{opacity:1;transform:translateY(-16px) scale(1.6)} 60%{opacity:0.45;transform:translateY(-6px) scale(0.8)} }
+        @keyframes sparkleFloatPage { 0%,100%{opacity:0.3;transform:translateY(0) scale(1)} 30%{opacity:1;transform:translateY(-16px) scale(1.6)} 60%{opacity:0.45;transform:translateY(-6px) scale(0.8)} }
 
         .top-bar { position: sticky; top: 0; z-index: 1000; background: rgba(255,255,255,0.7); backdrop-filter: blur(22px); border-bottom: 1px solid rgba(200,180,220,0.1); padding: 0 16px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
         .top-bar-left { display: flex; align-items: center; gap: 10px; }
@@ -120,36 +221,17 @@
         .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(200,180,220,0.5); cursor: pointer; transition: all 0.3s; }
         .dot.active { background: var(--accent-color); box-shadow: 0 0 8px rgba(232,120,138,0.4); transform: scale(1.3); }
         .slideshow-empty { display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-light); font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.2em; flex-direction: column; gap: 8px; }
-        .slideshow-skeleton {
-            position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 10; /* 确保在幻灯片上方 */
-            border-radius: var(--radius-xl);
-            display: none;
-            pointer-events: none;
-        }
+        .slideshow-skeleton { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; border-radius: var(--radius-xl); display: none; pointer-events: none; }
 
         .gallery-title { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.4em; color: var(--text-primary); margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
         .tl-section { margin-bottom: 20px; }
         .tl-header { display: flex; align-items: baseline; gap: 8px; padding-bottom: 8px; margin-bottom: 10px; border-bottom: 1px dashed rgba(200,180,220,0.3); font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1em; color: var(--accent-color); }
         .tl-header .tl-age { font-size: 0.7rem; color: var(--text-light); font-weight: normal; }
         .tl-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-        .tl-photo {
-            aspect-ratio: 1; border-radius: var(--radius-sm);
-            overflow: hidden; position: relative; cursor: pointer;
-            transition: all 0.3s var(--transition-bounce); box-shadow: var(--shadow-sm);
-            background: linear-gradient(180deg, var(--skeleton-base) 25%, var(--skeleton-shine) 50%, var(--skeleton-base) 75%);
-            background-size: 100% 200%;
-            animation: skeleton-shimmer-vertical 1.5s ease-in-out infinite;
-        }
+        .tl-photo { aspect-ratio: 1; border-radius: var(--radius-sm); overflow: hidden; position: relative; cursor: pointer; transition: all 0.3s var(--transition-bounce); box-shadow: var(--shadow-sm); background: linear-gradient(180deg, var(--skeleton-base) 25%, var(--skeleton-shine) 50%, var(--skeleton-base) 75%); background-size: 100% 200%; animation: skeleton-shimmer-vertical 1.5s ease-in-out infinite; }
         .tl-photo.img-loaded { background: #f0f0f0; animation: none; }
         .tl-photo:active { transform: scale(0.95); }
-        .tl-photo img {
-            width: 100%; height: 100%; object-fit: cover;
-            display: block; visibility: hidden; /* 加载前完全隐藏 */
-            transition: visibility 0.3s, opacity 0.3s;
-            position: relative; z-index: 1;
-        }
+        .tl-photo img { width: 100%; height: 100%; object-fit: cover; display: block; visibility: hidden; transition: visibility 0.3s, opacity 0.3s; position: relative; z-index: 1; }
         .tl-photo img.loaded { visibility: visible; opacity: 1; }
         .tl-photo .tl-date-tag { position: absolute; bottom: 4px; right: 4px; background: rgba(0,0,0,0.45); color: white; font-size: 0.6em; padding: 2px 6px; border-radius: 8px; pointer-events: none; z-index: 3; }
         .tl-photo .featured-star { position: absolute; top: 4px; left: 4px; font-size: 0.8em; pointer-events: none; text-shadow: 0 0 3px rgba(0,0,0,0.3); z-index: 3; }
@@ -221,7 +303,7 @@
             .tl-photo { border-radius: 10px; }
             .viewer-nav { display: none !important; }
             .slideshow-card { height: 260px; border-radius: var(--radius-lg); }
-            .slideshow-skeleton { border-radius: var(--radius-lg); } /* 与卡片圆角一致 */
+            .slideshow-skeleton { border-radius: var(--radius-lg); }
             .bottom-nav-add { width: 46px; height: 46px; top: -18px; font-size: 1.4em; }
             .bottom-nav-add-label { bottom: -20px; font-size: 0.6em; }
             .container { padding: 10px 12px 16px; }
@@ -230,6 +312,24 @@
     </style>
 </head>
 <body>
+
+<!-- ========== 加载界面 ========== -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-cloud loading-cloud1"></div>
+    <div class="loading-cloud loading-cloud2"></div>
+    <div class="loading-sparkle loading-sparkle1"></div>
+    <div class="loading-sparkle loading-sparkle2"></div>
+    <div class="loading-sparkle loading-sparkle3"></div>
+    <div class="loading-card">
+        <div class="loading-logo">🌱</div>
+        <div class="loading-text">正在打开相册...</div>
+        <div class="progress-container">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-percent" id="progressPercent">0%</div>
+    </div>
+</div>
+
 <div class="bg-decorations"><div class="cloud"></div><div class="cloud"></div><div class="cloud"></div><div class="cloud"></div><div class="sparkle"></div><div class="sparkle"></div><div class="sparkle"></div><div class="sparkle"></div></div>
 <div class="toast-message" id="toastMsg">提示</div>
 
@@ -329,6 +429,44 @@
     function getAgeFromDate(d){if(!d)return'';var p=d.split('-');if(p.length!==3)return'';var rd=new Date(p[0],p[1]-1,p[2]);var y=rd.getFullYear()-BIRTHDAY.getFullYear();var m=rd.getMonth()-BIRTHDAY.getMonth();if(m<0){y--;m+=12;}if(y<0)return'';return y+'岁'+m+'个月';}
     function getAgeForMonth(recs){return recs&&recs.length?getAgeFromDate(recs[0].recordDate):'';}
 
+    // ========== 预加载并显示进度 ==========
+    var allPhotoUrls = records.map(r => r.photoPath).filter(Boolean);
+    var totalPhotos = allPhotoUrls.length;
+    var loadedCount = 0;
+    var progressFill = document.getElementById('progressFill');
+    var progressPercent = document.getElementById('progressPercent');
+
+    function updateProgress() {
+        loadedCount++;
+        var percent = Math.min(100, Math.floor((loadedCount / totalPhotos) * 100));
+        progressFill.style.width = percent + '%';
+        progressPercent.textContent = percent + '%';
+        if (loadedCount >= totalPhotos) {
+            // 所有图片加载完成，隐藏加载界面并渲染内容
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+                renderFullGallery();
+                buildSlideshow();
+                resetAutoPlay();
+            }, 400); // 稍微延迟以保证最后百分比显示
+        }
+    }
+
+    function preloadImages() {
+        if (totalPhotos === 0) {
+            // 没有图片，直接进入
+            updateProgress(); // 会直接100%
+            return;
+        }
+        allPhotoUrls.forEach(url => {
+            var img = new Image();
+            img.onload = updateProgress;
+            img.onerror = updateProgress; // 加载失败也算进度
+            img.src = url;
+        });
+    }
+
+    // ========== 幻灯片逻辑 ==========
     var featuredRecords = records.filter(r=>r.featured);
     var slideshowRecords = featuredRecords.length>0?featuredRecords:records;
     var originalSlideCount = slideshowRecords.length;
@@ -352,8 +490,7 @@
     function nextSlide(){if(originalSlideCount<=1)return;var n=currentSlideIndex+1;if(n>originalSlideCount+1){setSlideTransform(1,false);setTimeout(()=>setSlideTransform(2,true),20);}else setSlideTransform(n,true);resetAutoPlay();}
     function prevSlide(){if(originalSlideCount<=1)return;var p=currentSlideIndex-1;if(p<0){setSlideTransform(originalSlideCount+1,false);setTimeout(()=>setSlideTransform(originalSlideCount,true),20);}else setSlideTransform(p,true);resetAutoPlay();}
     function resetAutoPlay(){if(autoTimer)clearInterval(autoTimer);if(originalSlideCount>1)autoTimer=setInterval(()=>{if(!document.hidden)nextSlide();},4000);}
-    function buildSlideshow(){if(originalSlideCount===0){document.getElementById('slideshowSkeleton').style.display='none';return;}document.getElementById('slideshowSkeleton').style.display='block';var f=slideshowRecords[0].photoPath;if(f){var img=new Image();img.onload=buildSlideshowContent;img.onerror=buildSlideshowContent;img.src=f;}else buildSlideshowContent();}
-    buildSlideshow();resetAutoPlay();
+    function buildSlideshow(){if(originalSlideCount===0){document.getElementById('slideshowSkeleton').style.display='none';return;}document.getElementById('slideshowSkeleton').style.display='block';buildSlideshowContent();}
     var slideshowEl=document.getElementById('slideshowSection');
     if(slideshowEl&&originalSlideCount>0){slideshowEl.addEventListener('touchstart',function(e){this.tx=e.touches[0].clientX;this.ty=e.touches[0].clientY;});slideshowEl.addEventListener('touchend',function(e){var dx=this.tx-e.changedTouches[0].clientX,dy=this.ty-e.changedTouches[0].clientY;if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40){dx>0?nextSlide():prevSlide();}});}
 
@@ -405,26 +542,9 @@
     window.submitBatchPhotos=async function(){if(!compressedFiles.length){showToast('请选择照片');return;}var date=document.getElementById('batchDate').value;if(!date){showToast('请选择日期');return;}var title=document.getElementById('batchTitle').value,desc=document.getElementById('batchDesc').value;var proms=compressedFiles.map(f=>{var fd=new FormData();fd.append('title',title);fd.append('description',desc);fd.append('recordDate',date);fd.append('photo',f);return fetch('/gallery/add',{method:'POST',body:fd}).then(r=>r.ok?r.json():null);});var results=await Promise.all(proms);closeAddForm();var newRecs=results.filter(r=>r);if(newRecs.length){records=newRecs.concat(records);renderFullGallery();featuredRecords=records.filter(r=>r.featured);slideshowRecords=featuredRecords.length>0?featuredRecords:records;originalSlideCount=slideshowRecords.length;buildSlideshow();showToast('成功添加 '+newRecs.length+' 张');}else showToast('上传失败');compressedFiles=[];fileHashes.clear();};
 
     window.addEventListener('scroll',()=>{document.getElementById('backToTop').style.display=window.scrollY>400?'flex':'none';});
-    renderFullGallery();
 
-    // 页面打开即预加载所有大图（分批避免阻塞）
-    (function preloadAllPhotos() {
-        var urls = records.map(r => r.photoPath).filter(Boolean);
-        if (!urls.length) return;
-        var i = 0;
-        function loadNext() {
-            if (i >= urls.length) return;
-            var img = new Image();
-            img.src = urls[i];
-            i++;
-            if ('requestIdleCallback' in window) {
-                requestIdleCallback(loadNext);
-            } else {
-                setTimeout(loadNext, 100);
-            }
-        }
-        loadNext();
-    })();
+    // 启动预加载流程
+    preloadImages();
     /*]]>*/
 </script>
 </body>
