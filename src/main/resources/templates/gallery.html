@@ -120,19 +120,6 @@
         .va-btn { background:rgba(30,30,40,0.8); backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.25); color:white; padding:10px 20px; border-radius:40px; font-size:0.9rem; font-weight:600; cursor:pointer; white-space:nowrap; transition:all 0.2s var(--transition-bounce); }
         .va-btn:active { transform:scale(0.93); }
 
-        .add-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:4000; display:flex; align-items:flex-end; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.35s var(--transition-smooth); }
-        .add-overlay.active { opacity:1; pointer-events:auto; }
-        .add-sheet { background:rgba(255,255,255,0.96); backdrop-filter:blur(20px); border-radius:var(--radius-xl) var(--radius-xl) 0 0; width:100%; max-width:500px; padding:28px 20px 40px; transform:translateY(100%); transition:transform 0.4s var(--transition-smooth); box-shadow:0 -10px 40px rgba(0,0,0,0.12); }
-        .add-overlay.active .add-sheet { transform:translateY(0); }
-        .add-sheet-title { font-family:"ZCOOL KuaiLe", sans-serif; font-size:1.2em; text-align:center; margin-bottom:20px; color:var(--text-primary); }
-        .add-sheet-options { display:flex; gap:14px; flex-wrap:wrap; justify-content:center; }
-        .add-option { display:flex; flex-direction:column; align-items:center; gap:8px; padding:18px 16px; border-radius:var(--radius-lg); background:rgba(245,240,250,0.6); border:none; cursor:pointer; min-width:85px; transition:all 0.3s var(--transition-bounce); text-decoration:none; color:var(--text-primary); font-family:inherit; }
-        .add-option:active { transform:scale(0.85); background:rgba(255,200,210,0.4); }
-        .add-option-icon { font-size:2.2em; }
-        .add-option-label { font-size:0.82em; font-weight:600; letter-spacing:0.03em; }
-        .add-sheet-close { display:block; margin:18px auto 0; padding:10px 30px; border-radius:30px; border:none; background:rgba(200,180,220,0.2); cursor:pointer; font-size:0.9em; font-weight:600; color:var(--text-secondary); transition:all 0.3s var(--transition-bounce); }
-        .add-sheet-close:active { transform:scale(0.9); background:rgba(200,180,220,0.35); }
-
         .form-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:5000; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.35s; }
         .form-overlay.active { opacity:1; pointer-events:auto; }
         .form-card { background:white; border-radius:var(--radius-xl); padding:28px 22px; width:90vw; max-width:420px; max-height:85vh; overflow-y:auto; box-shadow:0 20px 40px rgba(0,0,0,0.2); }
@@ -147,8 +134,8 @@
         .btn-submit:active { transform:scale(0.96); }
         .file-names { font-size:0.75rem; color:var(--accent-color); margin-top:6px; display:none; }
 
-        .bottom-nav { position:fixed; bottom:0; left:0; right:0; z-index:1000; background:var(--nav-bg); backdrop-filter:blur(24px); border-top:1px solid rgba(200,180,220,0.1); border-radius:var(--radius-xl) var(--radius-xl) 0 0; display:flex; align-items:center; justify-content:space-around; padding:6px 8px 12px; box-shadow:0 -6px 28px rgba(180,160,200,0.1); }
-        .bottom-nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; text-decoration:none; color:var(--text-light); font-size:0.68em; font-weight:500; padding:6px 10px; border-radius:var(--radius-md); transition:all 0.3s var(--transition-bounce); cursor:pointer; border:none; background:none; font-family:inherit; }
+        .bottom-nav { position:fixed; bottom:0; left:0; right:0; z-index:1000; background:var(--nav-bg); backdrop-filter:blur(24px); border-top:1px solid rgba(200,180,220,0.1); border-radius:var(--radius-xl) var(--radius-xl) 0 0; display:flex; align-items:center; justify-content:space-around; padding:6px 8px 12px; box-shadow:0 -6px 28px rgba(180,160,200,0.1); padding-bottom:max(12px, env(safe-area-inset-bottom)); }
+        .bottom-nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; text-decoration:none; color:var(--text-light); font-size:0.68em; font-weight:500; padding:6px 10px; border-radius:var(--radius-md); transition:all 0.3s var(--transition-bounce); cursor:pointer; border:none; background:none; font-family:inherit; position:relative; }
         .bottom-nav-item .nav-icon { font-size:1.5em; transition:transform 0.3s var(--transition-bounce); }
         .bottom-nav-item.active { color:var(--accent-color); font-weight:700; }
         .bottom-nav-item.active::after { content:''; position:absolute; bottom:-2px; width:22px; height:3px; border-radius:3px; background:var(--accent-color); }
@@ -225,11 +212,9 @@
     <div class="viewer-actions" id="viewerActions">
         <button class="va-btn download" id="downloadBtn">⬇️ 下载</button>
         <button class="va-btn featured" id="featuredBtn">⭐ 设为精选</button>
-        <button class="va-btn danger" id="deleteBtn">🗑 删除</button>
+        <button class="va-btn danger" id="deleteBtn" sec:authorize="isAuthenticated()">🗑 删除</button>
     </div>
 </div>
-
-
 
 <div class="form-overlay" id="addFormOverlay" onclick="if(event.target===this)closeAddForm()">
     <div class="form-card">
@@ -246,7 +231,10 @@
 <nav class="bottom-nav">
     <a href="/" class="bottom-nav-item"><span class="nav-icon">🏠</span><span>首页</span></a>
     <a href="/gallery" class="bottom-nav-item active"><span class="nav-icon">📷</span><span>相册</span></a>
-   <button class="bottom-nav-add" onclick="openAddForm()" aria-label="添加"><span>+</span><span class="bottom-nav-add-label">添加</span></button>
+    <button class="bottom-nav-add" onclick="handleAddClick()" aria-label="添加照片">
+        <span>+</span>
+        <span class="bottom-nav-add-label">添加</span>
+    </button>
     <a href="/growth" class="bottom-nav-item"><span class="nav-icon">📊</span><span>数据</span></a>
     <a href="/messages" class="bottom-nav-item"><span class="nav-icon">💌</span><span>留言</span></a>
 </nav>
@@ -259,17 +247,39 @@
     var isAuthenticated = /*[[${#authorization.expression('isAuthenticated()')}]]*/ false;
     var records = rawRecords.slice().sort((a,b)=>(a.recordDate===b.recordDate?(b.id||0)-(a.id||0):(b.recordDate||'').localeCompare(a.recordDate||'')));
     var BIRTHDAY = new Date(2017,1,24);
+    
     function showToast(msg){var t=document.getElementById('toastMsg');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1500);}
     function toggleSidebar(){var o=document.getElementById('sidebarOverlay'),p=document.getElementById('sidebarPanel');if(o.classList.contains('active')){o.classList.remove('active');p.classList.remove('active');document.body.style.overflow='';}else{o.classList.add('active');p.classList.add('active');document.body.style.overflow='hidden';}}
     function getAgeFromDate(d){if(!d)return'';var p=d.split('-');if(p.length!==3)return'';var rd=new Date(p[0],p[1]-1,p[2]);var y=rd.getFullYear()-BIRTHDAY.getFullYear();var m=rd.getMonth()-BIRTHDAY.getMonth();if(m<0){y--;m+=12;}if(y<0)return'';return y+'岁'+m+'个月';}
     function getAgeForMonth(recs){return recs&&recs.length?getAgeFromDate(recs[0].recordDate):'';}
+
+    // ✅ 统一权限检查
+    function requireAuth(action) {
+        if (!isAuthenticated) {
+            showToast('请先登录');
+            setTimeout(() => { window.location.href = '/login'; }, 600);
+            return false;
+        }
+        return true;
+    }
+    
+    // ✅ +号按钮点击处理
+    function handleAddClick() {
+        if (!requireAuth()) return;
+        openAddForm();
+    }
+    
+    // ✅ 长按操作也需要检查登录
+    function checkAuthThen(callback) {
+        if (!requireAuth()) return;
+        callback();
+    }
 
     var featuredRecords = records.filter(r=>r.featured);
     var slideshowRecords = featuredRecords.length>0?featuredRecords:records;
     var originalSlideCount = slideshowRecords.length;
     var currentSlideIndex=1,autoTimer=null;
 
-    // 直接构建幻灯片（不预加载）
     function buildSlideshowContent(){
         var c=document.getElementById('slidesContainer'),d=document.getElementById('dotsContainer');
         if(!c||originalSlideCount===0)return;
@@ -301,14 +311,12 @@
     var slideshowEl=document.getElementById('slideshowSection');
     if(slideshowEl&&originalSlideCount>0){slideshowEl.addEventListener('touchstart',function(e){this.tx=e.touches[0].clientX;this.ty=e.touches[0].clientY;});slideshowEl.addEventListener('touchend',function(e){var dx=this.tx-e.changedTouches[0].clientX,dy=this.ty-e.changedTouches[0].clientY;if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40){dx>0?nextSlide():prevSlide();}});}
 
-    // 直接渲染相册网格，首屏前6张直接设置src
     function renderFullGallery(){
         var groups={};records.forEach(r=>{var d=r.recordDate;if(!d)return;var y=d.substring(0,4),m=d.substring(5,7),ym=y+'年'+parseInt(m)+'月';if(!groups[ym])groups[ym]=[];groups[ym].push(r);});
         var keys=Object.keys(groups).sort((a,b)=>{var na=parseInt(a)*12+parseInt(a.match(/\d+/g)[1]);var nb=parseInt(b)*12+parseInt(b.match(/\d+/g)[1]);return nb-na;});
         var html='';var imgCounter=0;
         keys.forEach(k=>{var age=getAgeForMonth(groups[k]);html+='<div class="tl-section"><div class="tl-header">'+k+' · '+groups[k].length+' 张'+(age?'<span class="tl-age">('+age+')</span>':'')+'</div><div class="tl-grid">';
         groups[k].forEach(r=>{var src=r.photoPath||'',dd=r.recordDate?r.recordDate.substring(5):'',fid=r.id;
-            // 前6张直接加载，其余懒加载
             var imgTag;
             if (imgCounter < 6 && src) {
                 imgTag = '<img src="'+src+'" class="loaded" onload="onPhotoLoad(this)" onerror="onPhotoError(this)">';
@@ -316,21 +324,22 @@
                 imgTag = '<img class="lazy-img" data-src="'+src+'" onload="onPhotoLoad(this)" onerror="onPhotoError(this)">';
             }
             imgCounter++;
-            html+='<div class="tl-photo" data-id="'+fid+'" onclick="openViewer('+fid+')">'+imgTag+(r.featured?'<span class="featured-star">⭐</span>':'')+'<span class="tl-date-tag">'+dd+'</span><div class="photo-actions" onclick="event.stopPropagation();"><button class="pa-btn featured" onclick="event.stopPropagation();toggleFeaturedById('+fid+')">'+(r.featured?'取消精选':'⭐ 精选')+'</button><button class="pa-btn danger" onclick="event.stopPropagation();deleteById('+fid+')">🗑 删除</button></div></div>';
+            // ✅ 长按菜单按钮也需要登录检查
+            var actionsHtml = isAuthenticated ? 
+                '<button class="pa-btn featured" onclick="event.stopPropagation();toggleFeaturedById('+fid+')">'+(r.featured?'取消精选':'⭐ 精选')+'</button><button class="pa-btn danger" onclick="event.stopPropagation();deleteById('+fid+')">🗑 删除</button>' :
+                '';
+            html+='<div class="tl-photo" data-id="'+fid+'" onclick="openViewer('+fid+')">'+imgTag+(r.featured?'<span class="featured-star">⭐</span>':'')+'<span class="tl-date-tag">'+dd+'</span>'+(actionsHtml?'<div class="photo-actions" onclick="event.stopPropagation();">'+actionsHtml+'</div>':'')+'</div>';
         });
         html+='</div></div>';});
         document.getElementById('timelineContent').innerHTML=html;
-        // 懒加载剩余图片
         var observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){var img=e.target,src=img.getAttribute('data-src');if(src){img.src=src;img.classList.add('loaded');img.removeAttribute('data-src');}observer.unobserve(img);}})},{rootMargin:'100px'});
         document.querySelectorAll('.lazy-img').forEach(img=>observer.observe(img));
-        // 长按菜单
         document.querySelectorAll('.tl-photo').forEach(p=>{var timer;p.addEventListener('touchstart',()=>{timer=setTimeout(()=>p.classList.add('long-press'),600);});p.addEventListener('touchend',()=>clearTimeout(timer));p.addEventListener('touchmove',()=>{clearTimeout(timer);p.classList.remove('long-press');});});
         document.addEventListener('click',e=>{if(!e.target.closest('.tl-photo'))document.querySelectorAll('.tl-photo').forEach(p=>p.classList.remove('long-press'));});
     }
     window.onPhotoLoad=function(img){img.classList.add('loaded');var p=img.closest('.tl-photo');if(p)p.classList.add('img-loaded');};
     window.onPhotoError=function(img){var p=img.closest('.tl-photo');if(p)p.classList.add('img-loaded');};
 
-    // 大图浏览器
     var viewerTrack=document.getElementById('viewerTrack'),viewerIndex=0,viewerOpen=false,startX=0,savedScrollY=0;
     function updateViewerInfo(){var r=records[viewerIndex];if(!r)return;document.getElementById('viewerTitle').innerText=r.title||'';document.getElementById('viewerDate').innerText=r.recordDate||'';document.getElementById('viewerDesc').innerText=r.description||'';document.getElementById('featuredBtn').innerText=r.featured?'⭐ 取消精选':'⭐ 设为精选';}
     function buildViewerSlide(index){viewerTrack.innerHTML='';var s=document.createElement('div');s.className='viewer-slide';var img=document.createElement('img');img.src=records[index].photoPath||'';img.draggable=false;s.appendChild(img);viewerTrack.appendChild(s);}
@@ -345,17 +354,57 @@
     viewerContainer.addEventListener('touchmove',function(e){if(!startX)return;var dx=e.touches[0].clientX-startX;viewerTrack.style.transform='translateX('+dx+'px)';});
     viewerContainer.addEventListener('touchend',function(e){if(!startX)return;var dx=e.changedTouches[0].clientX-startX;startX=0;if(Math.abs(dx)>window.innerWidth*0.3){dx>0?window.viewerPrev():window.viewerNext();}else{viewerTrack.style.transition='transform 0.35s cubic-bezier(0.2,0.9,0.4,1.1)';viewerTrack.style.transform='translateX(0)';}});
     document.getElementById('downloadBtn').onclick=function(){var r=records[viewerIndex];if(!r||!r.photoPath)return;var a=document.createElement('a');a.href=r.photoPath;a.download=r.title||'photo';a.click();};
-    document.getElementById('featuredBtn').onclick=function(){var r=records[viewerIndex];if(r)toggleFeaturedById(r.id);};
-    document.getElementById('deleteBtn').onclick=function(){var r=records[viewerIndex];if(r)deleteById(r.id);};
+    document.getElementById('featuredBtn').onclick=function(){if(!requireAuth())return;var r=records[viewerIndex];if(r)toggleFeaturedById(r.id);};
+    document.getElementById('deleteBtn').onclick=function(){if(!requireAuth())return;var r=records[viewerIndex];if(r)deleteById(r.id);};
     window.addEventListener('popstate',function(e){if(viewerOpen){closeViewer(true);e.preventDefault();}});
 
-    window.deleteById=function(id){if(!confirm('确定删除吗？'))return;fetch('/delete/'+id,{method:'POST'}).then(r=>{if(r.ok){var idx=records.findIndex(r=>r.id==id);if(idx!==-1)records.splice(idx,1);renderFullGallery();featuredRecords=records.filter(r=>r.featured);slideshowRecords=featuredRecords.length>0?featuredRecords:records;originalSlideCount=slideshowRecords.length;buildSlideshow();showToast('已删除');closeViewer(true);}else showToast('删除失败');});};
-    window.toggleFeaturedById=function(id){fetch('/gallery/toggle-featured/'+id,{method:'POST'}).then(r=>{if(r.ok){var rec=records.find(r=>r.id==id);if(rec)rec.featured=!rec.featured;renderFullGallery();featuredRecords=records.filter(r=>r.featured);slideshowRecords=featuredRecords.length>0?featuredRecords:records;originalSlideCount=slideshowRecords.length;buildSlideshow();showToast(rec.featured?'已设为精选':'已取消精选');}});};
+    // ✅ 删除操作需要登录
+    window.deleteById=function(id){
+        if (!requireAuth()) return;
+        if(!confirm('确定删除吗？'))return;
+        fetch('/delete/'+id,{method:'POST'}).then(r=>{
+            if(r.ok){
+                var idx=records.findIndex(r=>r.id==id);
+                if(idx!==-1)records.splice(idx,1);
+                renderFullGallery();
+                featuredRecords=records.filter(r=>r.featured);
+                slideshowRecords=featuredRecords.length>0?featuredRecords:records;
+                originalSlideCount=slideshowRecords.length;
+                buildSlideshow();
+                showToast('已删除');
+                closeViewer(true);
+            }else showToast('删除失败');
+        });
+    };
+    
+    // ✅ 精选操作需要登录
+    window.toggleFeaturedById=function(id){
+        if (!requireAuth()) return;
+        fetch('/gallery/toggle-featured/'+id,{method:'POST'}).then(r=>{
+            if(r.ok){
+                var rec=records.find(r=>r.id==id);
+                if(rec)rec.featured=!rec.featured;
+                renderFullGallery();
+                featuredRecords=records.filter(r=>r.featured);
+                slideshowRecords=featuredRecords.length>0?featuredRecords:records;
+                originalSlideCount=slideshowRecords.length;
+                buildSlideshow();
+                showToast(rec.featured?'已设为精选':'已取消精选');
+            }
+        });
+    };
 
-    function openAddMenu(){document.getElementById('addMenuOverlay').classList.add('active');document.body.style.overflow='hidden';}
-    function closeAddMenu(){document.getElementById('addMenuOverlay').classList.remove('active');document.body.style.overflow='';}
-    function openAddForm(){document.getElementById('batchFiles').value='';document.getElementById('fileNamesDisplay').style.display='none';document.getElementById('compressProgress').style.display='none';document.getElementById('uploadBtn').innerHTML='✨ 发布照片';compressedFiles=[];fileHashes.clear();document.getElementById('addFormOverlay').classList.add('active');}
+    function openAddForm(){
+        document.getElementById('batchFiles').value='';
+        document.getElementById('fileNamesDisplay').style.display='none';
+        document.getElementById('compressProgress').style.display='none';
+        document.getElementById('uploadBtn').innerHTML='✨ 发布照片';
+        compressedFiles=[];
+        fileHashes.clear();
+        document.getElementById('addFormOverlay').classList.add('active');
+    }
     function closeAddForm(){document.getElementById('addFormOverlay').classList.remove('active');}
+
     var compressedFiles=[],fileHashes=new Set();
     function getFileHash(f){return f.name+'|'+f.size+'|'+f.lastModified;}
     function compressImage(file,maxW=1200,qual=0.7){return new Promise((resolve)=>{if(!file.type.match(/image.*/)){resolve(file);return;}var reader=new FileReader();reader.readAsDataURL(file);reader.onload=function(e){var img=new Image();img.src=e.target.result;img.onload=function(){var w=img.width,h=img.height,c=document.createElement('canvas');if(w>maxW){h=(h*maxW)/w;w=maxW;}c.width=w;c.height=h;var ctx=c.getContext('2d');ctx.drawImage(img,0,0,w,h);c.toBlob(blob=>{resolve(new File([blob],file.name.replace(/\.[^/.]+$/,'.jpg'),{type:'image/jpeg'}));},'image/jpeg',qual);};};});}
@@ -364,7 +413,6 @@
 
     window.addEventListener('scroll',()=>{document.getElementById('backToTop').style.display=window.scrollY>400?'flex':'none';});
 
-    // 直接渲染，无需加载等待
     renderFullGallery();
     buildSlideshow();
     resetAutoPlay();
