@@ -33,6 +33,11 @@ public class GrowthRecord {
     @Column(name = "weight_kg")
     private Double weightKg;
 
+    // ✅ 新增：成绩字段
+    private Double chinese;
+    private Double math;
+    private Double english;
+
     @Column(name = "recorded_by", length = 50)
     private String recordedBy;
 
@@ -74,6 +79,16 @@ public class GrowthRecord {
 
     public Double getWeightKg() { return weightKg; }
     public void setWeightKg(Double weightKg) { this.weightKg = weightKg; }
+
+    // ✅ 新增：成绩字段的 Getter & Setter
+    public Double getChinese() { return chinese; }
+    public void setChinese(Double chinese) { this.chinese = chinese; }
+
+    public Double getMath() { return math; }
+    public void setMath(Double math) { this.math = math; }
+
+    public Double getEnglish() { return english; }
+    public void setEnglish(Double english) { this.english = english; }
 
     public String getRecordedBy() { return recordedBy; }
     public void setRecordedBy(String recordedBy) { this.recordedBy = recordedBy; }
