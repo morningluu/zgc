@@ -7,9 +7,6 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🌱</text></svg>">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-  <!-- CSRF元标签（如果使用Spring Security） -->
-  <meta th:if="${_csrf}" th:name="${_csrf.parameterName}" th:content="${_csrf.token}"/>
-  <meta th:if="${_csrf}" th:name="${_csrf.headerName}" th:content="${_csrf.token}"/>
   <style>
     :root {
       --pink: #FFB5C2;
@@ -412,7 +409,7 @@
     }
     .record-table-wrap h3 {
       font-family: "ZCOOL KuaiLe", sans-serif;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
     }
     .record-table {
       width: 100%;
@@ -434,13 +431,14 @@
       background: rgba(255, 180, 180, 0.25);
       color: #D48888;
       border: none;
-      padding: 6px 14px;
+      padding: 4px 12px;
       border-radius: 20px;
       font-size: 0.85em;
       cursor: pointer;
+      text-decoration: none;
       font-weight: 600;
-      transition: all 0.3s;
       font-family: inherit;
+      transition: all 0.3s;
     }
     .btn-del:hover {
       background: #FF6B6B;
@@ -544,7 +542,6 @@
       cursor: pointer;
       transition: all 0.3s;
       margin-top: 8px;
-      font-family: inherit;
     }
     .add-sheet-cancel {
       display: block;
@@ -557,26 +554,6 @@
       cursor: pointer;
       font-size: 0.9em;
       font-family: inherit;
-    }
-
-    /* Toast提示 */
-    .toast {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(90, 70, 100, 0.92);
-      color: white;
-      padding: 12px 24px;
-      border-radius: 30px;
-      z-index: 9999;
-      font-size: 0.9em;
-      opacity: 0;
-      transition: opacity 0.3s;
-      pointer-events: none;
-    }
-    .toast.show {
-      opacity: 1;
     }
 
     #backToTop {
@@ -614,9 +591,6 @@
   </style>
 </head>
 <body>
-
-<!-- Toast提示 -->
-<div class="toast" id="toast"></div>
 
 <!-- 顶部栏 -->
 <header class="top-bar">
@@ -696,7 +670,9 @@
         <td th:text="${record.title != null ? record.title : '-'}"></td>
         <td th:text="${record.recordedBy != null ? record.recordedBy : '-'}"></td>
         <td sec:authorize="isAuthenticated()">
-          <button class="btn-del" th:attr="onclick=|deleteGrowthRecord(${record.id})|">🗑 删除</button>
+          <form th:action="@{/delete/{id}(id=${record.id})}" method="post" style="display:inline;" onsubmit="return confirm('确定删除这条记录吗？')">
+            <button type="submit" class="btn-del">🗑</button>
+          </form>
         </td>
       </tr>
       </tbody>
@@ -745,7 +721,9 @@
           <td th:text="${sr.title != null ? sr.title : '-'}"></td>
           <td th:text="${sr.recordedBy != null ? sr.recordedBy : '-'}"></td>
           <td sec:authorize="isAuthenticated()">
-            <button class="btn-del" th:attr="onclick=|deleteScoreRecord(${sr.id})|">🗑 删除</button>
+            <form th:action="@{/deleteScore/{id}(id=${sr.id})}" method="post" style="display:inline;" onsubmit="return confirm('确定删除这条成绩记录吗？')">
+              <button type="submit" class="btn-del">🗑</button>
+            </form>
           </td>
         </tr>
         </tbody>
@@ -764,7 +742,7 @@
 </nav>
 
 <!-- 通用添加浮层 -->
-<div class="add-overlay" id="addOverlay" onclick="if(event.target===this)closeAddOverlay()">
+<div class="add-overlay" id="addOverlay">
   <div class="add-sheet">
     <div class="add-sheet-title">✨ 添加新记录</div>
     <div style="display:flex; gap:16px; justify-content:center; margin:20px 0;">
@@ -790,7 +768,7 @@
   <div class="add-sheet">
     <div class="add-sheet-title">📊 添加成长数据</div>
     <p class="form-subtitle">记录宝宝身高体重</p>
-    <form action="/growth/add" method="post" onsubmit="setTimeout(function(){closeGrowthForm(); window.location.reload();}, 500)">
+    <form action="/growth/add" method="post" onsubmit="handleGrowthFormSubmit(event)">
       <div class="field-group">
         <div class="field-label">📅 测量日期 <span style="color:#E8788A;">*必填</span></div>
         <div class="custom-date-wrap">
@@ -827,7 +805,7 @@
   <div class="add-sheet">
     <div class="add-sheet-title">📚 添加成绩</div>
     <p class="form-subtitle">记录语文·数学·英语成绩</p>
-    <form action="/growth/addScore" method="post" onsubmit="setTimeout(function(){closeScoreForm(); window.location.reload();}, 500)">
+    <form action="/growth/addScore" method="post" onsubmit="handleScoreFormSubmit(event)">
       <div class="field-group">
         <div class="field-label">📅 考试/记录日期 <span style="color:#E8788A;">*必填</span></div>
         <div class="custom-date-wrap">
@@ -873,123 +851,14 @@
   var scoreChartInstance = null;
   var growthChartInstance = null;
 
-  // ========== Toast提示函数 ==========
-  function showToast(message, duration) {
-    var toast = document.getElementById('toast');
-    toast.textContent = message;
-    toast.classList.add('show');
-    setTimeout(function() {
-      toast.classList.remove('show');
-    }, duration || 2000);
-  }
-
-  // ========== 获取CSRF令牌 ==========
-  function getCsrfToken() {
-    var tokenMeta = document.querySelector('meta[name="_csrf"]');
-    return tokenMeta ? tokenMeta.content : '';
-  }
-
-  function getCsrfHeader() {
-    var headerMeta = document.querySelector('meta[name="_csrf_header"]');
-    return headerMeta ? headerMeta.content : 'X-CSRF-TOKEN';
-  }
-
-  // ========== 删除身高体重记录 ==========
-  function deleteGrowthRecord(id) {
-    if (!confirm('确定要删除这条记录吗？此操作不可撤销！')) {
-      return;
-    }
-
-    var csrfToken = getCsrfToken();
-    var csrfHeader = getCsrfHeader();
-
-    var headers = {
-      'Content-Type': 'application/json',
-    };
-
-    if (csrfToken) {
-      headers[csrfHeader] = csrfToken;
-    }
-
-    fetch('/delete/' + id, {
-      method: 'DELETE',
-      headers: headers,
-    })
-    .then(function(response) {
-      if (response.ok) {
-        showToast('✅ 删除成功');
-        setTimeout(function() {
-          window.location.reload();
-        }, 800);
-      } else if (response.status === 403) {
-        showToast('❌ 没有权限删除此记录');
-      } else if (response.status === 404) {
-        showToast('❌ 记录不存在或已被删除');
-        setTimeout(function() {
-          window.location.reload();
-        }, 1000);
-      } else {
-        showToast('❌ 删除失败，请重试');
-      }
-    })
-    .catch(function(error) {
-      console.error('删除错误:', error);
-      showToast('❌ 网络错误，请检查网络连接');
-    });
-  }
-
-  // ========== 删除成绩记录 ==========
-  function deleteScoreRecord(id) {
-    if (!confirm('确定要删除这条成绩记录吗？此操作不可撤销！')) {
-      return;
-    }
-
-    var csrfToken = getCsrfToken();
-    var csrfHeader = getCsrfHeader();
-
-    var headers = {
-      'Content-Type': 'application/json',
-    };
-
-    if (csrfToken) {
-      headers[csrfHeader] = csrfToken;
-    }
-
-    fetch('/deleteScore/' + id, {
-      method: 'DELETE',
-      headers: headers,
-    })
-    .then(function(response) {
-      if (response.ok) {
-        showToast('✅ 删除成功');
-        setTimeout(function() {
-          window.location.reload();
-        }, 800);
-      } else if (response.status === 403) {
-        showToast('❌ 没有权限删除此记录');
-      } else if (response.status === 404) {
-        showToast('❌ 成绩记录不存在或已被删除');
-        setTimeout(function() {
-          window.location.reload();
-        }, 1000);
-      } else {
-        showToast('❌ 删除失败，请重试');
-      }
-    })
-    .catch(function(error) {
-      console.error('删除错误:', error);
-      showToast('❌ 网络错误，请检查网络连接');
-    });
-  }
-
-  // ========== 侧边栏 ==========
+  // 侧边栏
   function toggleSidebar() {
     var ov = document.getElementById('sidebarOverlay'), pn = document.getElementById('sidebarPanel');
     ov.classList.toggle('active'); pn.classList.toggle('active');
     document.body.style.overflow = ov.classList.contains('active') ? 'hidden' : '';
   }
 
-  // ========== 通用添加浮层 ==========
+  // 通用添加浮层
   function openAddOverlay() {
     document.getElementById('addOverlay').classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -998,8 +867,11 @@
     document.getElementById('addOverlay').classList.remove('active');
     document.body.style.overflow = '';
   }
+  document.getElementById('addOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeAddOverlay();
+  });
 
-  // ========== 身高体重弹窗 ==========
+  // 身高体重弹窗
   function openGrowthForm() {
     document.getElementById('growthOverlay').classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -1008,8 +880,20 @@
     document.getElementById('growthOverlay').classList.remove('active');
     document.body.style.overflow = '';
   }
+  
+  function handleGrowthFormSubmit(event) {
+    event.preventDefault();
+    var form = event.target;
+    fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form)
+    }).then(function() {
+      closeGrowthForm();
+      window.location.reload();
+    });
+  }
 
-  // ========== 成绩弹窗 ==========
+  // 成绩弹窗
   function openScoreForm() {
     document.getElementById('scoreOverlay').classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -1018,8 +902,20 @@
     document.getElementById('scoreOverlay').classList.remove('active');
     document.body.style.overflow = '';
   }
+  
+  function handleScoreFormSubmit(event) {
+    event.preventDefault();
+    var form = event.target;
+    fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form)
+    }).then(function() {
+      closeScoreForm();
+      window.location.reload();
+    });
+  }
 
-  // ========== 身高体重图表 ==========
+  // 身高体重图表
   function renderGrowthChart() {
     if (!growthRecords || growthRecords.length === 0) {
       document.getElementById('growthChartWrap').style.display = 'none';
@@ -1033,12 +929,10 @@
     document.getElementById('latestHeight').textContent = latest.heightCm != null ? latest.heightCm : '--';
     document.getElementById('latestWeight').textContent = latest.weightKg != null ? latest.weightKg : '--';
 
-    var sorted = growthRecords.slice().sort(function(a, b) {
-      return (a.recordDate || '').localeCompare(b.recordDate || '');
-    });
-    var dates = sorted.map(function(r) { return r.recordDate || ''; });
-    var heights = sorted.map(function(r) { return r.heightCm; });
-    var weights = sorted.map(function(r) { return r.weightKg; });
+    var sorted = growthRecords.slice().sort((a, b) => (a.recordDate || '').localeCompare(b.recordDate || ''));
+    var dates = sorted.map(r => r.recordDate || '');
+    var heights = sorted.map(r => r.heightCm);
+    var weights = sorted.map(r => r.weightKg);
 
     if (growthChartInstance) growthChartInstance.destroy();
     var ctx = document.getElementById('growthChart').getContext('2d');
@@ -1047,62 +941,27 @@
       data: {
         labels: dates,
         datasets: [
-          {
-            label: '身高 (cm)',
-            data: heights,
-            borderColor: '#FF9AB2',
-            backgroundColor: 'rgba(255,154,178,0.1)',
-            fill: true,
-            tension: 0.4,
-            pointRadius: 4,
-            yAxisID: 'y'
-          },
-          {
-            label: '体重 (kg)',
-            data: weights,
-            borderColor: '#5DCFA0',
-            backgroundColor: 'rgba(93,207,160,0.1)',
-            fill: true,
-            tension: 0.4,
-            pointRadius: 4,
-            yAxisID: 'y1'
-          }
+          { label: '身高 (cm)', data: heights, borderColor: '#FF9AB2', backgroundColor: 'rgba(255,154,178,0.1)', fill: true, tension: 0.4, pointRadius: 4, yAxisID: 'y' },
+          { label: '体重 (kg)', data: weights, borderColor: '#5DCFA0', backgroundColor: 'rgba(93,207,160,0.1)', fill: true, tension: 0.4, pointRadius: 4, yAxisID: 'y1' }
         ]
       },
       options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { position: 'bottom', labels: { usePointStyle: true } }
-        },
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { usePointStyle: true } } },
         scales: {
-          y: {
-            position: 'left',
-            title: { display: true, text: '身高 (cm)' },
-            min: 40,
-            max: 180,
-            grid: { color: 'rgba(200,180,220,0.15)' }
-          },
-          y1: {
-            position: 'right',
-            title: { display: true, text: '体重 (kg)' },
-            min: 0,
-            max: 80,
-            grid: { drawOnChartArea: false }
-          },
+          y: { position: 'left', title: { display: true, text: '身高 (cm)' }, min: 40, max: 180, grid: { color: 'rgba(200,180,220,0.15)' } },
+          y1: { position: 'right', title: { display: true, text: '体重 (kg)' }, min: 0, max: 80, grid: { drawOnChartArea: false } },
           x: { grid: { display: false } }
         }
       }
     });
   }
 
-  // ========== 成绩图表 ==========
   function getSubjectLabel(subject) {
     if (subject === 'chinese') return '语文';
     if (subject === 'math') return '数学';
     return '英语';
   }
-
   function getSubjectColor(subject) {
     if (subject === 'chinese') return '#F9A66C';
     if (subject === 'math') return '#6CB4D9';
@@ -1118,11 +977,9 @@
     document.getElementById('scoreChartWrap').style.display = 'block';
     document.getElementById('scoreChartEmpty').style.display = 'none';
 
-    var sorted = scoreRecords.slice().sort(function(a, b) {
-      return (a.recordDate || '').localeCompare(b.recordDate || '');
-    });
-    var dates = sorted.map(function(r) { return r.recordDate || ''; });
-    var values = sorted.map(function(r) {
+    var sorted = scoreRecords.slice().sort((a, b) => (a.recordDate || '').localeCompare(b.recordDate || ''));
+    var dates = sorted.map(r => r.recordDate || '');
+    var values = sorted.map(r => {
       if (subject === 'chinese') return r.chinese;
       if (subject === 'math') return r.math;
       return r.english;
@@ -1152,45 +1009,37 @@
         maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
-          y: {
-            beginAtZero: false,
-            min: 0,
-            max: 100,
-            grid: { color: 'rgba(200,180,220,0.15)' },
-            title: { display: true, text: '分数' }
-          },
+          y: { beginAtZero: false, min: 0, max: 100, grid: { color: 'rgba(200,180,220,0.15)' }, title: { display: true, text: '分数' } },
           x: { grid: { display: false } }
         }
       }
     });
   }
 
-  // ========== 成绩科目切换 ==========
   document.getElementById('scoreTabs').addEventListener('click', function(e) {
     if (e.target.classList.contains('score-tab')) {
-      document.querySelectorAll('.score-tab').forEach(function(t) { t.classList.remove('active'); });
+      document.querySelectorAll('.score-tab').forEach(t => t.classList.remove('active'));
       e.target.classList.add('active');
       currentScoreSubject = e.target.dataset.subject;
       renderScoreChart(currentScoreSubject);
     }
   });
 
-  // ========== 初始化图表 ==========
   renderGrowthChart();
   renderScoreChart('chinese');
 
-  // ========== 回到顶部 ==========
+  // 回到顶部
   window.addEventListener('scroll', function() {
     document.getElementById('backToTop').style.display = window.scrollY > 300 ? 'block' : 'none';
   });
 
-  // ========== 底部导航高亮 ==========
+  // 底部导航高亮
   var path = window.location.pathname;
   document.querySelectorAll('.bottom-nav-item').forEach(function(item) {
     if (item.getAttribute('href') === path) item.classList.add('active');
   });
 
-  // ========== 手机端返回键跳转首页 ==========
+  // 手机端返回键跳转首页
   (function() {
     if (window.location.pathname === '/' || window.location.pathname === '') return;
     history.replaceState({ fromSubPage: true }, '', window.location.href);
@@ -1205,7 +1054,7 @@
     });
   })();
 
-  // ========== 修复登录页历史栈 ==========
+  // 修复登录页历史栈
   document.querySelectorAll('a[href="/login"]').forEach(function(link) {
     link.addEventListener('click', function(e) {
       e.preventDefault();
@@ -1214,6 +1063,5 @@
   });
   /*]]>*/
 </script>
-
 </body>
 </html>
