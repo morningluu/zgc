@@ -8,189 +8,614 @@
     <title>相册 - 赵高钏的成长手册</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🌱</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body, div, p, span, h1, h2, h3, h4, a, button, .nav-link, .tl-header, .footer-text, .gallery-title, .viewer-info-top, .viewer-desc-left {
+        :root {
+            --pink: #FFB5C2;
+            --pink-deep: #FF9AB2;
+            --pink-light: #FFE0E8;
+            --purple: #C8B8E8;
+            --purple-deep: #B8A9D4;
+            --purple-light: #E8E0F5;
+            --blue: #B5D8F7;
+            --blue-light: #E0F0F8;
+            --green: #B5E8D5;
+            --green-light: #E0F5EB;
+            --yellow: #FFE8C0;
+            --yellow-light: #FFF8E8;
+            --white-soft: #FFFBF8;
+            --text-primary: #5D4E6D;
+            --text-secondary: #8B7D9B;
+            --text-light: #9B8DAB;
+            --card-bg: rgba(255, 255, 255, 0.78);
+            --nav-bg: rgba(255, 252, 248, 0.94);
+            --shadow-sm: 0 4px 16px rgba(180, 160, 200, 0.08);
+            --shadow-md: 0 8px 28px rgba(180, 160, 200, 0.13);
+            --shadow-lg: 0 16px 44px rgba(180, 160, 200, 0.18);
+            --radius-xl: 28px;
+            --radius-lg: 22px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
+            --transition-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+            --accent-color: #E8788A;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html,
+        body,
+        div,
+        p,
+        span,
+        h1,
+        h2,
+        h3,
+        h4,
+        a,
+        button {
             -webkit-user-select: none !important;
             user-select: none !important;
             -webkit-touch-callout: none !important;
         }
-        input, textarea { -webkit-user-select: text !important; user-select: text !important; }
-        /* 移除强制滚动吸附与平滑滚动，避免夸克等浏览器滑动回弹 */
-        html { overflow-y: auto; height: 100vh; }
+        input,
+        textarea {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+        }
+
         body {
             font-family: "Noto Sans SC", sans-serif;
-            background: linear-gradient(180deg, #FFF8F5 0%, #F8F0FF 30%, #F0F8FF 60%, #FFF8F0 100%);
-            color: #5D4E6D;
+            background: linear-gradient(175deg,
+                    #FFF8F5 0%, #FEF5F8 8%, #F8F0FF 22%,
+                    #F5F0FA 35%, #F0F5FB 50%, #F5F8F5 65%,
+                    #FFFBF0 78%, #FFF8F5 100%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+            padding-bottom: 100px;
+            position: relative;
         }
+
+        /* ========== 背景装饰 ========== */
+        .bg-decorations {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.55);
+            border-radius: 50%;
+            filter: blur(30px);
+            animation: cloudFloat linear infinite;
+        }
+        .cloud:nth-child(1) {
+            width: 180px;
+            height: 90px;
+            top: 6%;
+            left: -5%;
+            animation-duration: 28s;
+            opacity: 0.5;
+        }
+        .cloud:nth-child(2) {
+            width: 140px;
+            height: 70px;
+            top: 18%;
+            right: -8%;
+            animation-duration: 34s;
+            animation-delay: -12s;
+            opacity: 0.45;
+        }
+        .cloud:nth-child(3) {
+            width: 200px;
+            height: 100px;
+            top: 55%;
+            left: 30%;
+            animation-duration: 38s;
+            animation-delay: -20s;
+            opacity: 0.35;
+        }
+        .cloud:nth-child(4) {
+            width: 120px;
+            height: 60px;
+            top: 72%;
+            right: 15%;
+            animation-duration: 30s;
+            animation-delay: -6s;
+            opacity: 0.4;
+        }
+        @keyframes cloudFloat {
+            0% {
+                transform: translateX(0) translateY(0);
+            }
+            25% {
+                transform: translateX(40px) translateY(-18px);
+            }
+            50% {
+                transform: translateX(10px) translateY(-6px);
+            }
+            75% {
+                transform: translateX(-20px) translateY(-22px);
+            }
+            100% {
+                transform: translateX(0) translateY(0);
+            }
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #FFD8A8;
+            border-radius: 50%;
+            animation: sparkleFloat 5s ease-in-out infinite;
+            box-shadow: 0 0 8px 2px rgba(255, 216, 168, 0.6);
+        }
+        .sparkle:nth-child(5) {
+            top: 12%;
+            left: 18%;
+            animation-delay: 0s;
+            background: #FFE0C0;
+            box-shadow: 0 0 10px 3px rgba(255, 224, 192, 0.7);
+            width: 5px;
+            height: 5px;
+        }
+        .sparkle:nth-child(6) {
+            top: 25%;
+            left: 75%;
+            animation-delay: -1.8s;
+            background: #FFD4B8;
+            box-shadow: 0 0 7px 2px rgba(255, 212, 184, 0.55);
+            width: 3px;
+            height: 3px;
+        }
+        .sparkle:nth-child(7) {
+            top: 48%;
+            left: 8%;
+            animation-delay: -3.2s;
+            background: #FFECD0;
+            box-shadow: 0 0 9px 3px rgba(255, 236, 208, 0.65);
+        }
+        .sparkle:nth-child(8) {
+            top: 68%;
+            left: 82%;
+            animation-delay: -4.5s;
+            background: #FFE8CC;
+            box-shadow: 0 0 6px 2px rgba(255, 232, 204, 0.5);
+            width: 3px;
+            height: 3px;
+        }
+        @keyframes sparkleFloat {
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: translateY(0) scale(1);
+            }
+            30% {
+                opacity: 1;
+                transform: translateY(-16px) scale(1.6);
+            }
+            60% {
+                opacity: 0.45;
+                transform: translateY(-6px) scale(0.8);
+            }
+        }
+
+        /* ========== 顶部状态栏 ========== */
+        .top-bar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border-bottom: 1px solid rgba(200, 180, 220, 0.1);
+            padding: 0 16px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .top-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .top-bar-back {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(200, 180, 220, 0.15);
+            border: none;
+            cursor: pointer;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            transition: all 0.3s var(--transition-bounce);
+            text-decoration: none;
+        }
+        .top-bar-back:active {
+            transform: scale(0.85);
+            background: rgba(200, 180, 220, 0.3);
+        }
+        .top-bar-title {
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            font-size: 1.15em;
+            font-weight: 700;
+            color: var(--accent-color);
+            letter-spacing: 0.04em;
+        }
+        .top-bar-mine {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(200, 180, 220, 0.12);
+            cursor: pointer;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s var(--transition-bounce);
+            color: var(--text-primary);
+        }
+        .top-bar-mine:active {
+            transform: scale(0.88);
+            background: rgba(200, 180, 220, 0.25);
+        }
+
+        /* ========== 侧边栏 ========== */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.35);
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s var(--transition-smooth);
+        }
+        .sidebar-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .sidebar-panel {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: 300px;
+            max-width: 82vw;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(20px);
+            z-index: 2001;
+            transition: right 0.4s var(--transition-smooth);
+            padding: 24px 20px;
+            display: flex;
+            flex-direction: column;
+            border-radius: var(--radius-xl) 0 0 var(--radius-xl);
+            box-shadow: -8px 0 36px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar-panel.active {
+            right: 0;
+        }
+        .sidebar-close {
+            align-self: flex-end;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(200, 180, 220, 0.15);
+            cursor: pointer;
+            font-size: 1.2em;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .sidebar-close:active {
+            transform: scale(0.85);
+        }
+        .sidebar-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FFE0E8, #FFB5C2, #E8E0F5);
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2em;
+            box-shadow: 0 6px 24px rgba(255, 181, 194, 0.3);
+        }
+        .sidebar-username {
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            font-size: 1.2em;
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+        .sidebar-links {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 13px 16px;
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            transition: all 0.3s var(--transition-smooth);
+        }
+        .sidebar-link:hover {
+            background: rgba(255, 180, 190, 0.15);
+        }
+        .sidebar-link:active {
+            transform: scale(0.96);
+            background: rgba(255, 180, 190, 0.25);
+        }
+
+        /* ========== Toast ========== */
         .toast-message {
             position: fixed;
-            bottom: 30%;
+            bottom: 28%;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0,0,0,0.7);
+            background: rgba(80, 60, 90, 0.82);
             color: white;
-            padding: 10px 20px;
+            padding: 10px 22px;
             border-radius: 40px;
             font-size: 0.9rem;
-            z-index: 1000;
+            z-index: 10000;
             pointer-events: none;
-            white-space: nowrap;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px);
             transition: opacity 0.3s;
             opacity: 0;
+            letter-spacing: 0.03em;
         }
-        .toast-message.show { opacity: 1; }
-        .main-nav { position: fixed; top: 0; z-index: 100; width: 100%; background: rgba(255,255,255,0.85); backdrop-filter: blur(15px); padding: 0 20px; border-bottom: 1px solid rgba(200,180,220,0.18); height: 56px; }
-        .nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 56px; }
-        .nav-brand { display: flex; align-items: center; gap: 8px; text-decoration: none; font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.2em; font-weight: 700; background: linear-gradient(135deg, #FF9AB2, #B8A9D4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .nav-brand span { -webkit-text-fill-color: initial; }
-        .nav-links { display: flex; gap: 4px; align-items: center; }
-        .nav-link { display: flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 20px; text-decoration: none; color: #5D4E6D; font-size: 0.82em; font-weight: 500; transition: all 0.3s; }
-        .nav-link:hover { background: rgba(255,180,190,0.2); }
-        .nav-link.active { background: rgba(255,154,178,0.2); color: #E8788A; font-weight: 700; }
-        .nav-toggle { display: none; flex-direction: column; gap: 4px; background: none; border: none; cursor: pointer; }
-        .nav-toggle span { width: 20px; height: 2px; background: #5D4E6D; border-radius: 2px; }
+        .toast-message.show {
+            opacity: 1;
+        }
+
+        /* ========== 主内容容器 ========== */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 16px 18px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ========== 幻灯片卡片 ========== */
+        .slideshow-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 20px;
+            position: relative;
+            height: 320px;
+        }
         .slideshow-section {
-            scroll-snap-align: start;
-            scroll-snap-stop: always;
-            position: relative; width: 100%; height: 100vh; overflow: hidden;
-            background: #FFF8F5; touch-action: pan-y;
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
         }
         .slides-container {
-            display: flex; height: 100%;
+            display: flex;
+            height: 100%;
             transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            will-change: transform;
         }
         .slide {
-            min-width: 100%; height: 100%;
-            background-size: contain; background-position: center; background-repeat: no-repeat;
+            min-width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
             background-color: #FFF8F5;
         }
         .dots {
-            position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%);
-            display: flex; gap: 10px; z-index: 3;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 3;
         }
         .dot {
-            width: 10px; height: 10px; border-radius: 50%;
-            background: rgba(200,180,220,0.4); cursor: pointer; transition: all 0.3s;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(200, 180, 220, 0.5);
+            cursor: pointer;
+            transition: all 0.3s;
         }
-        .dot.active { background: #FF9AB2; box-shadow: 0 0 8px rgba(255,154,178,0.4); transform: scale(1.2); }
-        .scroll-hint {
-            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-            z-index: 3; text-align: center; animation: floatHint 2s infinite;
+        .dot.active {
+            background: var(--accent-color);
+            box-shadow: 0 0 8px rgba(232, 120, 138, 0.4);
+            transform: scale(1.3);
         }
-        .scroll-hint span { font-size: 1.8em; display: block; color: #B8A9D4; }
-        .scroll-hint p { font-size: 0.7em; color: #B8A9D4; margin-top: 2px; }
-        @keyframes floatHint { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
-        /* 优化滚动区域 */
-        .gallery-section {
-            scroll-snap-align: start;
-            scroll-snap-stop: always;
-            background: linear-gradient(180deg, #FFF8F5, #F8F0FF, #FFF8F0);
-            padding: 76px 20px 60px;
-            min-height: 100vh;
-            -webkit-overflow-scrolling: touch;
+        .slideshow-empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-light);
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            font-size: 1.2em;
+            flex-direction: column;
+            gap: 8px;
         }
-        .gallery-inner { max-width: 1000px; margin: 0 auto; }
-        .gallery-header { text-align: center; margin-bottom: 30px; }
-        .gallery-title { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.8em; color: #E8788A; }
-        .tl-section { margin-bottom: 30px; }
+
+        /* ========== 相册网格 ========== */
+        .gallery-title {
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            font-size: 1.4em;
+            color: var(--text-primary);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .tl-section {
+            margin-bottom: 20px;
+        }
         .tl-header {
             display: flex;
             align-items: baseline;
-            gap: 10px;
-            padding-bottom: 10px;
-            margin-bottom: 12px;
-            border-bottom: 2px solid rgba(200,180,220,0.3);
+            gap: 8px;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+            border-bottom: 1px dashed rgba(200, 180, 220, 0.3);
             font-family: "ZCOOL KuaiLe", sans-serif;
-            font-size: 1.1em;
-            color: #E8788A;
+            font-size: 1em;
+            color: var(--accent-color);
         }
-        .tl-header .tl-age { font-size: 0.75rem; color: #B8A9D4; font-weight: normal; margin-left: 8px; }
-        .tl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 6px; }
+        .tl-header .tl-age {
+            font-size: 0.7rem;
+            color: var(--text-light);
+            font-weight: normal;
+        }
+        .tl-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+        }
         .tl-photo {
-            aspect-ratio: 1; border-radius: 10px; overflow: hidden;
+            aspect-ratio: 1;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
             background: #f0f0f0;
-            background-image: radial-gradient(circle at 30% 40%, rgba(200,200,200,0.2) 2%, transparent 2.5%);
-            background-size: 20px 20px;
             position: relative;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.3s var(--transition-bounce);
+            box-shadow: var(--shadow-sm);
         }
-        .tl-photo:active { transform: scale(0.96); }
+        .tl-photo:active {
+            transform: scale(0.95);
+        }
         .tl-photo img {
-            width: 100%; height: 100%; object-fit: cover;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
             display: block;
             opacity: 0;
-            transition: opacity 0.25s ease;
+            transition: opacity 0.3s;
         }
-        .tl-photo img.loaded { opacity: 1; }
+        .tl-photo img.loaded {
+            opacity: 1;
+        }
         .tl-photo .tl-date-tag {
-            position: absolute; bottom: 4px; right: 4px;
-            background: rgba(0,0,0,0.5); color: white;
-            font-size: 0.65em; padding: 2px 8px; border-radius: 10px;
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            background: rgba(0, 0, 0, 0.45);
+            color: white;
+            font-size: 0.6em;
+            padding: 2px 6px;
+            border-radius: 8px;
             pointer-events: none;
-            z-index: 2;
         }
         .tl-photo .featured-star {
-            position: absolute; top: 4px; left: 4px; font-size: 0.9em;
-            pointer-events: none; text-shadow: 0 0 2px rgba(0,0,0,0.3);
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            font-size: 0.8em;
+            pointer-events: none;
+            text-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+        }
+        .photo-actions {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.65);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            opacity: 0;
+            transition: opacity 0.25s;
+            pointer-events: none;
+            border-radius: var(--radius-sm);
             z-index: 2;
         }
-        .tl-photo .photo-actions {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.7); display: flex;
-            flex-direction: column;
-            align-items: center; justify-content: center; gap: 16px;
-            opacity: 0; transition: opacity 0.25s; pointer-events: none;
-            border-radius: 10px;
-            z-index: 3;
+        .tl-photo.long-press .photo-actions {
+            opacity: 1;
+            pointer-events: auto;
         }
-        .tl-photo.long-press .photo-actions { opacity: 1; pointer-events: auto; }
-        .photo-actions .pa-btn {
-            background: rgba(255,255,255,0.95); border: none;
-            color: #5D4E6D; padding: 12px 24px; border-radius: 40px;
-            font-size: 1rem; font-weight: 600; cursor: pointer;
+        .pa-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            color: var(--text-primary);
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
             white-space: nowrap;
-            min-width: 120px;
+            min-width: 100px;
             text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            transition: all 0.2s var(--transition-bounce);
         }
-        .photo-actions .pa-btn.danger { color: #E8788A; background: #fff0f0; }
-        .photo-actions .pa-btn.featured { color: #E8788A; }
-        .btn-add-fab {
-            position: fixed; bottom: 30px; right: 20px; z-index: 50;
-            background: linear-gradient(135deg, #FFB5C2, #FF9AB2);
-            color: white; padding: 12px 18px;
-            border-radius: 25px; border: none;
-            display: flex; align-items: center; gap: 6px;
-            font-size: 0.9em; font-weight: 600; cursor: pointer;
-            box-shadow: 0 6px 20px rgba(255,154,178,0.4);
-            transition: all 0.3s; text-decoration: none;
+        .pa-btn.danger {
+            color: var(--accent-color);
         }
-        .btn-add-fab:active { transform: scale(0.96); }
-        .empty-state { text-align: center; padding: 80px 20px; color: #8B7D9B; }
-        .main-footer { text-align: center; padding: 30px 20px; background: #FFF8F0; }
-        .footer-text { font-family: "ZCOOL KuaiLe", sans-serif; color: #8B7D9B; font-size: 0.9em; }
+        .pa-btn:active {
+            transform: scale(0.92);
+        }
+
+        /* ========== 大图浏览器 ========== */
         .photo-viewer {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.94); z-index: 200; display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.94);
+            z-index: 3000;
+            display: none;
             flex-direction: column;
             touch-action: pan-y;
         }
-        .photo-viewer.active { display: flex; }
+        .photo-viewer.active {
+            display: flex;
+        }
         .viewer-track-container {
             flex: 1;
             position: relative;
             overflow: hidden;
-            width: 100%;
         }
         .viewer-track {
             display: flex;
             height: 100%;
             transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            will-change: transform;
         }
         .viewer-slide {
             min-width: 100vw;
@@ -201,575 +626,1066 @@
         }
         .viewer-slide img {
             max-width: 95vw;
-            max-height: 70vh;
+            max-height: 75vh;
             object-fit: contain;
-            border-radius: 8px;
+            border-radius: 12px;
             pointer-events: none;
         }
         .viewer-info-top {
-            position: absolute; top: 24px; left: 20px; z-index: 15;
-            color: white; background: rgba(0,0,0,0.35); backdrop-filter: blur(8px);
-            padding: 8px 16px; border-radius: 30px;
-            max-width: 70%; pointer-events: none;
+            position: absolute;
+            top: 24px;
+            left: 20px;
+            z-index: 15;
+            color: white;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            padding: 6px 14px;
+            border-radius: 30px;
+            max-width: 70%;
+            pointer-events: none;
         }
-        .viewer-info-top .vi-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 2px; }
-        .viewer-info-top .vi-date { font-size: 0.75rem; opacity: 0.8; }
         .viewer-desc-left {
-            position: absolute; bottom: 100px; left: 20px; z-index: 15;
-            color: rgba(255,255,255,0.9); background: rgba(0,0,0,0.4); backdrop-filter: blur(8px);
-            padding: 8px 16px; border-radius: 24px; font-size: 0.85rem;
-            max-width: 70%; line-height: 1.3; pointer-events: none;
+            position: absolute;
+            bottom: 110px;
+            left: 20px;
+            z-index: 15;
+            color: rgba(255, 255, 255, 0.9);
+            background: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(8px);
+            padding: 6px 14px;
+            border-radius: 24px;
+            font-size: 0.8rem;
+            max-width: 70%;
+            pointer-events: none;
         }
         .viewer-close {
-            position: absolute; top: 18px; right: 18px;
-            background: rgba(255,255,255,0.15); border: none;
-            color: white; font-size: 1.3em; width: 40px; height: 40px;
-            border-radius: 50%; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; z-index: 20;
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 1.3em;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .viewer-nav {
-            position: absolute; top: 50%; transform: translateY(-50%);
-            background: rgba(255,255,255,0.15); border: none;
-            color: white; font-size: 2em; width: 44px; height: 44px;
-            border-radius: 50%; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 2em;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .viewer-nav.prev {
+            left: 16px;
+        }
+        .viewer-nav.next {
+            right: 16px;
+        }
+        .viewer-actions {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 16px;
             z-index: 20;
         }
-        .viewer-nav.prev { left: 16px; }
-        .viewer-nav.next { right: 16px; }
-        .viewer-actions {
-            position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
-            display: flex; gap: 18px; z-index: 20;
-        }
-        .viewer-actions .va-btn {
-            background: rgba(20,20,30,0.8); backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.3);
-            color: white; padding: 12px 28px; border-radius: 40px;
-            font-size: 0.95rem; font-weight: 600; cursor: pointer;
+        .va-btn {
+            background: rgba(20, 20, 30, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
             white-space: nowrap;
+            transition: all 0.2s var(--transition-bounce);
         }
-        .viewer-actions .va-btn.danger { border-color: rgba(255,107,107,0.6); }
-        .viewer-actions .va-btn.featured { border-color: rgba(255,154,178,0.6); }
+        .va-btn:active {
+            transform: scale(0.93);
+        }
+
+        /* ========== 添加弹窗（+号） ========== */
         .add-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4); z-index: 300; display: none;
-            align-items: center; justify-content: center; backdrop-filter: blur(6px);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 4000;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s var(--transition-smooth);
         }
-        .add-overlay.active { display: flex; }
-        .add-card {
-            background: white; border-radius: 28px; padding: 32px 24px;
-            width: 90vw; max-width: 420px; color: #5D4E6D;
-            max-height: 90vh; overflow-y: auto;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        .add-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
         }
-        .add-card h3 { font-family: "ZCOOL KuaiLe", sans-serif; text-align: center; margin-bottom: 6px; font-size: 1.4em; color: #E8788A; }
-        .add-card .form-subtitle { text-align: center; color: #B8A9D4; font-size: 0.8em; margin-bottom: 24px; }
-        .field-group { margin-bottom: 18px; }
-        .field-label { font-size: 0.85em; font-weight: 600; color: #8B7D9B; margin-bottom: 6px; }
-        .add-card input, .add-card textarea {
-            width: 100%; padding: 12px 14px; border: 1.5px solid #f0e6f6; border-radius: 20px;
-            font-family: inherit; font-size: 0.95em; outline: none; background: #FFFAFD;
+        .add-sheet {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+            width: 100%;
+            max-width: 500px;
+            padding: 28px 20px 40px;
+            transform: translateY(100%);
+            transition: transform 0.4s var(--transition-smooth);
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.12);
         }
-        .custom-date-wrap { position: relative; }
-        .custom-date-wrap input[type="date"] {
-            width: 100%; padding: 12px 14px; border: 1.5px solid #f0e6f6; border-radius: 20px;
-            background: #FFFAFD; cursor: pointer;
+        .add-overlay.active .add-sheet {
+            transform: translateY(0);
         }
-        .custom-date-wrap .date-icon {
-            position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-            pointer-events: none; font-size: 1.2em; color: #FF9AB2;
+        .add-sheet-title {
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            font-size: 1.2em;
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--text-primary);
         }
-        .file-upload-wrap { position: relative; }
-        .file-upload-wrap input[type="file"] {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            opacity: 0; cursor: pointer; z-index: 2;
+        .add-sheet-options {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .add-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 18px 16px;
+            border-radius: var(--radius-lg);
+            background: rgba(245, 240, 250, 0.6);
+            border: none;
+            cursor: pointer;
+            min-width: 85px;
+            transition: all 0.3s var(--transition-bounce);
+            text-decoration: none;
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+        .add-option:active {
+            transform: scale(0.85);
+            background: rgba(255, 200, 210, 0.4);
+        }
+        .add-option-icon {
+            font-size: 2.2em;
+        }
+        .add-option-label {
+            font-size: 0.82em;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+        }
+        .add-sheet-close {
+            display: block;
+            margin: 18px auto 0;
+            padding: 10px 30px;
+            border-radius: 30px;
+            border: none;
+            background: rgba(200, 180, 220, 0.2);
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            color: var(--text-secondary);
+            transition: all 0.3s var(--transition-bounce);
+        }
+        .add-sheet-close:active {
+            transform: scale(0.9);
+            background: rgba(200, 180, 220, 0.35);
+        }
+
+        /* ========== 相册添加表单弹窗（独立样式） ========== */
+        .form-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 5000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s;
+        }
+        .form-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .form-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 28px 22px;
+            width: 90vw;
+            max-width: 420px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+        .form-card h3 {
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            text-align: center;
+            margin-bottom: 6px;
+            font-size: 1.3em;
+            color: var(--accent-color);
+        }
+        .form-subtitle {
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.8em;
+            margin-bottom: 20px;
+        }
+        .field-group {
+            margin-bottom: 16px;
+        }
+        .field-label {
+            font-size: 0.85em;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+        .form-card input,
+        .form-card textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid #f0e6f6;
+            border-radius: 20px;
+            font-family: inherit;
+            font-size: 0.95em;
+            background: #FFFAFD;
+            outline: none;
         }
         .file-upload-box {
-            padding: 24px 12px; border: 2px dashed #FFD4E0; border-radius: 24px;
-            text-align: center; background: #FFF5F8;
+            padding: 20px;
+            border: 2px dashed #FFD4E0;
+            border-radius: 20px;
+            text-align: center;
+            background: #FFF5F8;
+            cursor: pointer;
+            position: relative;
+        }
+        .file-upload-box input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
         }
         .btn-submit {
-            width: 100%; padding: 14px; background: linear-gradient(135deg, #FFB5C2, #FF9AB2);
-            border: none; border-radius: 40px; color: white; font-weight: 700;
-            font-size: 1em; cursor: pointer;
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #FFB5C2, #FF9AB2);
+            border: none;
+            border-radius: 40px;
+            color: white;
+            font-weight: 700;
+            font-size: 1em;
+            cursor: pointer;
             transition: all 0.3s;
         }
-        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,154,178,0.4); }
-        @media (max-width: 768px) {
-            .nav-links { display: none; position: absolute; top: 56px; left: 0; right: 0; background: rgba(255,255,255,0.98); flex-direction: column; padding: 12px; border-radius: 0 0 20px 20px; }
-            .nav-links.active { display: flex; }
-            .nav-toggle { display: flex; }
-            .tl-grid { grid-template-columns: repeat(3, 1fr); gap: 3px; }
-            .tl-photo { border-radius: 8px; }
-            .viewer-nav { display: none !important; }
-            .viewer-info-top { top: 16px; left: 16px; padding: 6px 12px; max-width: 75%; }
-            .viewer-desc-left { bottom: 100px; left: 16px; max-width: 75%; font-size: 0.75rem; }
-            .viewer-actions .va-btn { padding: 10px 20px; font-size: 0.85rem; }
-            .btn-add-fab { bottom: 20px; right: 16px; padding: 10px 16px; }
-            .photo-actions .pa-btn { padding: 10px 20px; min-width: 100px; font-size: 0.9rem; }
+        .btn-submit:active {
+            transform: scale(0.96);
+        }
+        .file-names {
+            font-size: 0.75rem;
+            color: var(--accent-color);
+            margin-top: 6px;
+            display: none;
+        }
+
+        /* ========== 底部导航 ========== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: var(--nav-bg);
+            backdrop-filter: blur(24px);
+            border-top: 1px solid rgba(200, 180, 220, 0.1);
+            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 6px 8px 12px;
+            box-shadow: 0 -6px 28px rgba(180, 160, 200, 0.1);
+        }
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            text-decoration: none;
+            color: var(--text-light);
+            font-size: 0.68em;
+            font-weight: 500;
+            padding: 6px 10px;
+            border-radius: var(--radius-md);
+            transition: all 0.3s var(--transition-bounce);
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: inherit;
+        }
+        .bottom-nav-item .nav-icon {
+            font-size: 1.55em;
+            transition: transform 0.3s var(--transition-bounce);
+        }
+        .bottom-nav-item.active {
+            color: var(--accent-color);
+            font-weight: 700;
+        }
+        .bottom-nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            width: 22px;
+            height: 3px;
+            border-radius: 3px;
+            background: var(--accent-color);
+        }
+        .bottom-nav-item:active {
+            transform: scale(0.85);
+        }
+        .bottom-nav-add {
+            position: relative;
+            top: -22px;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FFB5C2, #FF9AB2);
+            border: 4px solid rgba(255, 255, 255, 0.85);
+            box-shadow: 0 8px 26px rgba(255, 154, 178, 0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6em;
+            color: white;
+            cursor: pointer;
+            transition: all 0.35s var(--transition-bounce);
+            z-index: 5;
+            animation: addBtnBreathe 2.5s ease-in-out infinite;
+        }
+        @keyframes addBtnBreathe {
+            0%,
+            100% {
+                box-shadow: 0 8px 26px rgba(255, 154, 178, 0.45);
+            }
+            50% {
+                box-shadow: 0 14px 36px rgba(255, 154, 178, 0.65);
+            }
+        }
+        .bottom-nav-add:active {
+            transform: scale(0.78) rotate(45deg);
+        }
+        .bottom-nav-add-label {
+            position: absolute;
+            bottom: -24px;
+            font-size: 0.65em;
+            color: var(--accent-color);
+            font-weight: 700;
+            white-space: nowrap;
+            letter-spacing: 0.04em;
+        }
+
+        /* ========== 回到顶部 ========== */
+        #backToTop {
+            position: fixed;
+            bottom: 110px;
+            right: 20px;
+            z-index: 999;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.85);
+            box-shadow: var(--shadow-sm);
+            font-size: 1.1em;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            backdrop-filter: blur(8px);
+        }
+        #backToTop:hover {
+            transform: scale(1.12);
+        }
+        #backToTop:active {
+            transform: scale(0.85);
+        }
+
+        @media (max-width: 600px) {
+            .tl-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 4px;
+            }
+            .tl-photo {
+                border-radius: 10px;
+            }
+            .viewer-nav {
+                display: none !important;
+            }
+            .slideshow-card {
+                height: 260px;
+                border-radius: var(--radius-lg);
+            }
+            .bottom-nav-add {
+                width: 46px;
+                height: 46px;
+                top: -18px;
+                font-size: 1.4em;
+            }
+            .bottom-nav-add-label {
+                bottom: -20px;
+                font-size: 0.6em;
+            }
+            .container {
+                padding: 10px 12px 16px;
+            }
         }
     </style>
 </head>
 <body>
-<div class="toast-message" id="toastMsg">提示</div>
-<nav class="main-nav">
-    <div class="nav-inner">
-        <a href="/" class="nav-brand"><span>🌱</span> 相册</a>
-        <div class="nav-links" id="navLinks">
-            <a href="/" class="nav-link">🏠 首页</a>
-            <a href="/gallery" class="nav-link active">📷 相册</a>
-            <a href="/growth" class="nav-link">📊 数据</a>
-            <a href="/diary" class="nav-link">📝 日记</a>
-            <a href="/messages" class="nav-link">💌 留言</a>
-            <a sec:authorize="!isAuthenticated()" href="/login" class="nav-link">🔐 登录</a>
-            <a sec:authorize="isAuthenticated()" href="/logout" class="nav-link">🚪 退出</a>
+
+    <!-- ========== 背景装饰 ========== -->
+    <div class="bg-decorations">
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="sparkle"></div>
+        <div class="sparkle"></div>
+        <div class="sparkle"></div>
+        <div class="sparkle"></div>
+    </div>
+
+    <!-- ========== Toast ========== -->
+    <div class="toast-message" id="toastMsg">提示</div>
+
+    <!-- ========== 顶部状态栏 ========== -->
+    <header class="top-bar">
+        <div class="top-bar-left">
+            <a href="/" class="top-bar-back" aria-label="返回首页">←</a>
+            <span class="top-bar-title">📷 相册</span>
         </div>
-        <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('active')"><span></span><span></span><span></span></button>
-    </div>
-</nav>
-<div class="slideshow-section" id="slideshowSection">
-    <div class="slides-container" id="slidesContainer"></div>
-    <div class="dots" id="dotsContainer"></div>
-    <div class="scroll-hint" id="scrollHint" style="display:none;"><span>⌄</span><p>向下滑动查看全部照片</p></div>
-    <div th:if="${#lists.isEmpty(records)}" style="display:flex;align-items:center;justify-content:center;height:100vh;text-align:center;flex-direction:column;"><div style="font-size:5em;">📸</div><p style="color:#8B7D9B;font-size:1.2em;margin-top:16px;">还没有照片，快来添加第一张吧~</p></div>
-</div>
-<div class="gallery-section" id="gallerySection">
-    <div class="gallery-inner">
-        <div class="gallery-header"><div class="gallery-title">📂 全部照片</div></div>
-        <div th:if="${#lists.isEmpty(records)}" class="empty-state"><div>🖼️</div><p>相册是空的</p></div>
+        <button class="top-bar-mine" onclick="toggleSidebar()" aria-label="我的">👤</button>
+    </header>
+
+    <!-- ========== 侧边栏 ========== -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    <aside class="sidebar-panel" id="sidebarPanel">
+        <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+        <div class="sidebar-avatar">🧸</div>
+        <div class="sidebar-username" sec:authorize="isAuthenticated()"><span sec:authentication="name">用户</span></div>
+        <div class="sidebar-username" sec:authorize="!isAuthenticated()">访客</div>
+        <div class="sidebar-links">
+            <a sec:authorize="!isAuthenticated()" href="/login" class="sidebar-link">🔐 登录账号</a>
+            <a sec:authorize="isAuthenticated()" href="/logout" class="sidebar-link">🚪 退出登录</a>
+            <a href="/gallery" class="sidebar-link">📷 相册图集</a>
+            <a href="/growth" class="sidebar-link">📊 成长数据</a>
+            <a href="/messages" class="sidebar-link">💌 家人留言</a>
+        </div>
+    </aside>
+
+    <!-- ========== 主内容 ========== -->
+    <main class="container">
+        <!-- 幻灯片卡片 -->
+        <div class="slideshow-card" id="slideshowCard">
+            <div class="slideshow-section" id="slideshowSection">
+                <div class="slides-container" id="slidesContainer"></div>
+                <div class="dots" id="dotsContainer"></div>
+            </div>
+            <div th:if="${#lists.isEmpty(records)}" class="slideshow-empty">
+                <span style="font-size:3em;">📸</span>
+                <span>还没有照片，快来添加第一张吧~</span>
+            </div>
+        </div>
+
+        <!-- 相册列表 -->
+        <div class="gallery-title">📂 全部照片</div>
+        <div th:if="${#lists.isEmpty(records)}" style="text-align:center;padding:40px;color:var(--text-light);">🖼️ 相册是空的</div>
         <div id="timelineContent"></div>
+    </main>
+
+    <!-- ========== 大图浏览器 ========== -->
+    <div class="photo-viewer" id="photoViewer">
+        <button class="viewer-close" onclick="closeViewer()">✕</button>
+        <button class="viewer-nav prev" onclick="viewerPrev()">‹</button>
+        <button class="viewer-nav next" onclick="viewerNext()">›</button>
+        <div class="viewer-info-top" id="viewerInfoTop">
+            <div class="vi-title" id="viewerTitle"></div>
+            <div class="vi-date" id="viewerDate"></div>
+        </div>
+        <div class="viewer-track-container"><div class="viewer-track" id="viewerTrack"></div></div>
+        <div class="viewer-desc-left" id="viewerDesc"></div>
+        <div class="viewer-actions" id="viewerActions">
+            <button class="va-btn featured" id="featuredBtn">⭐ 设为精选</button>
+            <button class="va-btn danger" id="deleteBtn">🗑 删除</button>
+        </div>
     </div>
-</div>
-<footer class="main-footer"><p class="footer-text">用爱与温暖，记录每一个珍贵的成长瞬间 💕</p></footer>
-<a sec:authorize="!isAuthenticated()" href="/login" class="btn-add-fab">✨ 添加照片</a>
-<button sec:authorize="isAuthenticated()" class="btn-add-fab" onclick="openAddForm()">✨ 添加照片</button>
-<div class="photo-viewer" id="photoViewer">
-    <button class="viewer-close" onclick="closeViewer()">✕</button>
-    <button class="viewer-nav prev" onclick="viewerPrev()">‹</button>
-    <button class="viewer-nav next" onclick="viewerNext()">›</button>
-    <div class="viewer-info-top" id="viewerInfoTop"><div class="vi-title" id="viewerTitle"></div><div class="vi-date" id="viewerDate"></div></div>
-    <div class="viewer-track-container"><div class="viewer-track" id="viewerTrack"></div></div>
-    <div class="viewer-desc-left" id="viewerDesc"></div>
-    <div class="viewer-actions" id="viewerActions"><button class="va-btn featured" id="featuredBtn">⭐ 设为精选</button><button class="va-btn danger" id="deleteBtn">🗑 删除</button></div>
-</div>
-<div class="add-overlay" id="addOverlay" onclick="if(event.target===this)closeAddForm()">
-    <div class="add-card"><h3>✨ 添加新照片</h3><p class="form-subtitle">可一次选择多张照片，自动压缩后上传</p>
-        <div class="field-group"><div class="field-label">📝 照片标题 <span style="font-weight:normal;color:#B8A9D4;">(选填)</span></div><input type="text" id="batchTitle" placeholder="如：宝宝第一次走路"></div>
-        <div class="field-group"><div class="field-label">💬 照片描述 <span style="font-weight:normal;color:#B8A9D4;">(选填)</span></div><textarea id="batchDesc" rows="2" placeholder="记录下这一刻的美好..."></textarea></div>
-        <div class="field-group"><div class="field-label">📅 拍摄日期 <span class="required">*必填</span></div><div class="custom-date-wrap"><input type="date" id="batchDate" required><span class="date-icon" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);pointer-events:none;">📆</span></div></div>
-        <div class="field-group"><div class="field-label">🖼️ 选择照片 <span class="required">*必填 (可多选，同一张照片只会被添加一次)</span></div><div class="file-upload-wrap"><input type="file" id="batchFiles" accept="image/*" multiple onchange="handleFilesSelect(this)"><div class="file-upload-box">📷 点击选择照片（可多选）</div></div><div class="file-name-display" id="fileNamesDisplay" style="font-size:0.75rem;color:#E8788A;margin-top:6px;display:none;"></div><div class="compress-progress" id="compressProgress" style="font-size:0.7rem;color:#5DCFA0;display:none;margin-top:6px;">压缩中...</div></div>
-        <button type="button" class="btn-submit" id="uploadBtn" onclick="submitBatchPhotos()">✨ 发布照片</button>
+
+    <!-- ========== +号弹窗（选择面板） ========== -->
+    <div class="add-overlay" id="addMenuOverlay" onclick="if(event.target===this)closeAddMenu()">
+        <div class="add-sheet">
+            <div class="add-sheet-title">✨ 添加新记录</div>
+            <div class="add-sheet-options">
+                <button class="add-option" onclick="openAddForm(); closeAddMenu();">
+                    <span class="add-option-icon">📷</span>
+                    <span class="add-option-label">上传照片</span>
+                </button>
+                <a href="/growth" class="add-option">
+                    <span class="add-option-icon">📊</span>
+                    <span class="add-option-label">记录数据</span>
+                </a>
+                <a href="/messages" class="add-option">
+                    <span class="add-option-icon">💌</span>
+                    <span class="add-option-label">写留言</span>
+                </a>
+            </div>
+            <button class="add-sheet-close" onclick="closeAddMenu()">取 消</button>
+        </div>
     </div>
-</div>
-<script th:inline="javascript">
-    /*<![CDATA[*/
-    var rawRecords = /*[[${records}]]*/ [];
-    var isAuthenticated = /*[[${#authorization.expression('isAuthenticated()')}]]*/ false;
-    var records = rawRecords.slice().sort(function(a, b) {
-        if (a.recordDate === b.recordDate) return (b.id || 0) - (a.id || 0);
-        return (b.recordDate || '').localeCompare(a.recordDate || '');
-    });
-    var BIRTHDAY = new Date(2017, 1, 24);
-    function getAgeFromDate(dateStr) {
-        if (!dateStr) return '';
-        var parts = dateStr.split('-');
-        if (parts.length !== 3) return '';
-        var recordDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-        var years = recordDate.getFullYear() - BIRTHDAY.getFullYear();
-        var months = recordDate.getMonth() - BIRTHDAY.getMonth();
-        if (months < 0) { years--; months += 12; }
-        if (years < 0) return '';
-        return years + '岁' + months + '个月';
-    }
-    function getAgeForMonth(recordsInMonth) {
-        if (!recordsInMonth || recordsInMonth.length === 0) return '';
-        var firstRecord = recordsInMonth[0];
-        return getAgeFromDate(firstRecord.recordDate);
-    }
-    function showToast(msg) {
-        var toast = document.getElementById('toastMsg');
-        toast.textContent = msg;
-        toast.classList.add('show');
-        setTimeout(function() { toast.classList.remove('show'); }, 1500);
-    }
-    function requireLogin(callback) {
-        if (!isAuthenticated) { location.replace('/login'); return; }
-        callback();
-    }
-    // 图片压缩与批量上传（无刷新）
-    var compressedFiles = [];
-    var fileHashes = new Set();
-    var isCompressing = false;
-    var isSubmitting = false;
-    function getFileHash(file) { return file.name + '|' + file.size + '|' + file.lastModified; }
-    function compressImage(file, maxWidth = 1200, quality = 0.7) {
-        return new Promise(function(resolve, reject) {
-            if (!file.type.match(/image.*/)) { resolve(file); return; }
-            var reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = function(e) {
-                var img = new Image();
-                img.src = e.target.result;
-                img.onload = function() {
-                    var width = img.width, height = img.height, canvas = document.createElement('canvas');
-                    if (width > maxWidth) { height = (height * maxWidth) / width; width = maxWidth; }
-                    canvas.width = width; canvas.height = height;
-                    var ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-                    canvas.toBlob(function(blob) {
-                        var compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, '.jpg'), { type: 'image/jpeg' });
-                        resolve(compressedFile);
-                    }, 'image/jpeg', quality);
-                };
-                img.onerror = reject;
-            };
-            reader.onerror = reject;
+
+    <!-- ========== 相册添加表单弹窗 ========== -->
+    <div class="form-overlay" id="addFormOverlay" onclick="if(event.target===this)closeAddForm()">
+        <div class="form-card">
+            <h3>✨ 添加新照片</h3>
+            <p class="form-subtitle">可一次选择多张照片，自动压缩后上传</p>
+            <div class="field-group">
+                <div class="field-label">📝 照片标题 <span style="font-weight:normal;color:var(--text-light);">(选填)</span></div>
+                <input type="text" id="batchTitle" placeholder="如：宝宝第一次走路">
+            </div>
+            <div class="field-group">
+                <div class="field-label">💬 照片描述 <span style="font-weight:normal;color:var(--text-light);">(选填)</span></div>
+                <textarea id="batchDesc" rows="2" placeholder="记录下这一刻的美好..."></textarea>
+            </div>
+            <div class="field-group">
+                <div class="field-label">📅 拍摄日期 <span style="color:var(--accent-color);">*必填</span></div>
+                <input type="date" id="batchDate" required>
+            </div>
+            <div class="field-group">
+                <div class="field-label">🖼️ 选择照片 <span style="color:var(--accent-color);">*必填 (可多选)</span></div>
+                <div class="file-upload-box">
+                    <input type="file" id="batchFiles" accept="image/*" multiple onchange="handleFilesSelect(this)">
+                    📷 点击选择照片（可多选）
+                </div>
+                <div class="file-names" id="fileNamesDisplay"></div>
+                <div id="compressProgress" style="font-size:0.7rem;color:#5DCFA0;display:none;margin-top:6px;">压缩中...</div>
+            </div>
+            <button class="btn-submit" id="uploadBtn" onclick="submitBatchPhotos()">✨ 发布照片</button>
+        </div>
+    </div>
+
+    <!-- ========== 底部导航 ========== -->
+    <nav class="bottom-nav">
+        <a href="/" class="bottom-nav-item"><span class="nav-icon">🏠</span><span>首页</span></a>
+        <a href="/gallery" class="bottom-nav-item active"><span class="nav-icon">📷</span><span>相册</span></a>
+        <button class="bottom-nav-add" onclick="openAddMenu()" aria-label="添加">
+            <span>+</span>
+            <span class="bottom-nav-add-label">添加</span>
+        </button>
+        <a href="/growth" class="bottom-nav-item"><span class="nav-icon">📊</span><span>数据</span></a>
+        <a href="/messages" class="bottom-nav-item"><span class="nav-icon">💌</span><span>留言</span></a>
+    </nav>
+
+    <!-- ========== 回到顶部 ========== -->
+    <button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="回到顶部">⬆</button>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var rawRecords = /*[[${records}]]*/ [];
+        var isAuthenticated = /*[[${#authorization.expression('isAuthenticated()')}]]*/ false;
+        var records = rawRecords.slice().sort(function(a, b) {
+            if (a.recordDate === b.recordDate) return (b.id || 0) - (a.id || 0);
+            return (b.recordDate || '').localeCompare(a.recordDate || '');
         });
-    }
-    window.handleFilesSelect = async function(input) {
-        var files = Array.from(input.files);
-        if (files.length === 0) {
-            compressedFiles = []; fileHashes.clear();
-            document.getElementById('uploadBtn').innerHTML = '✨ 发布照片';
-            document.getElementById('fileNamesDisplay').style.display = 'none';
-            document.getElementById('compressProgress').style.display = 'none';
-            return;
+        var BIRTHDAY = new Date(2017, 1, 24);
+
+        function getAgeFromDate(dateStr) {
+            if (!dateStr) return '';
+            var parts = dateStr.split('-');
+            if (parts.length !== 3) return '';
+            var recordDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+            var years = recordDate.getFullYear() - BIRTHDAY.getFullYear();
+            var months = recordDate.getMonth() - BIRTHDAY.getMonth();
+            if (months < 0) { years--;
+                months += 12; }
+            if (years < 0) return '';
+            return years + '岁' + months + '个月';
         }
-        var newFiles = [], duplicateCount = 0;
-        for (var i = 0; i < files.length; i++) {
-            var hash = getFileHash(files[i]);
-            if (!fileHashes.has(hash)) { fileHashes.add(hash); newFiles.push(files[i]); }
-            else duplicateCount++;
+
+        function getAgeForMonth(recordsInMonth) {
+            if (!recordsInMonth || recordsInMonth.length === 0) return '';
+            return getAgeFromDate(recordsInMonth[0].recordDate);
         }
-        if (duplicateCount > 0) showToast('已忽略 ' + duplicateCount + ' 个重复文件');
-        if (newFiles.length === 0) { showToast('没有新增的照片，请选择未上传过的文件'); input.value = ''; return; }
-        var progressDiv = document.getElementById('compressProgress');
-        progressDiv.style.display = 'block';
-        progressDiv.innerHTML = '⏳ 正在压缩图片 (' + newFiles.length + ' 张)...';
-        var uploadBtn = document.getElementById('uploadBtn');
-        uploadBtn.disabled = true; uploadBtn.style.opacity = '0.6';
-        isCompressing = true;
-        var compressed = [];
-        for (var j = 0; j < newFiles.length; j++) {
-            try { var compressedFile = await compressImage(newFiles[j]); compressed.push(compressedFile); progressDiv.innerHTML = '⏳ 压缩中 ' + (j+1) + '/' + newFiles.length; }
-            catch (err) { compressed.push(newFiles[j]); }
+
+        function showToast(msg) {
+            var toast = document.getElementById('toastMsg');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(function() { toast.classList.remove('show'); }, 1500);
         }
-        compressedFiles = compressed;
-        progressDiv.style.display = 'none';
-        uploadBtn.disabled = false; uploadBtn.style.opacity = '1';
-        isCompressing = false;
-        var displayDiv = document.getElementById('fileNamesDisplay');
-        displayDiv.textContent = '📎 已选择 ' + newFiles.length + ' 个文件（已压缩）';
-        displayDiv.style.display = 'block';
-        uploadBtn.innerHTML = '✨ 批量发布 (' + newFiles.length + ' 张)';
-    };
-    window.submitBatchPhotos = function() {
-        if (!isAuthenticated) { location.replace('/login'); return; }
-        if (isCompressing) { showToast('图片还在压缩中，请稍后'); return; }
-        if (!compressedFiles.length) { showToast('请选择至少一张照片'); return; }
-        var recordDate = document.getElementById('batchDate').value;
-        if (!recordDate) { showToast('请选择拍摄日期'); return; }
-        if (isSubmitting) return;
-        isSubmitting = true;
-        var title = document.getElementById('batchTitle').value;
-        var description = document.getElementById('batchDesc').value;
-        var filesToUpload = compressedFiles.slice();
-        var uploadPromises = [];
-        for (var i = 0; i < filesToUpload.length; i++) {
-            var fd = new FormData();
-            fd.append('title', title);
-            fd.append('description', description);
-            fd.append('recordDate', recordDate);
-            fd.append('photo', filesToUpload[i]);
-            var promise = fetch('/gallery/add', { method: 'POST', body: fd })
-                .then(function(response) {
-                    if (response.ok) return response.json();
-                    else return null;
-                })
-                .catch(function() { return null; });
-            uploadPromises.push(promise);
-        }
-        Promise.all(uploadPromises).then(function(results) {
-            closeAddForm();
-            var newRecords = results.filter(function(r) { return r !== null; });
-            if (newRecords.length > 0) {
-                records = newRecords.concat(records);
-                renderFullGallery();
-                showToast('成功添加 ' + newRecords.length + ' 张照片');
+
+        function toggleSidebar() {
+            var overlay = document.getElementById('sidebarOverlay');
+            var panel = document.getElementById('sidebarPanel');
+            var active = overlay.classList.contains('active');
+            if (active) {
+                overlay.classList.remove('active');
+                panel.classList.remove('active');
+                document.body.style.overflow = '';
             } else {
-                showToast('上传失败，请重试');
+                overlay.classList.add('active');
+                panel.classList.add('active');
+                document.body.style.overflow = 'hidden';
             }
-            compressedFiles = [];
-            fileHashes.clear();
-            isSubmitting = false;
-        });
-    };
-    // 异步删除（不刷新页面）
-    window.deleteById = function(id) {
-        if (!confirm('确定删除吗？')) return;
-        fetch('/delete/' + id, { method: 'POST' }).then(function(response) {
-            if (response.ok) {
-                var index = records.findIndex(function(r) { return r.id == id; });
-                if (index !== -1) records.splice(index, 1);
-                renderFullGallery();
-                showToast('已删除');
+        }
+
+        // ========== 幻灯片 ==========
+        var featuredRecords = records.filter(function(r) { return r.featured; });
+        var slideshowRecords = featuredRecords.length > 0 ? featuredRecords : records;
+        var originalSlideCount = slideshowRecords.length;
+        var currentSlideIndex = 1;
+        var autoTimer = null;
+
+        function buildSlideshow() {
+            var container = document.getElementById('slidesContainer');
+            var dotsContainer = document.getElementById('dotsContainer');
+            if (!container || originalSlideCount === 0) return;
+            container.innerHTML = '';
+            dotsContainer.innerHTML = '';
+            var lastClone = slideshowRecords[originalSlideCount - 1];
+            var firstClone = slideshowRecords[0];
+            var slideLast = document.createElement('div');
+            slideLast.className = 'slide';
+            if (lastClone.photoPath) slideLast.style.backgroundImage = 'url("' + lastClone.photoPath + '")';
+            container.appendChild(slideLast);
+            for (var i = 0; i < originalSlideCount; i++) {
+                var r = slideshowRecords[i];
+                var slide = document.createElement('div');
+                slide.className = 'slide';
+                if (r.photoPath) slide.style.backgroundImage = 'url("' + r.photoPath + '")';
+                container.appendChild(slide);
+            }
+            var slideFirstClone = document.createElement('div');
+            slideFirstClone.className = 'slide';
+            if (firstClone.photoPath) slideFirstClone.style.backgroundImage = 'url("' + firstClone.photoPath + '")';
+            container.appendChild(slideFirstClone);
+            for (var j = 0; j < originalSlideCount; j++) {
+                var dot = document.createElement('span');
+                dot.className = 'dot' + (j === 0 ? ' active' : '');
+                dot.onclick = (function(idx) { return function() { goToRealSlide(idx); }; })(j);
+                dotsContainer.appendChild(dot);
+            }
+            container.style.transition = 'none';
+            container.style.transform = 'translateX(-100%)';
+            container.offsetHeight;
+            container.style.transition = 'transform 0.4s cubic-bezier(0.2,0.9,0.4,1.1)';
+            updateSlideDots(0);
+        }
+
+        function updateSlideDots(realIndex) {
+            var dots = document.querySelectorAll('#dotsContainer .dot');
+            dots.forEach(function(d, i) { d.classList.toggle('active', i === realIndex); });
+        }
+
+        function getRealIndexFromVisual(visualIdx) {
+            if (visualIdx === 0) return originalSlideCount - 1;
+            if (visualIdx === originalSlideCount + 1) return 0;
+            return visualIdx - 1;
+        }
+
+        function setSlideTransform(visualIdx, withAnimation) {
+            var container = document.getElementById('slidesContainer');
+            if (!container) return;
+            if (!withAnimation) container.style.transition = 'none';
+            container.style.transform = 'translateX(-' + (visualIdx * 100) + '%)';
+            if (!withAnimation) { container.offsetHeight;
+                container.style.transition = 'transform 0.4s cubic-bezier(0.2,0.9,0.4,1.1)'; }
+            var realIndex = getRealIndexFromVisual(visualIdx);
+            updateSlideDots(realIndex);
+            currentSlideIndex = visualIdx;
+        }
+
+        function goToRealSlide(realIdx) {
+            if (realIdx < 0 || realIdx >= originalSlideCount) return;
+            setSlideTransform(realIdx + 1, true);
+            resetAutoPlay();
+        }
+
+        function nextSlide() {
+            if (originalSlideCount <= 1) return;
+            var nextVisual = currentSlideIndex + 1;
+            if (nextVisual > originalSlideCount + 1) {
+                setSlideTransform(1, false);
+                setTimeout(function() { setSlideTransform(2, true); }, 20);
             } else {
-                showToast('删除失败');
+                setSlideTransform(nextVisual, true);
             }
-        }).catch(function() { showToast('网络错误'); });
-    };
-    // 异步精选切换
-    window.toggleFeaturedById = function(id) {
-        fetch('/gallery/toggle-featured/' + id, { method: 'POST' }).then(function(response) {
-            if (response.ok) {
-                var record = records.find(function(r) { return r.id == id; });
-                if (record) record.featured = !record.featured;
-                renderFullGallery();
-                showToast(record.featured ? '已设为精选' : '已取消精选');
+            resetAutoPlay();
+        }
+
+        function prevSlide() {
+            if (originalSlideCount <= 1) return;
+            var prevVisual = currentSlideIndex - 1;
+            if (prevVisual < 0) {
+                setSlideTransform(originalSlideCount + 1, false);
+                setTimeout(function() { setSlideTransform(originalSlideCount, true); }, 20);
             } else {
-                showToast('操作失败');
+                setSlideTransform(prevVisual, true);
             }
-        }).catch(function() { showToast('网络错误'); });
-    };
-    // 全局相册渲染（无刷新）
-    function renderFullGallery() {
-        var groups = {};
-        records.forEach(function(r) {
-            var d = r.recordDate;
-            if (!d) return;
-            var year = d.substring(0,4), month = d.substring(5,7), ym = year + '年' + parseInt(month) + '月';
-            if (!groups[ym]) groups[ym] = [];
-            groups[ym].push(r);
-        });
-        var keysWithNum = Object.keys(groups).map(function(ym) {
-            var year = parseInt(ym.substring(0,4)), month = parseInt(ym.substring(5, ym.indexOf('月')));
-            return { key: ym, num: year*12+month };
-        });
-        keysWithNum.sort(function(a,b){ return b.num - a.num; });
-        var keys = keysWithNum.map(function(item){ return item.key; });
-        var html = '';
-        keys.forEach(function(k) {
-            var ageText = getAgeForMonth(groups[k]), ageHtml = ageText ? '<span class="tl-age">('+ageText+')</span>' : '';
-            html += '<div class="tl-section"><div class="tl-header">' + k + ' · ' + groups[k].length + ' 张' + ageHtml + '</div><div class="tl-grid">';
-            groups[k].forEach(function(r) {
-                var src = r.photoPath || '', dd = r.recordDate ? r.recordDate.substring(5) : '', isF = r.featured, fid = r.id;
-                html += '<div class="tl-photo" data-id="'+fid+'" onclick="openViewer('+fid+')" oncontextmenu="return false">';
-                html += '<img class="lazy-img" data-src="'+src+'" alt="">';
-                if (isF) html += '<span class="featured-star">⭐</span>';
-                html += '<span class="tl-date-tag">'+dd+'</span>';
-                html += '<div class="photo-actions" onclick="event.stopPropagation();">';
-                html += '<button class="pa-btn featured" onclick="event.stopPropagation(); requireLogin(function(){ toggleFeaturedById('+fid+'); })">'+(isF?'取消精选':'⭐ 精选')+'</button>';
-                html += '<button class="pa-btn danger" onclick="event.stopPropagation(); requireLogin(function(){ deleteById('+fid+'); })">🗑 删除</button>';
-                html += '</div></div>';
+            resetAutoPlay();
+        }
+
+        function resetAutoPlay() {
+            if (autoTimer) clearInterval(autoTimer);
+            if (originalSlideCount > 1) {
+                autoTimer = setInterval(function() { if (!document.hidden) nextSlide(); }, 4000);
+            }
+        }
+        var slideshowEl = document.getElementById('slideshowSection');
+        if (slideshowEl && originalSlideCount > 0) {
+            slideshowEl.addEventListener('touchstart', function(e) {
+                this.touchStartX = e.touches[0].clientX;
+                this.touchStartY = e.touches[0].clientY;
             });
-            html += '</div></div>';
-        });
-        document.getElementById('timelineContent').innerHTML = html;
-        var observer = new IntersectionObserver(function(entries) {
-            entries.forEach(function(entry) {
-                if (entry.isIntersecting) {
-                    var img = entry.target;
-                    var src = img.getAttribute('data-src');
-                    if (src) {
-                        img.src = src;
-                        img.classList.add('loaded');
-                        img.removeAttribute('data-src');
-                        var preload = new Image();
-                        preload.src = src;
-                    }
-                    observer.unobserve(img);
+            slideshowEl.addEventListener('touchend', function(e) {
+                var diffX = this.touchStartX - e.changedTouches[0].clientX;
+                var diffY = this.touchStartY - e.changedTouches[0].clientY;
+                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
+                    diffX > 0 ? nextSlide() : prevSlide();
                 }
             });
-        }, { rootMargin: '100px' });
-        document.querySelectorAll('.lazy-img').forEach(function(img) { observer.observe(img); });
-        var photos = document.querySelectorAll('.tl-photo');
-        var longPressTimer = null;
-        photos.forEach(function(photo) {
-            photo.addEventListener('touchstart', function() { longPressTimer = setTimeout(function() { photo.classList.add('long-press'); },600); });
-            photo.addEventListener('touchend', function() { clearTimeout(longPressTimer); });
-            photo.addEventListener('touchmove', function() { clearTimeout(longPressTimer); photo.classList.remove('long-press'); });
-        });
-        document.addEventListener('click', function(e) { if (!e.target.closest('.tl-photo')) photos.forEach(function(p){ p.classList.remove('long-press'); }); });
-    }
-    // 幻灯片无限循环（完整）
-    var featuredRecords = records.filter(function(r) { return r.featured; });
-    var slideshowRecords = featuredRecords.length > 0 ? featuredRecords : records;
-    var originalSlideCount = slideshowRecords.length;
-    var currentSlideIndex = 1;
-    var touchStartX_s = 0, touchStartY_s = 0, endX_s = 0, endY_s = 0;
-    var autoTimer = null;
-    function buildSlideshow() {
-        var container = document.getElementById('slidesContainer');
-        var dotsContainer = document.getElementById('dotsContainer');
-        if (!container || originalSlideCount === 0) return;
-        container.innerHTML = '';
-        dotsContainer.innerHTML = '';
-        var lastClone = slideshowRecords[originalSlideCount - 1];
-        var firstClone = slideshowRecords[0];
-        var slideLast = document.createElement('div');
-        slideLast.className = 'slide';
-        if (lastClone.photoPath) slideLast.style.backgroundImage = 'url("' + lastClone.photoPath + '")';
-        container.appendChild(slideLast);
-        for (var i = 0; i < originalSlideCount; i++) {
-            var r = slideshowRecords[i];
+        }
+        buildSlideshow();
+        resetAutoPlay();
+
+        // ========== 相册网格 ==========
+        function renderFullGallery() {
+            var groups = {};
+            records.forEach(function(r) {
+                var d = r.recordDate;
+                if (!d) return;
+                var year = d.substring(0, 4),
+                    month = d.substring(5, 7),
+                    ym = year + '年' + parseInt(month) + '月';
+                if (!groups[ym]) groups[ym] = [];
+                groups[ym].push(r);
+            });
+            var keysWithNum = Object.keys(groups).map(function(ym) {
+                var year = parseInt(ym.substring(0, 4)),
+                    month = parseInt(ym.substring(5, ym.indexOf('月')));
+                return { key: ym, num: year * 12 + month };
+            });
+            keysWithNum.sort(function(a, b) { return b.num - a.num; });
+            var keys = keysWithNum.map(function(item) { return item.key; });
+            var html = '';
+            keys.forEach(function(k) {
+                var ageText = getAgeForMonth(groups[k]),
+                    ageHtml = ageText ? '<span class="tl-age">(' + ageText + ')</span>' : '';
+                html += '<div class="tl-section"><div class="tl-header">' + k + ' · ' + groups[k].length + ' 张' +
+                    ageHtml + '</div><div class="tl-grid">';
+                groups[k].forEach(function(r) {
+                    var src = r.photoPath || '',
+                        dd = r.recordDate ? r.recordDate.substring(5) : '',
+                        isF = r.featured,
+                        fid = r.id;
+                    html += '<div class="tl-photo" data-id="' + fid + '" onclick="openViewer(' + fid +
+                        ')" oncontextmenu="return false">';
+                    html += '<img class="lazy-img" data-src="' + src + '" alt="">';
+                    if (isF) html += '<span class="featured-star">⭐</span>';
+                    html += '<span class="tl-date-tag">' + dd + '</span>';
+                    html +=
+                        '<div class="photo-actions" onclick="event.stopPropagation();"><button class="pa-btn featured" onclick="event.stopPropagation(); requireLogin(function(){ toggleFeaturedById(' +
+                        fid +
+                        '); })">' + (isF ? '取消精选' : '⭐ 精选') +
+                        '</button><button class="pa-btn danger" onclick="event.stopPropagation(); requireLogin(function(){ deleteById(' +
+                        fid + '); })">🗑 删除</button></div></div>';
+                });
+                html += '</div></div>';
+            });
+            document.getElementById('timelineContent').innerHTML = html;
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        var img = entry.target;
+                        var src = img.getAttribute('data-src');
+                        if (src) {
+                            img.src = src;
+                            img.classList.add('loaded');
+                            img.removeAttribute('data-src');
+                        }
+                        observer.unobserve(img);
+                    }
+                });
+            }, { rootMargin: '100px' });
+            document.querySelectorAll('.lazy-img').forEach(function(img) { observer.observe(img); });
+            // 长按菜单
+            var photos = document.querySelectorAll('.tl-photo');
+            var longPressTimer = null;
+            photos.forEach(function(photo) {
+                photo.addEventListener('touchstart', function() { longPressTimer = setTimeout(function() { photo
+                        .classList.add('long-press'); }, 600); });
+                photo.addEventListener('touchend', function() { clearTimeout(longPressTimer); });
+                photo.addEventListener('touchmove', function() { clearTimeout(longPressTimer);
+                    photo.classList.remove('long-press'); });
+            });
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.tl-photo')) photos.forEach(function(p) { p.classList.remove(
+                        'long-press'); });
+            });
+        }
+
+        // ========== 大图浏览器 ==========
+        var viewerTrack = document.getElementById('viewerTrack');
+        var viewerIndex = 0;
+
+        function updateViewerInfo() {
+            var r = records[viewerIndex];
+            if (!r) return;
+            document.getElementById('viewerTitle').innerText = r.title || '';
+            document.getElementById('viewerDate').innerText = r.recordDate || '';
+            document.getElementById('viewerDesc').innerText = r.description || '';
+            document.getElementById('featuredBtn').innerText = r.featured ? '⭐ 取消精选' : '⭐ 设为精选';
+        }
+
+        function setViewerPosition(index, withAnimation) {
+            if (index < 0) index = 0;
+            if (index >= records.length) index = records.length - 1;
+            viewerIndex = index;
+            viewerTrack.innerHTML = '';
             var slide = document.createElement('div');
-            slide.className = 'slide';
-            if (r.photoPath) slide.style.backgroundImage = 'url("' + r.photoPath + '")';
-            container.appendChild(slide);
-        }
-        var slideFirstClone = document.createElement('div');
-        slideFirstClone.className = 'slide';
-        if (firstClone.photoPath) slideFirstClone.style.backgroundImage = 'url("' + firstClone.photoPath + '")';
-        container.appendChild(slideFirstClone);
-        for (var j = 0; j < originalSlideCount; j++) {
-            var dot = document.createElement('span');
-            dot.className = 'dot' + (j === 0 ? ' active' : '');
-            dot.onclick = (function(idx) { return function() { goToRealSlide(idx); }; })(j);
-            dotsContainer.appendChild(dot);
-        }
-        document.getElementById('scrollHint').style.display = 'block';
-        container.style.transition = 'none';
-        container.style.transform = 'translateX(-100%)';
-        container.offsetHeight;
-        container.style.transition = 'transform 0.4s cubic-bezier(0.2,0.9,0.4,1.1)';
-        updateSlideDots(0);
-    }
-    function updateSlideDots(realIndex) { var dots = document.querySelectorAll('.dot'); dots.forEach(function(d,i){ d.classList.toggle('active', i===realIndex); }); }
-    function getRealIndexFromVisual(visualIdx) { if (visualIdx === 0) return originalSlideCount-1; if (visualIdx === originalSlideCount+1) return 0; return visualIdx-1; }
-    function setSlideTransform(visualIdx, withAnimation) {
-        var container = document.getElementById('slidesContainer');
-        if (!container) return;
-        if (!withAnimation) container.style.transition = 'none';
-        container.style.transform = 'translateX(-' + (visualIdx * 100) + '%)';
-        if (!withAnimation) { container.offsetHeight; container.style.transition = 'transform 0.4s cubic-bezier(0.2,0.9,0.4,1.1)'; }
-        var realIndex = getRealIndexFromVisual(visualIdx);
-        updateSlideDots(realIndex);
-        currentSlideIndex = visualIdx;
-    }
-    function goToRealSlide(realIdx) { if (realIdx<0 || realIdx>=originalSlideCount) return; var targetVisual = realIdx+1; setSlideTransform(targetVisual, true); resetAutoPlay(); }
-    function nextSlide() { if (originalSlideCount<=1) return; var nextVisual = currentSlideIndex+1, maxVisual = originalSlideCount+1; if (nextVisual>maxVisual) { setSlideTransform(1,false); setTimeout(function(){ setSlideTransform(2,true); },20); } else { setSlideTransform(nextVisual,true); } resetAutoPlay(); }
-    function prevSlide() { if (originalSlideCount<=1) return; var prevVisual = currentSlideIndex-1; if (prevVisual<0) { setSlideTransform(originalSlideCount+1,false); setTimeout(function(){ setSlideTransform(originalSlideCount,true); },20); } else { setSlideTransform(prevVisual,true); } resetAutoPlay(); }
-    function resetAutoPlay() { if (autoTimer) clearInterval(autoTimer); if (originalSlideCount>1) { autoTimer = setInterval(function(){ if(!document.hidden) nextSlide(); },4000); } }
-    var slideshowEl = document.getElementById('slideshowSection');
-    if (slideshowEl && originalSlideCount>0) {
-        slideshowEl.addEventListener('touchstart', function(e){ touchStartX_s = e.touches[0].clientX; touchStartY_s = e.touches[0].clientY; });
-        slideshowEl.addEventListener('touchend', function(e){ endX_s = e.changedTouches[0].clientX; endY_s = e.changedTouches[0].clientY; var diffX = touchStartX_s - endX_s, diffY = touchStartY_s - endY_s; if(Math.abs(diffX)>Math.abs(diffY) && Math.abs(diffX)>40) { diffX>0 ? nextSlide() : prevSlide(); } });
-    }
-    buildSlideshow();
-    resetAutoPlay();
-    // 大图浏览（多级返回）
-    var viewerTrack = document.getElementById('viewerTrack');
-    var viewerIndex = 0;
-    var touchStartX_v = 0, touchStartY_v = 0, touchStartTime_v = 0;
-    var viewerHistoryStateAdded = false;
-    function updateViewerInfo() {
-        var r = records[viewerIndex];
-        if (!r) return;
-        document.getElementById('viewerTitle').innerText = r.title || '';
-        document.getElementById('viewerDate').innerText = r.recordDate || '';
-        document.getElementById('viewerDesc').innerText = r.description || '';
-        var isF = r.featured;
-        document.getElementById('featuredBtn').innerText = isF ? '⭐ 取消精选' : '⭐ 设为精选';
-    }
-    function setViewerPosition(index, withAnimation) {
-        if (index < 0) index = 0;
-        if (index >= records.length) index = records.length - 1;
-        if (index === viewerIndex && !withAnimation) return;
-        viewerIndex = index;
-        viewerTrack.innerHTML = '';
-        var slide = document.createElement('div');
-        slide.className = 'viewer-slide';
-        var img = document.createElement('img');
-        var r = records[viewerIndex];
-        img.src = r.photoPath || '';
-        img.alt = r.title || '';
-        slide.appendChild(img);
-        viewerTrack.appendChild(slide);
-        if (withAnimation === false) {
-            viewerTrack.style.transition = 'none';
+            slide.className = 'viewer-slide';
+            var img = document.createElement('img');
+            img.src = records[viewerIndex].photoPath || '';
+            slide.appendChild(img);
+            viewerTrack.appendChild(slide);
+            viewerTrack.style.transition = withAnimation === false ? 'none' :
+                'transform 0.4s cubic-bezier(0.2,0.9,0.4,1.1)';
             viewerTrack.style.transform = 'translateX(0)';
-            viewerTrack.offsetHeight;
-            viewerTrack.style.transition = 'transform 0.4s cubic-bezier(0.2,0.9,0.4,1.1)';
-        } else {
-            viewerTrack.style.transform = 'translateX(0)';
+            if (!withAnimation) { viewerTrack.offsetHeight;
+                viewerTrack.style.transition = 'transform 0.4s cubic-bezier(0.2,0.9,0.4,1.1)'; }
+            updateViewerInfo();
         }
-        updateViewerInfo();
-        if (viewerIndex + 1 < records.length) { var nextImg = new Image(); nextImg.src = records[viewerIndex+1].photoPath; }
-        if (viewerIndex - 1 >= 0) { var prevImg = new Image(); prevImg.src = records[viewerIndex-1].photoPath; }
-    }
-    window.openViewer = function(id) {
-        var idx = records.findIndex(function(r) { return r.id == id; });
-        if (idx === -1) return;
-        viewerIndex = idx;
-        setViewerPosition(viewerIndex, false);
-        document.getElementById('photoViewer').classList.add('active');
-        if (!viewerHistoryStateAdded) {
-            history.pushState({ viewerOpen: true }, '', window.location.href);
-            viewerHistoryStateAdded = true;
+        window.openViewer = function(id) {
+            var idx = records.findIndex(function(r) { return r.id == id; });
+            if (idx === -1) return;
+            setViewerPosition(idx, false);
+            document.getElementById('photoViewer').classList.add('active');
+        };
+        window.closeViewer = function() { document.getElementById('photoViewer').classList.remove('active'); };
+        window.viewerPrev = function() {
+            if (viewerIndex > 0) setViewerPosition(viewerIndex - 1, true);
+            else showToast('已经是第一张了');
+        };
+        window.viewerNext = function() {
+            if (viewerIndex < records.length - 1) setViewerPosition(viewerIndex + 1, true);
+            else showToast('已经是最后一张了');
+        };
+        var viewerContainer = document.getElementById('photoViewer');
+        if (viewerContainer) {
+            viewerContainer.addEventListener('touchstart', function(e) {
+                if (e.target.closest('button')) return;
+                this.touchStartX = e.touches[0].clientX;
+                this.touchStartY = e.touches[0].clientY;
+            }, { passive: true });
+            viewerContainer.addEventListener('touchend', function(e) {
+                var diffX = this.touchStartX - e.changedTouches[0].clientX;
+                var diffY = this.touchStartY - e.changedTouches[0].clientY;
+                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                    diffX > 0 ? viewerNext() : viewerPrev();
+                } else {
+                    setViewerPosition(viewerIndex, true);
+                }
+            });
         }
-    };
-    window.closeViewer = function() {
-        document.getElementById('photoViewer').classList.remove('active');
-        if (viewerHistoryStateAdded) {
-            viewerHistoryStateAdded = false;
+        document.getElementById('featuredBtn').onclick = function() {
+            if (!isAuthenticated) { location.replace('/login'); return; }
+            var r = records[viewerIndex];
+            if (r) toggleFeaturedById(r.id);
+        };
+        document.getElementById('deleteBtn').onclick = function() {
+            if (!isAuthenticated) { location.replace('/login'); return; }
+            var r = records[viewerIndex];
+            if (r) deleteById(r.id);
+        };
+
+        // ========== 异步操作 ==========
+        window.deleteById = function(id) {
+            if (!confirm('确定删除吗？')) return;
+            fetch('/delete/' + id, { method: 'POST' }).then(function(response) {
+                if (response.ok) {
+                    var index = records.findIndex(function(r) { return r.id == id; });
+                    if (index !== -1) records.splice(index, 1);
+                    renderFullGallery();
+                    buildSlideshow();
+                    showToast('已删除');
+                } else showToast('删除失败');
+            });
+        };
+        window.toggleFeaturedById = function(id) {
+            fetch('/gallery/toggle-featured/' + id, { method: 'POST' }).then(function(response) {
+                if (response.ok) {
+                    var record = records.find(function(r) { return r.id == id; });
+                    if (record) record.featured = !record.featured;
+                    renderFullGallery();
+                    buildSlideshow();
+                    showToast(record.featured ? '已设为精选' : '已取消精选');
+                } else showToast('操作失败');
+            });
+        };
+
+        // ========== 添加弹窗 ==========
+        function openAddMenu() {
+            document.getElementById('addMenuOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
         }
-    };
-    window.viewerPrev = function() { if (viewerIndex > 0) setViewerPosition(viewerIndex-1, true); else showToast('已经是第一张了'); };
-    window.viewerNext = function() { if (viewerIndex < records.length-1) setViewerPosition(viewerIndex+1, true); else showToast('已经是最后一张了'); };
-    var viewerContainer = document.getElementById('photoViewer');
-    if (viewerContainer) {
-        viewerContainer.addEventListener('touchstart', function(e) { if (e.target.closest('button')) return; touchStartX_v = e.touches[0].clientX; touchStartY_v = e.touches[0].clientY; touchStartTime_v = Date.now(); }, { passive: true });
-        viewerContainer.addEventListener('touchend', function(e) {
-            var diffX = touchStartX_v - e.changedTouches[0].clientX;
-            var diffY = touchStartY_v - e.changedTouches[0].clientY;
-            var deltaTime = Date.now() - touchStartTime_v;
-            var threshold = (deltaTime < 200 && Math.abs(diffX) > 30) ? 30 : 50;
-            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > threshold) { diffX > 0 ? window.viewerNext() : window.viewerPrev(); }
-            else { setViewerPosition(viewerIndex, true); }
+
+        function closeAddMenu() {
+            document.getElementById('addMenuOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function openAddForm() {
+            document.getElementById('batchFiles').value = '';
+            document.getElementById('fileNamesDisplay').style.display = 'none';
+            document.getElementById('compressProgress').style.display = 'none';
+            document.getElementById('uploadBtn').innerHTML = '✨ 发布照片';
+            compressedFiles = [];
+            fileHashes.clear();
+            document.getElementById('addFormOverlay').classList.add('active');
+        }
+
+        function closeAddForm() {
+            document.getElementById('addFormOverlay').classList.remove('active');
+        }
+
+        // 压缩上传
+        var compressedFiles = [];
+        var fileHashes = new Set();
+
+        function getFileHash(file) { return file.name + '|' + file.size + '|' + file.lastModified; }
+
+        function compressImage(file, maxWidth = 1200, quality = 0.7) {
+            return new Promise(function(resolve, reject) {
+                if (!file.type.match(/image.*/)) { resolve(file); return; }
+                var reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = function(e) {
+                    var img = new Image();
+                    img.src = e.target.result;
+                    img.onload = function() {
+                        var width = img.width,
+                            height = img.height,
+                            canvas = document.createElement('canvas');
+                        if (width > maxWidth) { height = (height * maxWidth) / width;
+                            width = maxWidth; }
+                        canvas.width = width;
+                        canvas.height = height;
+                        var ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        canvas.toBlob(function(blob) {
+                            var compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/,
+                                '.jpg'), { type: 'image/jpeg' });
+                            resolve(compressedFile);
+                        }, 'image/jpeg', quality);
+                    };
+                };
+            });
+        }
+        window.handleFilesSelect = async function(input) {
+            var files = Array.from(input.files);
+            if (files.length === 0) return;
+            var newFiles = [],
+                duplicateCount = 0;
+            for (var i = 0; i < files.length; i++) {
+                var hash = getFileHash(files[i]);
+                if (!fileHashes.has(hash)) { fileHashes.add(hash);
+                    newFiles.push(files[i]); } else duplicateCount++;
+            }
+            if (duplicateCount > 0) showToast('已忽略 ' + duplicateCount + ' 个重复文件');
+            if (newFiles.length === 0) { showToast('没有新增的照片'); return; }
+            document.getElementById('compressProgress').style.display = 'block';
+            document.getElementById('uploadBtn').disabled = true;
+            var compressed = [];
+            for (var j = 0; j < newFiles.length; j++) {
+                try { compressed.push(await compressImage(newFiles[j])); } catch (e) { compressed.push(newFiles[
+                        j]); }
+            }
+            compressedFiles = compressed;
+            document.getElementById('compressProgress').style.display = 'none';
+            document.getElementById('uploadBtn').disabled = false;
+            document.getElementById('fileNamesDisplay').style.display = 'block';
+            document.getElementById('fileNamesDisplay').textContent = '📎 已选择 ' + newFiles.length + ' 个文件（已压缩）';
+            document.getElementById('uploadBtn').innerHTML = '✨ 批量发布 (' + newFiles.length + ' 张)';
+        };
+        window.submitBatchPhotos = async function() {
+            if (!isAuthenticated) { location.replace('/login'); return; }
+            if (!compressedFiles.length) { showToast('请选择照片'); return; }
+            var recordDate = document.getElementById('batchDate').value;
+            if (!recordDate) { showToast('请选择拍摄日期'); return; }
+            var title = document.getElementById('batchTitle').value;
+            var description = document.getElementById('batchDesc').value;
+            var promises = [];
+            for (var i = 0; i < compressedFiles.length; i++) {
+                var fd = new FormData();
+                fd.append('title', title);
+                fd.append('description', description);
+                fd.append('recordDate', recordDate);
+                fd.append('photo', compressedFiles[i]);
+                promises.push(fetch('/gallery/add', { method: 'POST', body: fd }).then(r => r.ok ? r.json() : null));
+            }
+            var results = await Promise.all(promises);
+            closeAddForm();
+            var newRecords = results.filter(r => r !== null);
+            if (newRecords.length) {
+                records = newRecords.concat(records);
+                renderFullGallery();
+                buildSlideshow();
+                showToast('成功添加 ' + newRecords.length + ' 张照片');
+            } else showToast('上传失败');
+            compressedFiles = [];
+            fileHashes.clear();
+        };
+
+        // ========== 返回顶部 ==========
+        window.addEventListener('scroll', function() {
+            var btn = document.getElementById('backToTop');
+            btn.style.display = window.scrollY > 400 ? 'flex' : 'none';
         });
-    }
-    window.addEventListener('resize', function() { if (document.getElementById('photoViewer').classList.contains('active')) setViewerPosition(viewerIndex, false); });
-    document.addEventListener('keydown', function(e) {
-        if (document.getElementById('photoViewer').classList.contains('active')) { if (e.key === 'ArrowLeft') viewerPrev(); if (e.key === 'ArrowRight') viewerNext(); if (e.key === 'Escape') closeViewer(); }
-        if (e.key === 'Escape') closeAddForm();
-    });
-    document.getElementById('featuredBtn').onclick = function() { requireLogin(function() { var r = records[viewerIndex]; if (r) toggleFeaturedById(r.id); }); };
-    document.getElementById('deleteBtn').onclick = function() { requireLogin(function() { var r = records[viewerIndex]; if (r) deleteById(r.id); }); };
-    window.openAddForm = function() {
-        document.getElementById('batchFiles').value = '';
-        document.getElementById('fileNamesDisplay').style.display = 'none';
-        document.getElementById('uploadBtn').innerHTML = '✨ 发布照片';
-        document.getElementById('uploadBtn').disabled = false;
-        document.getElementById('uploadBtn').style.opacity = '1';
-        document.getElementById('compressProgress').style.display = 'none';
-        compressedFiles = [];
-        fileHashes.clear();
-        isCompressing = false;
-        isSubmitting = false;
-        document.getElementById('addOverlay').classList.add('active');
-    };
-    window.closeAddForm = function() { document.getElementById('addOverlay').classList.remove('active'); };
-    document.querySelectorAll('#navLinks .nav-link').forEach(function(l) { l.addEventListener('click', function() { document.getElementById('navLinks').classList.remove('active'); }); });
-    // 全局返回处理：大图打开时优先关闭大图，否则相册内按返回跳转到首页
-    window.addEventListener('popstate', function(event) {
-        var viewer = document.getElementById('photoViewer');
-        if (viewer.classList.contains('active')) {
-            closeViewer();
-            history.pushState({ viewerOpen: true }, '', window.location.href);
-            viewerHistoryStateAdded = true;
-            event.preventDefault();
-            return;
-        }
-        if (window.location.pathname !== '/' && window.location.pathname !== '') {
-            window.location.href = '/';
-        }
-    });
-    if (window.location.pathname !== '/' && window.location.pathname !== '') {
-        history.replaceState({ fromSubPage: true }, '', window.location.href);
-    }
-    document.querySelectorAll('a[href="/login"]').forEach(function(link) { link.addEventListener('click', function(e) { e.preventDefault(); location.replace('/login'); }); });
-    renderFullGallery();
-    /*]]>*/
-</script>
+
+        // ========== 初始化 ==========
+        renderFullGallery();
+        buildSlideshow();
+        /*]]>*/
+    </script>
 </body>
 </html>
