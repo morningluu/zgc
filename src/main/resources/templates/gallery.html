@@ -26,50 +26,6 @@
         input,textarea { -webkit-user-select:text!important; user-select:text!important; }
         body { font-family:"Noto Sans SC",sans-serif; background:linear-gradient(175deg,#FFF8F5 0%,#FEF5F8 8%,#F8F0FF 22%,#F5F0FA 35%,#F0F5FB 50%,#F5F8F5 65%,#FFFBF0 78%,#FFF8F5 100%); background-attachment:fixed; color:var(--text-primary); min-height:100vh; overflow-x:hidden; -webkit-tap-highlight-color:transparent; -webkit-font-smoothing:antialiased; padding-bottom:100px; position:relative; }
 
-        /* ========== 全新加载界面 ========== */
-        .loading-screen {
-            position:fixed; top:0; left:0; width:100%; height:100%;
-            background:linear-gradient(175deg, #FFF5F5, #F8F0FF, #FFF5F8);
-            z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center;
-            transition:opacity 0.5s ease, visibility 0.5s;
-            opacity:1; visibility:visible;
-        }
-        .loading-screen.hidden { opacity:0; visibility:hidden; pointer-events:none; }
-        .loading-illust {
-            font-size:4.5em; margin-bottom:20px;
-            animation:loadingBounce 1.8s ease-in-out infinite;
-        }
-        @keyframes loadingBounce {
-            0%,100% { transform:translateY(0); }
-            50% { transform:translateY(-15px); }
-        }
-        .loading-progress-wrap {
-            width:220px; display:flex; flex-direction:column; align-items:center; gap:12px;
-        }
-        .loading-bar {
-            width:100%; height:8px; background:rgba(200,180,220,0.25);
-            border-radius:10px; overflow:hidden;
-        }
-        .loading-bar-fill {
-            height:100%; width:0%;
-            background:linear-gradient(90deg, #FFB5C2, #FF9AB2);
-            border-radius:10px;
-            transition:width 0.25s ease;
-            box-shadow:0 0 10px rgba(255,154,178,0.4);
-        }
-        .loading-percent {
-            font-family:"ZCOOL KuaiLe", sans-serif;
-            font-size:1.6em; font-weight:700;
-            color:var(--accent-color);
-            letter-spacing:0.04em;
-        }
-        .loading-text {
-            font-family:"ZCOOL KuaiLe", sans-serif;
-            font-size:0.9em; color:var(--text-light);
-            letter-spacing:0.04em; margin-top:4px;
-        }
-
-        /* ========== 骨架屏与原有样式 ========== */
         @keyframes skeleton-shimmer-vertical {
             0% { background-position:0 200%; }
             100% { background-position:0 -200%; }
@@ -219,19 +175,6 @@
     </style>
 </head>
 <body>
-
-<!-- ========== 全新加载界面 ========== -->
-<div class="loading-screen" id="loadingScreen">
-    <div class="loading-illust">📸</div>
-    <div class="loading-progress-wrap">
-        <div class="loading-bar">
-            <div class="loading-bar-fill" id="loadingBarFill"></div>
-        </div>
-        <div class="loading-percent" id="loadingPercent">0%</div>
-        <div class="loading-text">正在准备珍贵瞬间...</div>
-    </div>
-</div>
-
 <div class="bg-decorations"><div class="cloud"></div><div class="cloud"></div><div class="cloud"></div><div class="cloud"></div><div class="sparkle"></div><div class="sparkle"></div><div class="sparkle"></div><div class="sparkle"></div></div>
 <div class="toast-message" id="toastMsg">提示</div>
 
@@ -331,65 +274,12 @@
     function getAgeFromDate(d){if(!d)return'';var p=d.split('-');if(p.length!==3)return'';var rd=new Date(p[0],p[1]-1,p[2]);var y=rd.getFullYear()-BIRTHDAY.getFullYear();var m=rd.getMonth()-BIRTHDAY.getMonth();if(m<0){y--;m+=12;}if(y<0)return'';return y+'岁'+m+'个月';}
     function getAgeForMonth(recs){return recs&&recs.length?getAgeFromDate(recs[0].recordDate):'';}
 
-    // ========== 预加载可见缩略图，快速进入 ==========
-    var allPhotoPaths = records.map(r=>r.photoPath).filter(Boolean);
-    var MIN_LOAD_COUNT = Math.min(6, allPhotoPaths.length); // 只需加载前6张缩略图即可进入
-    var loadedCount = 0;
-    var loadingBarFill = document.getElementById('loadingBarFill');
-    var loadingPercent = document.getElementById('loadingPercent');
-    var loadingScreen = document.getElementById('loadingScreen');
-    var preloadedCache = {}; // 记录哪些URL已预加载
-
-    function updateLoadingProgress() {
-        loadedCount++;
-        var percent = Math.floor((loadedCount / MIN_LOAD_COUNT) * 100);
-        loadingBarFill.style.width = percent + '%';
-        loadingPercent.textContent = percent + '%';
-        if (loadedCount >= MIN_LOAD_COUNT) {
-            finishLoading();
-        }
-    }
-
-    function finishLoading() {
-        // 确保进度条到达100%
-        loadingBarFill.style.width = '100%';
-        loadingPercent.textContent = '100%';
-        setTimeout(() => {
-            loadingScreen.classList.add('hidden');
-            // 渲染相册内容，已缓存图片将直接显示
-            renderFullGallery();
-            buildSlideshow();
-            resetAutoPlay();
-        }, 400);
-    }
-
-    function preloadThumbnails() {
-        if (allPhotoPaths.length === 0) {
-            finishLoading();
-            return;
-        }
-        // 只预加载前 MIN_LOAD_COUNT 张
-        var targets = allPhotoPaths.slice(0, MIN_LOAD_COUNT);
-        targets.forEach(url => {
-            var img = new Image();
-            img.onload = function() {
-                preloadedCache[url] = true;
-                updateLoadingProgress();
-            };
-            img.onerror = function() {
-                // 即使加载失败也标记，避免阻塞进度
-                preloadedCache[url] = false;
-                updateLoadingProgress();
-            };
-            img.src = url;
-        });
-    }
-
-    // ========== 幻灯片 ==========
     var featuredRecords = records.filter(r=>r.featured);
     var slideshowRecords = featuredRecords.length>0?featuredRecords:records;
     var originalSlideCount = slideshowRecords.length;
     var currentSlideIndex=1,autoTimer=null;
+
+    // 直接构建幻灯片（不预加载）
     function buildSlideshowContent(){
         var c=document.getElementById('slidesContainer'),d=document.getElementById('dotsContainer');
         if(!c||originalSlideCount===0)return;
@@ -409,25 +299,38 @@
     function nextSlide(){if(originalSlideCount<=1)return;var n=currentSlideIndex+1;if(n>originalSlideCount+1){setSlideTransform(1,false);setTimeout(()=>setSlideTransform(2,true),20);}else setSlideTransform(n,true);resetAutoPlay();}
     function prevSlide(){if(originalSlideCount<=1)return;var p=currentSlideIndex-1;if(p<0){setSlideTransform(originalSlideCount+1,false);setTimeout(()=>setSlideTransform(originalSlideCount,true),20);}else setSlideTransform(p,true);resetAutoPlay();}
     function resetAutoPlay(){if(autoTimer)clearInterval(autoTimer);if(originalSlideCount>1)autoTimer=setInterval(()=>{if(!document.hidden)nextSlide();},4000);}
-    function buildSlideshow(){if(originalSlideCount===0){document.getElementById('slideshowSkeleton').style.display='none';return;}document.getElementById('slideshowSkeleton').style.display='block';buildSlideshowContent();}
+    function buildSlideshow(){
+        if(originalSlideCount===0){
+            document.getElementById('slideshowSkeleton').style.display='none';
+            return;
+        }
+        document.getElementById('slideshowSkeleton').style.display='block';
+        buildSlideshowContent();
+    }
+
     var slideshowEl=document.getElementById('slideshowSection');
     if(slideshowEl&&originalSlideCount>0){slideshowEl.addEventListener('touchstart',function(e){this.tx=e.touches[0].clientX;this.ty=e.touches[0].clientY;});slideshowEl.addEventListener('touchend',function(e){var dx=this.tx-e.changedTouches[0].clientX,dy=this.ty-e.changedTouches[0].clientY;if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40){dx>0?nextSlide():prevSlide();}});}
 
-    // ========== 网格渲染（利用缓存直接设置src） ==========
+    // 直接渲染相册网格，首屏前6张直接设置src
     function renderFullGallery(){
         var groups={};records.forEach(r=>{var d=r.recordDate;if(!d)return;var y=d.substring(0,4),m=d.substring(5,7),ym=y+'年'+parseInt(m)+'月';if(!groups[ym])groups[ym]=[];groups[ym].push(r);});
         var keys=Object.keys(groups).sort((a,b)=>{var na=parseInt(a)*12+parseInt(a.match(/\d+/g)[1]);var nb=parseInt(b)*12+parseInt(b.match(/\d+/g)[1]);return nb-na;});
-        var html='';keys.forEach(k=>{var age=getAgeForMonth(groups[k]);html+='<div class="tl-section"><div class="tl-header">'+k+' · '+groups[k].length+' 张'+(age?'<span class="tl-age">('+age+')</span>':'')+'</div><div class="tl-grid">';
+        var html='';var imgCounter=0;
+        keys.forEach(k=>{var age=getAgeForMonth(groups[k]);html+='<div class="tl-section"><div class="tl-header">'+k+' · '+groups[k].length+' 张'+(age?'<span class="tl-age">('+age+')</span>':'')+'</div><div class="tl-grid">';
         groups[k].forEach(r=>{var src=r.photoPath||'',dd=r.recordDate?r.recordDate.substring(5):'',fid=r.id;
-            // 如果已经预加载过，直接设置src，否则使用data-src懒加载
-            var imgTag = preloadedCache[src] ? 
-                '<img src="'+src+'" class="loaded" onload="onPhotoLoad(this)" onerror="onPhotoError(this)">' :
-                '<img class="lazy-img" data-src="'+src+'" onload="onPhotoLoad(this)" onerror="onPhotoError(this)">';
+            // 前6张直接加载，其余懒加载
+            var imgTag;
+            if (imgCounter < 6 && src) {
+                imgTag = '<img src="'+src+'" class="loaded" onload="onPhotoLoad(this)" onerror="onPhotoError(this)">';
+            } else {
+                imgTag = '<img class="lazy-img" data-src="'+src+'" onload="onPhotoLoad(this)" onerror="onPhotoError(this)">';
+            }
+            imgCounter++;
             html+='<div class="tl-photo" data-id="'+fid+'" onclick="openViewer('+fid+')">'+imgTag+(r.featured?'<span class="featured-star">⭐</span>':'')+'<span class="tl-date-tag">'+dd+'</span><div class="photo-actions" onclick="event.stopPropagation();"><button class="pa-btn featured" onclick="event.stopPropagation();toggleFeaturedById('+fid+')">'+(r.featured?'取消精选':'⭐ 精选')+'</button><button class="pa-btn danger" onclick="event.stopPropagation();deleteById('+fid+')">🗑 删除</button></div></div>';
         });
         html+='</div></div>';});
         document.getElementById('timelineContent').innerHTML=html;
-        // 只对未缓存的图片启用懒加载
+        // 懒加载剩余图片
         var observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){var img=e.target,src=img.getAttribute('data-src');if(src){img.src=src;img.classList.add('loaded');img.removeAttribute('data-src');}observer.unobserve(img);}})},{rootMargin:'100px'});
         document.querySelectorAll('.lazy-img').forEach(img=>observer.observe(img));
         // 长按菜单
@@ -437,7 +340,7 @@
     window.onPhotoLoad=function(img){img.classList.add('loaded');var p=img.closest('.tl-photo');if(p)p.classList.add('img-loaded');};
     window.onPhotoError=function(img){var p=img.closest('.tl-photo');if(p)p.classList.add('img-loaded');};
 
-    // 大图浏览器（保持不变）
+    // 大图浏览器
     var viewerTrack=document.getElementById('viewerTrack'),viewerIndex=0,viewerOpen=false,startX=0,savedScrollY=0;
     function updateViewerInfo(){var r=records[viewerIndex];if(!r)return;document.getElementById('viewerTitle').innerText=r.title||'';document.getElementById('viewerDate').innerText=r.recordDate||'';document.getElementById('viewerDesc').innerText=r.description||'';document.getElementById('featuredBtn').innerText=r.featured?'⭐ 取消精选':'⭐ 设为精选';}
     function buildViewerSlide(index){viewerTrack.innerHTML='';var s=document.createElement('div');s.className='viewer-slide';var img=document.createElement('img');img.src=records[index].photoPath||'';img.draggable=false;s.appendChild(img);viewerTrack.appendChild(s);}
@@ -471,8 +374,10 @@
 
     window.addEventListener('scroll',()=>{document.getElementById('backToTop').style.display=window.scrollY>400?'flex':'none';});
 
-    // 启动预加载流程
-    preloadThumbnails();
+    // 直接渲染，无需加载等待
+    renderFullGallery();
+    buildSlideshow();
+    resetAutoPlay();
     /*]]>*/
 </script>
 </body>
