@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      lang="zh-CN">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,19 +36,14 @@
             --transition-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
             --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
         }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: "Noto Sans SC", sans-serif;
-            background: linear-gradient(175deg,
-                    #FFF8F5 0%, #FEF5F8 8%, #F8F0FF 22%,
-                    #F5F0FA 35%, #F0F5FB 50%, #F5F8F5 65%,
-                    #FFFBF0 78%, #FFF8F5 100%);
+            background: linear-gradient(175deg, #FFF8F5 0%, #FEF5F8 8%, #F8F0FF 22%, #F5F0FA 35%, #F0F5FB 50%, #F5F8F5 65%, #FFFBF0 78%, #FFF8F5 100%);
             background-attachment: fixed;
             color: var(--text-primary);
             min-height: 100vh;
@@ -61,137 +54,194 @@
             position: relative;
         }
 
-        /* ========== 背景装饰：浮动云朵 & 星光 ========== */
-        .bg-decorations {
+        /* 开屏界面 (已省略部分动画样式，保留核心) */
+        .splash-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(170deg, #FFF5F2, #FEF3F7, #FBF2FC, #F6F1FB, #F3F4FA, #F5F8F7, #FFF9F0, #FFF6F3);
+            transition: opacity 0.5s, visibility 0.5s;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: all;
+            user-select: none;
+        }
+        .splash-screen.fade-out {
+            opacity: 0;
+            visibility: hidden;
             pointer-events: none;
-            z-index: 0;
-            overflow: hidden;
         }
-        .cloud {
+        .splash-cloud {
             position: absolute;
-            background: rgba(255, 255, 255, 0.55);
+            background: rgba(255, 255, 255, 0.5);
             border-radius: 50%;
-            filter: blur(30px);
-            animation: cloudFloat linear infinite;
+            filter: blur(35px);
+            pointer-events: none;
+            animation: splashCloudFloat linear infinite;
         }
-        .cloud:nth-child(1) {
-            width: 180px;
-            height: 90px;
-            top: 6%;
-            left: -5%;
-            animation-duration: 28s;
+        .splash-cloud:nth-child(1) {
+            width: 160px;
+            height: 80px;
+            top: 8%;
+            left: -10%;
+            animation-duration: 26s;
             opacity: 0.5;
         }
-        .cloud:nth-child(2) {
-            width: 140px;
-            height: 70px;
-            top: 18%;
-            right: -8%;
-            animation-duration: 34s;
-            animation-delay: -12s;
-            opacity: 0.45;
-        }
-        .cloud:nth-child(3) {
-            width: 200px;
-            height: 100px;
-            top: 55%;
-            left: 30%;
-            animation-duration: 38s;
-            animation-delay: -20s;
-            opacity: 0.35;
-        }
-        .cloud:nth-child(4) {
+        .splash-cloud:nth-child(2) {
             width: 120px;
             height: 60px;
-            top: 72%;
-            right: 15%;
-            animation-duration: 30s;
-            animation-delay: -6s;
+            top: 22%;
+            right: -12%;
+            animation-duration: 32s;
+            animation-delay: -14s;
             opacity: 0.4;
         }
-        @keyframes cloudFloat {
+        .splash-cloud:nth-child(3) {
+            width: 140px;
+            height: 70px;
+            bottom: 20%;
+            left: 15%;
+            animation-duration: 30s;
+            animation-delay: -8s;
+            opacity: 0.38;
+        }
+        @keyframes splashCloudFloat {
             0% {
                 transform: translateX(0) translateY(0);
             }
             25% {
-                transform: translateX(40px) translateY(-18px);
+                transform: translateX(30px) translateY(-14px);
             }
             50% {
-                transform: translateX(10px) translateY(-6px);
+                transform: translateX(8px) translateY(-4px);
             }
             75% {
-                transform: translateX(-20px) translateY(-22px);
+                transform: translateX(-18px) translateY(-18px);
             }
             100% {
                 transform: translateX(0) translateY(0);
             }
         }
-
-        .sparkle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: #FFD8A8;
+        .splash-logo-area {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .splash-logo-wrap {
+            position: relative;
+            z-index: 3;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
-            animation: sparkleFloat 5s ease-in-out infinite;
-            box-shadow: 0 0 8px 2px rgba(255, 216, 168, 0.6);
+            background: linear-gradient(145deg, #FFF8F5, #FFEEF2, #FDF5FF);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.2em;
+            box-shadow: 0 8px 32px rgba(255, 181, 194, 0.3);
+            animation: splashLogoBreathe 3s ease-in-out infinite;
         }
-        .sparkle:nth-child(5) {
-            top: 12%;
-            left: 18%;
-            animation-delay: 0s;
-            background: #FFE0C0;
-            box-shadow: 0 0 10px 3px rgba(255, 224, 192, 0.7);
-            width: 5px;
-            height: 5px;
-        }
-        .sparkle:nth-child(6) {
-            top: 25%;
-            left: 75%;
-            animation-delay: -1.8s;
-            background: #FFD4B8;
-            box-shadow: 0 0 7px 2px rgba(255, 212, 184, 0.55);
-            width: 3px;
-            height: 3px;
-        }
-        .sparkle:nth-child(7) {
-            top: 48%;
-            left: 8%;
-            animation-delay: -3.2s;
-            background: #FFECD0;
-            box-shadow: 0 0 9px 3px rgba(255, 236, 208, 0.65);
-        }
-        .sparkle:nth-child(8) {
-            top: 68%;
-            left: 82%;
-            animation-delay: -4.5s;
-            background: #FFE8CC;
-            box-shadow: 0 0 6px 2px rgba(255, 232, 204, 0.5);
-            width: 3px;
-            height: 3px;
-        }
-        @keyframes sparkleFloat {
+        @keyframes splashLogoBreathe {
             0%,
             100% {
-                opacity: 0.3;
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.06);
+            }
+        }
+        .splash-baby-name {
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #E8788A;
+            margin-top: 8px;
+            letter-spacing: 0.06em;
+            z-index: 3;
+        }
+        .splash-bottom {
+            position: absolute;
+            bottom: 14%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        .splash-dots {
+            display: flex;
+            gap: 12px;
+        }
+        .splash-dot {
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            animation: splashDotBounce 1.2s ease-in-out infinite;
+        }
+        .splash-dot:nth-child(1) {
+            background: #FFB5C2;
+            animation-delay: 0s;
+        }
+        .splash-dot:nth-child(2) {
+            background: #C8B8E8;
+            animation-delay: 0.14s;
+        }
+        .splash-dot:nth-child(3) {
+            background: #B5D8F7;
+            animation-delay: 0.28s;
+        }
+        .splash-dot:nth-child(4) {
+            background: #B5E8D5;
+            animation-delay: 0.42s;
+        }
+        .splash-dot:nth-child(5) {
+            background: #FFD4A8;
+            animation-delay: 0.56s;
+        }
+        @keyframes splashDotBounce {
+            0%,
+            100% {
                 transform: translateY(0) scale(1);
+                opacity: 0.5;
             }
             30% {
+                transform: translateY(-18px) scale(1.35);
                 opacity: 1;
-                transform: translateY(-16px) scale(1.6);
             }
             60% {
-                opacity: 0.45;
-                transform: translateY(-6px) scale(0.8);
+                transform: translateY(-6px) scale(0.9);
+                opacity: 0.7;
+            }
+        }
+        .splash-loading-text {
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            font-size: 0.95em;
+            color: #B8A9D4;
+            letter-spacing: 0.06em;
+            animation: splashTextShimmer 2.5s ease-in-out infinite;
+        }
+        @keyframes splashTextShimmer {
+            0%,
+            100% {
+                opacity: 0.55;
+            }
+            50% {
+                opacity: 1;
             }
         }
 
-        /* ========== 顶部状态栏 ========== */
+        /* 顶部栏 */
         .top-bar {
             position: sticky;
             top: 0;
@@ -221,19 +271,7 @@
             align-items: center;
             justify-content: center;
             font-size: 1.1em;
-            animation: logoBreathe 3s ease-in-out infinite;
             box-shadow: 0 3px 12px rgba(255, 181, 194, 0.35);
-        }
-        @keyframes logoBreathe {
-            0%,
-            100% {
-                transform: scale(1);
-                box-shadow: 0 3px 12px rgba(255, 181, 194, 0.35);
-            }
-            50% {
-                transform: scale(1.08);
-                box-shadow: 0 6px 20px rgba(255, 181, 194, 0.5);
-            }
         }
         .top-bar-appname {
             font-family: "ZCOOL KuaiLe", sans-serif;
@@ -255,19 +293,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s var(--transition-bounce);
-            color: var(--text-primary);
-            position: relative;
-        }
-        .top-bar-mine:active {
-            transform: scale(0.88);
-            background: rgba(200, 180, 220, 0.25);
-        }
-        .top-bar-mine:hover {
-            background: rgba(200, 180, 220, 0.2);
         }
 
-        /* ========== 侧边栏遮罩 & 面板 ========== */
+        /* 侧边栏 */
         .sidebar-overlay {
             position: fixed;
             top: 0;
@@ -278,7 +306,7 @@
             z-index: 2000;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.35s var(--transition-smooth);
+            transition: opacity 0.35s;
         }
         .sidebar-overlay.active {
             opacity: 1;
@@ -293,9 +321,8 @@
             height: 100%;
             background: rgba(255, 255, 255, 0.96);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             z-index: 2001;
-            transition: right 0.4s var(--transition-smooth);
+            transition: right 0.4s;
             padding: 24px 20px;
             display: flex;
             flex-direction: column;
@@ -314,14 +341,6 @@
             background: rgba(200, 180, 220, 0.15);
             cursor: pointer;
             font-size: 1.2em;
-            transition: all 0.3s var(--transition-bounce);
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .sidebar-close:active {
-            transform: scale(0.85);
         }
         .sidebar-user-info {
             text-align: center;
@@ -337,22 +356,10 @@
             align-items: center;
             justify-content: center;
             font-size: 2.2em;
-            box-shadow: 0 6px 24px rgba(255, 181, 194, 0.3);
-            animation: avatarBreathe 3.5s ease-in-out infinite;
-        }
-        @keyframes avatarBreathe {
-            0%,
-            100% {
-                box-shadow: 0 6px 24px rgba(255, 181, 194, 0.3);
-            }
-            50% {
-                box-shadow: 0 10px 32px rgba(255, 181, 194, 0.5);
-            }
         }
         .sidebar-username {
             font-family: "ZCOOL KuaiLe", sans-serif;
             font-size: 1.2em;
-            color: var(--text-primary);
         }
         .sidebar-links {
             display: flex;
@@ -368,41 +375,10 @@
             text-decoration: none;
             color: var(--text-primary);
             font-weight: 500;
-            transition: all 0.3s var(--transition-smooth);
-            font-size: 0.95em;
-        }
-        .sidebar-link:hover {
-            background: rgba(255, 180, 190, 0.15);
-        }
-        .sidebar-link:active {
-            transform: scale(0.96);
-            background: rgba(255, 180, 190, 0.25);
+            transition: all 0.3s;
         }
 
-        /* ========== Toast提示 ========== */
-        .toast-message {
-            position: fixed;
-            bottom: 28%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(80, 60, 90, 0.82);
-            color: white;
-            padding: 10px 22px;
-            border-radius: 40px;
-            font-size: 0.9rem;
-            z-index: 10000;
-            pointer-events: none;
-            white-space: nowrap;
-            backdrop-filter: blur(10px);
-            transition: opacity 0.3s;
-            opacity: 0;
-            letter-spacing: 0.03em;
-        }
-        .toast-message.show {
-            opacity: 1;
-        }
-
-        /* ========== 主内容容器 ========== */
+        /* 主内容容器 */
         .container {
             max-width: 600px;
             margin: 0 auto;
@@ -411,160 +387,276 @@
             z-index: 1;
         }
 
-        /* ========== 宝宝信息卡片 ========== */
-        .baby-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border-radius: var(--radius-xl);
-            padding: 22px 20px 18px;
-            box-shadow: var(--shadow-lg);
-            animation: cardFloat 5s ease-in-out infinite;
-            position: relative;
-            overflow: visible;
-            transition: all 0.4s var(--transition-smooth);
-        }
-        @keyframes cardFloat {
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-7px);
-            }
-        }
-        .baby-card-inner {
-            display: flex;
-            gap: 18px;
-            align-items: stretch;
-        }
-        /* 左侧头像区 */
-        .baby-avatar-wrap {
-            flex-shrink: 0;
+        /* 手账宝宝卡片 */
+        .card-group {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            transition: transform 0.35s var(--transition-bounce);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .journal {
             position: relative;
+            width: 100%;
+            background: #FFF9F2;
+            border-radius: 24px 24px 18px 18px;
+            box-shadow: 0 10px 32px rgba(160, 130, 110, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            display: flex;
+            overflow: hidden;
         }
-        .baby-avatar-wrap:active {
-            transform: scale(0.9);
+        .journal-spine {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 14px;
+            bottom: 14px;
+            width: 1px;
+            background: repeating-linear-gradient(to bottom, rgba(180, 150, 130, 0.4) 0px, rgba(180, 150, 130, 0.4) 5px, transparent 5px, transparent 11px);
+            z-index: 2;
+            pointer-events: none;
         }
-        .baby-avatar-ring {
-            width: 88px;
-            height: 88px;
+        .journal-spine::before,
+        .journal-spine::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
-            padding: 5px;
-            background: conic-gradient(from 0deg,
-                    #FFB5C2, #FFE0E8, #E8E0F5, #B5D8F7,
-                    #B5E8D5, #FFE8C0, #FFB5C2);
-            animation: ringRotate 8s linear infinite, ringBreathe 3s ease-in-out infinite;
-            box-shadow: 0 6px 22px rgba(200, 170, 200, 0.25);
+            background: #D4B896;
+            box-shadow: 0 0 0 3px rgba(210, 180, 150, 0.35);
         }
-        @keyframes ringRotate {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
+        .journal-spine::before {
+            top: -4px;
         }
-        @keyframes ringBreathe {
+        .journal-spine::after {
+            bottom: -4px;
+        }
+        .page-left {
+            flex: 1 1 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 14px 20px 20px;
+            z-index: 1;
+        }
+        .polaroid-frame {
+            width: 100%;
+            aspect-ratio: 3 / 4;
+            background: #FFFEF9;
+            border-radius: 8px;
+            padding: 9px 9px 30px 9px;
+            box-shadow: 3px 5px 18px rgba(140, 110, 80, 0.2);
+            position: relative;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s;
+            cursor: pointer;
+            transform: rotate(-1.2deg);
+            animation: polaroidSway 7s ease-in-out infinite;
+        }
+        @keyframes polaroidSway {
             0%,
             100% {
-                box-shadow: 0 6px 22px rgba(200, 170, 200, 0.25);
+                transform: rotate(-1.2deg);
             }
-            50% {
-                box-shadow: 0 10px 32px rgba(200, 170, 200, 0.45);
+            30% {
+                transform: rotate(-2deg);
+            }
+            60% {
+                transform: rotate(-0.3deg);
+            }
+            85% {
+                transform: rotate(-1.5deg);
             }
         }
-        .baby-avatar-inner {
+        .polaroid-photo {
             width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: linear-gradient(145deg, #FFF5F5, #FFE8EC, #F8F0FF);
+            aspect-ratio: 1 / 1;
+            background: linear-gradient(160deg, #FFF5F5, #FFE8EC, #FDF0F8, #FFF8F5);
+            border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.8em;
+            font-size: 4.5em;
             overflow: hidden;
-            border: 3px solid rgba(255, 255, 255, 0.7);
+            position: relative;
         }
-        .baby-avatar-inner img {
+        .polaroid-photo img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border-radius: 50%;
+            border-radius: 4px;
+            display: none;
         }
-        .baby-nickname {
+        .polaroid-photo img.show {
+            display: block;
+        }
+        .polaroid-photo .default-emoji {
+            position: absolute;
+            transition: opacity 0.3s;
+        }
+        .polaroid-photo.has-image .default-emoji {
+            opacity: 0;
+        }
+        .polaroid-caption {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
             font-family: "ZCOOL KuaiLe", sans-serif;
-            font-size: 1.15em;
-            color: var(--text-primary);
+            font-size: 1.05em;
+            color: #8B6E5E;
             font-weight: 700;
-            letter-spacing: 0.04em;
+            letter-spacing: 0.06em;
+            white-space: nowrap;
         }
-
-        /* 右侧信息区 */
-        .baby-info-right {
-            flex: 1;
+        .washi-tape {
+            position: absolute;
+            z-index: 3;
+            pointer-events: none;
+        }
+        .washi-tape-1 {
+            top: -8px;
+            left: 16%;
+            width: 52px;
+            height: 18px;
+            background: rgba(255, 181, 194, 0.75);
+            border-radius: 3px;
+            transform: rotate(-9deg);
+            box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.06);
+        }
+        .washi-tape-2 {
+            top: -5px;
+            right: 20%;
+            width: 42px;
+            height: 15px;
+            background: rgba(200, 184, 232, 0.7);
+            border-radius: 2px;
+            transform: rotate(6deg);
+            box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        .page-right {
+            flex: 1 1 50%;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
+            padding: 20px 20px 20px 10px;
             justify-content: center;
+            z-index: 1;
         }
-        .baby-info-row {
+        .info-slip {
+            background: #FFFEF7;
+            border-radius: 4px 18px 18px 4px;
+            padding: 11px 14px;
+            box-shadow: 1px 3px 9px rgba(180, 150, 130, 0.14);
+            font-size: 0.9em;
+            color: #5D4E6D;
             display: flex;
             align-items: center;
             gap: 8px;
-            flex-wrap: wrap;
-            animation: fadeInUp 0.6s var(--transition-smooth) both;
+            transition: all 0.25s;
+            border-left: 3px solid transparent;
         }
-        .baby-info-row:nth-child(1) {
-            animation-delay: 0.1s;
+        .info-slip:hover {
+            transform: translateX(4px);
+            border-left-color: #FFD4C0;
         }
-        .baby-info-row:nth-child(2) {
-            animation-delay: 0.25s;
+        .info-slip .slip-icon {
+            font-size: 1.2em;
+            flex-shrink: 0;
         }
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(14px);
-            }
-            to {
-                opacity: 1;
+        .info-slip .slip-label {
+            font-size: 0.78em;
+            color: #9B8DAB;
+            flex-shrink: 0;
+        }
+        .info-slip .slip-value {
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            font-weight: 700;
+            font-size: 1em;
+            margin-left: auto;
+            letter-spacing: 0.03em;
+            text-align: right;
+        }
+        .info-slip.birthday .slip-value {
+            color: #C08050;
+        }
+        .info-slip.age .slip-value {
+            color: #E8788A;
+        }
+        .info-slip.height .slip-value {
+            color: #5D8A6E;
+        }
+        .info-slip.weight .slip-value {
+            color: #5D8A6E;
+        }
+
+        .bottom-tickets {
+            display: flex;
+            gap: 14px;
+            width: 100%;
+            padding: 0 4px;
+        }
+        .ticket-card {
+            flex: 1;
+            background: #FFFEF9;
+            border-radius: 16px;
+            padding: 16px 10px 14px;
+            text-align: center;
+            box-shadow: 0 7px 20px rgba(160, 130, 100, 0.16);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: default;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            border: 1px solid rgba(220, 200, 180, 0.25);
+        }
+        .ticket-icon {
+            font-size: 1.6em;
+            display: block;
+            animation: ticketIconBounce 2.8s ease-in-out infinite;
+        }
+        @keyframes ticketIconBounce {
+            0%,
+            100% {
                 transform: translateY(0);
             }
+            30% {
+                transform: translateY(-7px);
+            }
+            55% {
+                transform: translateY(-2px);
+            }
         }
-        .baby-info-label {
-            font-size: 0.75em;
-            color: var(--text-light);
-            white-space: nowrap;
+        .ticket-label {
+            font-size: 0.8em;
+            color: #8B7D9B;
             font-weight: 500;
         }
-        .baby-info-value {
+        .ticket-value-row {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 4px;
             font-family: "ZCOOL KuaiLe", sans-serif;
-            font-size: 1.25em;
             font-weight: 700;
-            color: #E8788A;
-            animation: numberPop 0.5s var(--transition-bounce) both;
-            animation-delay: 0.4s;
-        }
-        .baby-info-value.countdown {
             color: #C08050;
-            animation: countdownPulse 1.5s ease-in-out infinite;
-            animation-delay: 0s;
         }
-        @keyframes numberPop {
-            0% {
-                transform: scale(0.5);
-                opacity: 0;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
+        .ticket-value-row .ticket-number {
+            font-size: 1.6em;
+            line-height: 1.1;
+        }
+        .ticket-value-row .ticket-unit {
+            font-size: 0.85em;
+            color: #B8A9D4;
+        }
+        .ticket-card.countdown .ticket-value-row {
+            color: #E8788A;
+        }
+        .ticket-card.countdown .ticket-number {
+            animation: countdownPulse 1.8s ease-in-out infinite;
         }
         @keyframes countdownPulse {
             0%,
@@ -572,71 +664,11 @@
                 transform: scale(1);
             }
             50% {
-                transform: scale(1.12);
+                transform: scale(1.1);
             }
-        }
-        .baby-info-icon {
-            font-size: 1.1em;
-            display: inline-block;
         }
 
-        /* 卡片底部横栏：身高体重 */
-        .baby-stats-bar {
-            display: flex;
-            gap: 14px;
-            margin-top: 14px;
-            padding-top: 12px;
-            border-top: 1px dashed rgba(200, 180, 220, 0.22);
-            animation: statsSway 4s ease-in-out infinite;
-        }
-        @keyframes statsSway {
-            0%,
-            100% {
-                transform: translateX(0);
-            }
-            25% {
-                transform: translateX(3px);
-            }
-            75% {
-                transform: translateX(-3px);
-            }
-        }
-        .baby-stat-item {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(240, 235, 250, 0.4);
-            border-radius: var(--radius-sm);
-            padding: 10px 12px;
-            transition: all 0.3s var(--transition-bounce);
-            cursor: default;
-        }
-        .baby-stat-item:hover {
-            background: rgba(240, 235, 250, 0.65);
-            transform: translateY(-2px);
-        }
-        .baby-stat-icon {
-            font-size: 1.5em;
-            flex-shrink: 0;
-        }
-        .baby-stat-info {
-            display: flex;
-            flex-direction: column;
-        }
-        .baby-stat-label {
-            font-size: 0.68em;
-            color: var(--text-light);
-            font-weight: 500;
-        }
-        .baby-stat-value {
-            font-family: "ZCOOL KuaiLe", sans-serif;
-            font-size: 1.15em;
-            font-weight: 700;
-            color: #5D8A6E;
-        }
-
-        /* ========== 快捷功能入口 ========== */
+        /* 快捷入口与记录区保持不变 */
         .quick-actions {
             display: flex;
             gap: 16px;
@@ -655,63 +687,16 @@
             cursor: pointer;
             background: var(--card-bg);
             backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
             box-shadow: var(--shadow-sm);
-            transition: all 0.35s var(--transition-bounce);
+            transition: all 0.35s;
             text-decoration: none;
             color: var(--text-primary);
             min-width: 90px;
-            position: relative;
-        }
-        .quick-action-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-md);
-            background: rgba(255, 255, 255, 0.9);
-        }
-        .quick-action-btn:active {
-            transform: scale(0.88);
-            box-shadow: var(--shadow-sm);
-        }
-        .quick-action-icon {
-            font-size: 2em;
-            transition: transform 0.35s var(--transition-bounce);
-            display: block;
-        }
-        .quick-action-btn:active .quick-action-icon {
-            transform: scale(1.3);
-        }
-        .quick-action-label {
-            font-family: "ZCOOL KuaiLe", sans-serif;
-            font-size: 0.88em;
-            font-weight: 600;
-            color: var(--text-secondary);
-            letter-spacing: 0.03em;
-        }
-        .quick-action-btn:nth-child(1) {
-            background: linear-gradient(135deg, rgba(255, 224, 232, 0.5), rgba(255, 255, 255, 0.7));
-        }
-        .quick-action-btn:nth-child(2) {
-            background: linear-gradient(135deg, rgba(224, 245, 235, 0.5), rgba(255, 255, 255, 0.7));
-        }
-        .quick-action-btn:nth-child(3) {
-            background: linear-gradient(135deg, rgba(232, 224, 245, 0.5), rgba(255, 255, 255, 0.7));
-        }
-
-        /* ========== 最新成长记录区 ========== */
-        .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin: 22px 0 14px;
-            padding: 0 4px;
         }
         .section-header h2 {
             font-family: "ZCOOL KuaiLe", sans-serif;
             font-size: 1.3em;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            margin: 22px 0 14px;
         }
         .record-grid {
             display: flex;
@@ -721,74 +706,21 @@
         .record-card {
             background: var(--card-bg);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             border-radius: var(--radius-lg);
             overflow: hidden;
             box-shadow: var(--shadow-sm);
-            transition: all 0.35s var(--transition-smooth);
-            animation: fadeInUp 0.55s var(--transition-smooth) both;
-            position: relative;
-        }
-        .record-card:nth-child(1) {
-            animation-delay: 0.05s;
-        }
-        .record-card:nth-child(2) {
-            animation-delay: 0.15s;
-        }
-        .record-card:nth-child(3) {
-            animation-delay: 0.25s;
-        }
-        .record-card:nth-child(4) {
-            animation-delay: 0.35s;
-        }
-        .record-card:nth-child(5) {
-            animation-delay: 0.45s;
-        }
-        .record-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-md);
-        }
-        .record-card:active {
-            transform: scale(0.97);
         }
         .record-card img {
             width: 100%;
             height: 180px;
             object-fit: cover;
-            display: block;
         }
-        .record-card .rc-body {
-            padding: 14px 16px;
-        }
-        .record-card .rc-date {
-            font-size: 0.74em;
-            color: #B8A9D4;
-            font-weight: 500;
-            margin-bottom: 2px;
-        }
-        .record-card .rc-title {
-            font-family: "ZCOOL KuaiLe", sans-serif;
-            font-size: 1.05em;
-            margin-bottom: 3px;
-            color: var(--text-primary);
-        }
-        .record-card .rc-desc {
-            font-size: 0.82em;
-            color: var(--text-secondary);
-            line-height: 1.45;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-        .record-card .rc-tag {
+        .rc-tag {
             display: inline-block;
             font-size: 0.7em;
             padding: 3px 10px;
             border-radius: 12px;
             font-weight: 600;
-            margin-bottom: 6px;
-            letter-spacing: 0.03em;
         }
         .tag-gallery {
             background: #FFE0E8;
@@ -798,27 +730,8 @@
             background: #E0F5EB;
             color: #5D8A6E;
         }
-        .tag-diary {
-            background: #FFF0E0;
-            color: #C08050;
-        }
-        .tag-messages {
-            background: #E8E0F5;
-            color: #7B68A0;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 44px 20px;
-            color: var(--text-light);
-            animation: fadeInUp 0.5s var(--transition-smooth) both;
-        }
-        .empty-state .empty-icon {
-            font-size: 3.2em;
-            margin-bottom: 10px;
-            display: block;
-        }
 
-        /* ========== 底部导航栏 ========== */
+        /* 底部导航 */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -827,69 +740,25 @@
             z-index: 1000;
             background: var(--nav-bg);
             backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
             border-top: 1px solid rgba(200, 180, 220, 0.1);
             border-radius: var(--radius-xl) var(--radius-xl) 0 0;
             display: flex;
             align-items: center;
             justify-content: space-around;
             padding: 6px 8px 12px;
-            box-shadow: 0 -6px 28px rgba(180, 160, 200, 0.1);
-            transition: all 0.3s var(--transition-smooth);
         }
         .bottom-nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
             text-decoration: none;
             color: var(--text-light);
             font-size: 0.68em;
-            font-weight: 500;
-            padding: 6px 10px;
-            border-radius: var(--radius-md);
-            transition: all 0.3s var(--transition-bounce);
-            position: relative;
-            letter-spacing: 0.03em;
-            cursor: pointer;
-            border: none;
-            background: none;
-            font-family: inherit;
-        }
-        .bottom-nav-item .nav-icon {
-            font-size: 1.55em;
-            transition: transform 0.3s var(--transition-bounce);
-            display: block;
         }
         .bottom-nav-item.active {
             color: #E8788A;
             font-weight: 700;
         }
-        .bottom-nav-item.active::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            width: 22px;
-            height: 3px;
-            border-radius: 3px;
-            background: #E8788A;
-            animation: navIndicator 0.4s var(--transition-bounce);
-        }
-        @keyframes navIndicator {
-            from {
-                transform: scaleX(0);
-            }
-            to {
-                transform: scaleX(1);
-            }
-        }
-        .bottom-nav-item:active {
-            transform: scale(0.85);
-        }
-        .bottom-nav-item:hover {
-            color: #E8788A;
-        }
-        /* +号特殊按钮 */
         .bottom-nav-add {
             position: relative;
             top: -22px;
@@ -899,44 +768,10 @@
             background: linear-gradient(135deg, #FFB5C2, #FF9AB2);
             border: 4px solid rgba(255, 255, 255, 0.85);
             box-shadow: 0 8px 26px rgba(255, 154, 178, 0.45);
-            display: flex;
-            align-items: center;
-            justify-content: center;
             font-size: 1.6em;
             color: white;
             cursor: pointer;
-            transition: all 0.35s var(--transition-bounce);
-            z-index: 5;
-            animation: addBtnBreathe 2.5s ease-in-out infinite;
         }
-        @keyframes addBtnBreathe {
-            0%,
-            100% {
-                box-shadow: 0 8px 26px rgba(255, 154, 178, 0.45);
-            }
-            50% {
-                box-shadow: 0 14px 36px rgba(255, 154, 178, 0.65);
-            }
-        }
-        .bottom-nav-add:active {
-            transform: scale(0.78) rotate(45deg);
-            box-shadow: 0 4px 14px rgba(255, 154, 178, 0.5);
-        }
-        .bottom-nav-add:hover {
-            transform: scale(1.08);
-            box-shadow: 0 12px 32px rgba(255, 154, 178, 0.6);
-        }
-        .bottom-nav-add-label {
-            position: absolute;
-            bottom: -24px;
-            font-size: 0.65em;
-            color: #E8788A;
-            font-weight: 700;
-            white-space: nowrap;
-            letter-spacing: 0.04em;
-        }
-
-        /* ========== 添加弹窗 ========== */
         .add-overlay {
             position: fixed;
             top: 0;
@@ -950,7 +785,7 @@
             justify-content: center;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.35s var(--transition-smooth);
+            transition: opacity 0.35s;
         }
         .add-overlay.active {
             opacity: 1;
@@ -958,264 +793,50 @@
         }
         .add-sheet {
             background: rgba(255, 255, 255, 0.96);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border-radius: var(--radius-xl) var(--radius-xl) 0 0;
             width: 100%;
             max-width: 500px;
             padding: 28px 20px 40px;
             transform: translateY(100%);
-            transition: transform 0.4s var(--transition-smooth);
-            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.12);
+            transition: transform 0.4s;
         }
         .add-overlay.active .add-sheet {
             transform: translateY(0);
         }
-        .add-sheet-title {
-            font-family: "ZCOOL KuaiLe", sans-serif;
-            font-size: 1.2em;
-            text-align: center;
-            margin-bottom: 20px;
-            color: var(--text-primary);
-        }
-        .add-sheet-options {
-            display: flex;
-            gap: 14px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .add-option {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            padding: 18px 16px;
-            border-radius: var(--radius-lg);
-            background: rgba(245, 240, 250, 0.6);
-            border: none;
-            cursor: pointer;
-            min-width: 85px;
-            transition: all 0.3s var(--transition-bounce);
-            text-decoration: none;
-            color: var(--text-primary);
-            font-family: inherit;
-        }
-        .add-option:active {
-            transform: scale(0.85);
-            background: rgba(255, 200, 210, 0.4);
-        }
-        .add-option-icon {
-            font-size: 2.2em;
-        }
-        .add-option-label {
-            font-size: 0.82em;
-            font-weight: 600;
-            letter-spacing: 0.03em;
-        }
-        .add-sheet-close {
-            display: block;
-            margin: 18px auto 0;
-            padding: 10px 30px;
-            border-radius: 30px;
-            border: none;
-            background: rgba(200, 180, 220, 0.2);
-            cursor: pointer;
-            font-size: 0.9em;
-            font-weight: 600;
-            color: var(--text-secondary);
-            transition: all 0.3s var(--transition-bounce);
-            letter-spacing: 0.04em;
-        }
-        .add-sheet-close:active {
-            transform: scale(0.9);
-            background: rgba(200, 180, 220, 0.35);
-        }
-
-        /* ========== 页脚 ========== */
-        .main-footer {
-            text-align: center;
-            padding: 30px 20px 20px;
-            position: relative;
-            z-index: 1;
-        }
-        .footer-text {
-            font-family: "ZCOOL KuaiLe", sans-serif;
-            color: var(--text-light);
-            font-size: 0.85em;
-            letter-spacing: 0.04em;
-        }
-
-        /* ========== 回到顶部按钮 ========== */
-        #backToTop {
-            position: fixed;
-            bottom: 110px;
-            right: 20px;
-            z-index: 999;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: none;
-            background: rgba(255, 255, 255, 0.85);
-            box-shadow: var(--shadow-sm);
-            font-size: 1.1em;
-            cursor: pointer;
-            display: none;
-            transition: all 0.3s var(--transition-bounce);
-            color: var(--text-primary);
-            backdrop-filter: blur(8px);
-        }
-        #backToTop:hover {
-            transform: scale(1.12);
-            box-shadow: var(--shadow-md);
-        }
-        #backToTop:active {
-            transform: scale(0.85);
-        }
-
-        /* ========== 响应式 - 手机端 ========== */
-        @media (max-width: 600px) {
-            .baby-card-inner {
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-                gap: 12px;
-            }
-            .baby-avatar-ring {
-                width: 76px;
-                height: 76px;
-                padding: 4px;
-            }
-            .baby-avatar-inner {
-                font-size: 2.4em;
-            }
-            .baby-info-right {
-                align-items: center;
-                gap: 5px;
-            }
-            .baby-info-row {
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-            .baby-stats-bar {
-                flex-direction: row;
-                gap: 10px;
-            }
-            .baby-stat-item {
-                padding: 8px 10px;
-            }
-            .quick-actions {
-                gap: 10px;
-            }
-            .quick-action-btn {
-                padding: 14px 16px;
-                min-width: 75px;
-                border-radius: var(--radius-md);
-            }
-            .quick-action-icon {
-                font-size: 1.7em;
-            }
-            .quick-action-label {
-                font-size: 0.78em;
-            }
-            .record-card img {
-                height: 150px;
-            }
-            .bottom-nav {
-                padding: 4px 4px 10px;
-                border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-            }
-            .bottom-nav-item {
-                font-size: 0.62em;
-                padding: 4px 6px;
-            }
-            .bottom-nav-item .nav-icon {
-                font-size: 1.35em;
-            }
-            .bottom-nav-add {
-                width: 46px;
-                height: 46px;
-                top: -18px;
-                font-size: 1.4em;
-                border-width: 3px;
-            }
-            .bottom-nav-add-label {
-                bottom: -20px;
-                font-size: 0.6em;
-            }
-            .top-bar {
-                height: 50px;
-                padding: 0 12px;
-            }
-            .top-bar-logo {
-                width: 28px;
-                height: 28px;
-                font-size: 0.95em;
-            }
-            .top-bar-appname {
-                font-size: 0.9em;
-            }
-            .top-bar-mine {
-                width: 32px;
-                height: 32px;
-                font-size: 1.1em;
-            }
-            .container {
-                padding: 8px 10px 14px;
-            }
-            .baby-card {
-                padding: 16px 14px 14px;
-                border-radius: var(--radius-lg);
-            }
-            .sidebar-panel {
-                width: 280px;
-                max-width: 78vw;
-            }
-            #backToTop {
-                bottom: 100px;
-                right: 12px;
-                width: 36px;
-                height: 36px;
-                font-size: 1em;
-            }
-        }
     </style>
 </head>
 <body>
-
-    <!-- ========== 背景装饰 ========== -->
-    <div class="bg-decorations">
-        <div class="cloud"></div>
-        <div class="cloud"></div>
-        <div class="cloud"></div>
-        <div class="cloud"></div>
-        <div class="sparkle"></div>
-        <div class="sparkle"></div>
-        <div class="sparkle"></div>
-        <div class="sparkle"></div>
+    <!-- 开屏加载界面 -->
+    <div class="splash-screen" id="splashScreen">
+        <div class="splash-cloud"></div>
+        <div class="splash-cloud"></div>
+        <div class="splash-cloud"></div>
+        <div class="splash-logo-area">
+            <div class="splash-logo-wrap"><span>🌱</span></div>
+            <div class="splash-baby-name">赵高钏</div>
+        </div>
+        <div class="splash-bottom">
+            <div class="splash-dots"><span class="splash-dot"></span><span class="splash-dot"></span><span class="splash-dot"></span><span class="splash-dot"></span><span class="splash-dot"></span></div>
+            <span class="splash-loading-text">正在加载成长的回忆…</span>
+        </div>
     </div>
 
-    <!-- ========== Toast提示 ========== -->
-    <div class="toast-message" id="toastMsg">提示</div>
-
-    <!-- ========== 顶部状态栏 ========== -->
+    <!-- 顶部栏 -->
     <header class="top-bar">
         <a href="/" class="top-bar-brand">
             <div class="top-bar-logo">🌱</div>
             <span class="top-bar-appname">成长手册</span>
         </a>
-        <button class="top-bar-mine" id="btnMine" aria-label="我的" onclick="toggleSidebar()">👤</button>
+        <button class="top-bar-mine" onclick="toggleSidebar()">👤</button>
     </header>
 
-    <!-- ========== 侧边栏遮罩 ========== -->
+    <!-- 侧边栏 -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-    <!-- ========== 侧边栏面板 ========== -->
     <aside class="sidebar-panel" id="sidebarPanel">
         <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
         <div class="sidebar-user-info">
             <div class="sidebar-avatar">🧸</div>
-            <div class="sidebar-username" sec:authorize="isAuthenticated()">
-                <span sec:authentication="name">用户</span>
-            </div>
+            <div class="sidebar-username" sec:authorize="isAuthenticated()"><span sec:authentication="name">用户</span></div>
             <div class="sidebar-username" sec:authorize="!isAuthenticated()">访客</div>
         </div>
         <div class="sidebar-links">
@@ -1227,347 +848,219 @@
         </div>
     </aside>
 
-    <!-- ========== 主内容 ========== -->
     <main class="container">
-
-        <!-- 宝宝信息卡片 -->
-        <div class="baby-card">
-            <div class="baby-card-inner">
-                <!-- 左侧头像区 -->
-                <div class="baby-avatar-wrap" onclick="window.location.href='/gallery'">
-                    <div class="baby-avatar-ring">
-                        <div class="baby-avatar-inner">
-                            <span>👶</span>
+        <!-- 手账宝宝信息卡片 -->
+        <div class="card-group">
+            <div class="journal">
+                <div class="journal-spine"></div>
+                <div class="page-left">
+                    <div class="polaroid-frame" id="polaroidFrame">
+                        <div class="washi-tape washi-tape-1"></div>
+                        <div class="washi-tape washi-tape-2"></div>
+                        <div class="polaroid-photo" id="polaroidPhoto">
+                            <span class="default-emoji">👶</span>
+                            <img id="avatarImg" src="#" alt="头像" style="display:none;">
                         </div>
+                        <span class="polaroid-caption">赵高钏</span>
                     </div>
-                    <span class="baby-nickname">赵高钏</span>
+                    <input type="file" id="avatarInput" accept="image/*" style="display:none;">
                 </div>
-                <!-- 右侧信息区 -->
-                <div class="baby-info-right">
-                    <div class="baby-info-row">
-                        <span class="baby-info-label">🎂 出生日期</span>
-                        <span class="baby-info-value">2017年2月24日</span>
+                <div class="page-right">
+                    <div class="info-slip birthday">
+                        <span class="slip-icon">🎂</span>
+                        <span class="slip-label">出生</span>
+                        <span class="slip-value">2017年2月24日</span>
                     </div>
-                    <div class="baby-info-row">
-                        <span class="baby-info-label">🎈 当前年龄</span>
-                        <span class="baby-info-value" id="ageNumber">--</span>
+                    <div class="info-slip age">
+                        <span class="slip-icon">🎈</span>
+                        <span class="slip-label">年龄</span>
+                        <span class="slip-value" id="ageNumber">--</span>
                     </div>
-                    <div class="baby-info-row">
-                        <span class="baby-info-icon">🌍</span>
-                        <span class="baby-info-label">来到世上</span>
-                        <span class="baby-info-value" id="totalDays">--</span>
-                        <span class="baby-info-label">天</span>
+                    <div class="info-slip height">
+                        <span class="slip-icon">📏</span>
+                        <span class="slip-label">身高</span>
+                        <!-- 使用单一表达式，Thymeleaf处理后会替换，静态时显示默认文本 -->
+                        <span class="slip-value" id="statHeight" th:text="${latestHeight != null ? latestHeight + ' cm' : '待记录'}">待记录</span>
                     </div>
-                    <div class="baby-info-row">
-                        <span class="baby-info-icon">🎂</span>
-                        <span class="baby-info-label">生日倒计时</span>
-                        <span class="baby-info-value countdown" id="birthdayCountdown">--</span>
-                        <span class="baby-info-label">天</span>
+                    <div class="info-slip weight">
+                        <span class="slip-icon">⚖️</span>
+                        <span class="slip-label">体重</span>
+                        <span class="slip-value" id="statWeight" th:text="${latestWeight != null ? latestWeight + ' kg' : '待记录'}">待记录</span>
                     </div>
                 </div>
             </div>
-            <!-- 底部横栏：身高体重 -->
-            <div class="baby-stats-bar">
-                <div class="baby-stat-item">
-                    <span class="baby-stat-icon">📏</span>
-                    <div class="baby-stat-info">
-                        <span class="baby-stat-label">身高</span>
-                        <span class="baby-stat-value" id="statHeight">
-                            <span th:if="${latestHeight != null}" th:text="${latestHeight} + ' cm'">-- cm</span>
-                            <span th:if="${latestHeight == null}">-- cm</span>
-                        </span>
+            <div class="bottom-tickets">
+                <div class="ticket-card">
+                    <span class="ticket-icon">🌍</span>
+                    <span class="ticket-label">来到世上</span>
+                    <div class="ticket-value-row">
+                        <span class="ticket-number" id="totalDays">--</span>
+                        <span class="ticket-unit">天</span>
                     </div>
                 </div>
-                <div class="baby-stat-item">
-                    <span class="baby-stat-icon">⚖️</span>
-                    <div class="baby-stat-info">
-                        <span class="baby-stat-label">体重</span>
-                        <span class="baby-stat-value" id="statWeight">
-                            <span th:if="${latestWeight != null}" th:text="${latestWeight} + ' kg'">-- kg</span>
-                            <span th:if="${latestWeight == null}">-- kg</span>
-                        </span>
+                <div class="ticket-card countdown">
+                    <span class="ticket-icon">🎂</span>
+                    <span class="ticket-label">生日倒计时</span>
+                    <div class="ticket-value-row">
+                        <span class="ticket-number" id="birthdayCountdown">--</span>
+                        <span class="ticket-unit">天</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 快捷功能入口 -->
+        <!-- 快捷入口 -->
         <div class="quick-actions">
-            <a href="/gallery" class="quick-action-btn">
-                <span class="quick-action-icon">📷</span>
-                <span class="quick-action-label">精选相册</span>
-            </a>
-            <a href="/growth" class="quick-action-btn">
-                <span class="quick-action-icon">📊</span>
-                <span class="quick-action-label">成长记录</span>
-            </a>
-            <a href="/messages" class="quick-action-btn">
-                <span class="quick-action-icon">💌</span>
-                <span class="quick-action-label">家人留言</span>
-            </a>
+            <a href="/gallery" class="quick-action-btn"><span>📷</span>精选相册</a>
+            <a href="/growth" class="quick-action-btn"><span>📊</span>成长记录</a>
+            <a href="/messages" class="quick-action-btn"><span>💌</span>家人留言</a>
         </div>
 
-        <!-- 最新成长记录 -->
-        <div class="section-header">
-            <h2>🌟 最新成长记录</h2>
-        </div>
-        <div th:if="${#lists.isEmpty(records)}" class="empty-state">
-            <span class="empty-icon">📸</span>
-            <p>还没有成长记录哦</p>
-            <p style="font-size:0.85em;margin-top:4px;">点击底部 + 开始记录宝宝的珍贵瞬间吧</p>
-        </div>
-        <div class="record-grid" id="recordsContainer">
-            <div class="record-card" th:each="record : ${records}" data-id="${record.id}">
-                <img th:if="${record.photoPath != null}" th:src="@{${record.photoPath}}" alt="照片"
-                onerror="this.style.display='none'">
-                <div class="rc-body">
-                    <span class="rc-tag"
-                    th:classappend="${record.category == 'gallery' ? 'tag-gallery' : (record.category == 'growth' ? 'tag-growth' : (record.category == 'diary' ? 'tag-diary' : 'tag-messages'))}"
-                th:text="${record.category == 'gallery' ? '📷 相册' : (record.category == 'growth' ? '📊 数据' : (record.category == 'diary' ? '📝 日记' : '💌 留言'))}">分类</span>
-                <div class="rc-date" th:text="${#temporals.format(record.recordDate, 'yyyy年MM月dd日')}">日期</div>
-                <div class="rc-title" th:text="${record.title}">标题</div>
-                <div class="rc-desc" th:text="${record.description}">描述</div>
+        <!-- 成长记录列表 -->
+        <div class="section-header"><h2>🌟 最新成长记录</h2></div>
+        <div th:if="${#lists.isEmpty(records)}">📸 还没有成长记录哦</div>
+        <div class="record-grid">
+            <div class="record-card" th:each="record : ${records}">
+                <img th:if="${record.photoPath != null}" th:src="@{${record.photoPath}}" onerror="this.style.display='none'">
+                <div style="padding:14px 16px;">
+                    <span class="rc-tag" th:classappend="${record.category == 'gallery' ? 'tag-gallery' : (record.category == 'growth' ? 'tag-growth' : '')}" th:text="${record.category}"></span>
+                    <div th:text="${#temporals.format(record.recordDate, 'yyyy年MM月dd日')}"></div>
+                    <div th:text="${record.title}"></div>
+                    <div th:text="${record.description}"></div>
+                </div>
             </div>
         </div>
-    </div>
-</main>
+    </main>
 
-<!-- ========== 页脚 ========== -->
-<footer class="main-footer">
-    <p class="footer-text">用爱与温暖，记录每一个珍贵的成长瞬间</p>
-</footer>
-
-<!-- ========== 回到顶部 ========== -->
-<button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="回到顶部">⬆</button>
-
-<!-- ========== 添加弹窗（+号触发） ========== -->
-<div class="add-overlay" id="addOverlay">
-    <div class="add-sheet">
-        <div class="add-sheet-title">✨ 添加新记录</div>
-        <div class="add-sheet-options">
-            <a href="/gallery" class="add-option">
-                <span class="add-option-icon">📷</span>
-                <span class="add-option-label">上传照片</span>
-            </a>
-            <a href="/growth" class="add-option">
-                <span class="add-option-icon">📊</span>
-                <span class="add-option-label">记录数据</span>
-            </a>
-            <a href="/messages" class="add-option">
-                <span class="add-option-icon">💌</span>
-                <span class="add-option-label">写留言</span>
-            </a>
+    <!-- 底部导航 -->
+    <nav class="bottom-nav">
+        <a href="/" class="bottom-nav-item active"><span>🏠</span>首页</a>
+        <a href="/gallery" class="bottom-nav-item"><span>📷</span>相册</a>
+        <button class="bottom-nav-add" onclick="openAddOverlay()">+</button>
+        <a href="/growth" class="bottom-nav-item"><span>📊</span>数据</a>
+        <a href="/messages" class="bottom-nav-item"><span>💌</span>留言</a>
+    </nav>
+    <div class="add-overlay" id="addOverlay">
+        <div class="add-sheet">
+            <div style="text-align:center;font-family:'ZCOOL KuaiLe',sans-serif;">✨ 添加新记录</div>
+            <div style="display:flex;gap:14px;justify-content:center;margin:20px 0;">
+                <a href="/gallery" style="text-decoration:none;color:#5D4E6D;">📷 上传照片</a>
+                <a href="/growth" style="text-decoration:none;color:#5D4E6D;">📊 记录数据</a>
+                <a href="/messages" style="text-decoration:none;color:#5D4E6D;">💌 写留言</a>
+            </div>
+            <button onclick="closeAddOverlay()" style="display:block;margin:0 auto;padding:10px 30px;border-radius:30px;border:none;background:rgba(200,180,220,0.2);">取消</button>
         </div>
-        <button class="add-sheet-close" onclick="closeAddOverlay()">取 消</button>
     </div>
-</div>
 
-<!-- ========== 底部导航栏 ========== -->
-<nav class="bottom-nav" id="bottomNav">
-    <a href="/" class="bottom-nav-item active">
-        <span class="nav-icon">🏠</span>
-        <span>首页</span>
-    </a>
-    <a href="/gallery" class="bottom-nav-item">
-        <span class="nav-icon">📷</span>
-        <span>相册</span>
-    </a>
-    <button class="bottom-nav-add" id="btnAdd" onclick="openAddOverlay()" aria-label="添加">
-        <span>+</span>
-        <span class="bottom-nav-add-label">添加</span>
-    </button>
-    <a href="/growth" class="bottom-nav-item">
-        <span class="nav-icon">📊</span>
-        <span>数据</span>
-    </a>
-    <a href="/messages" class="bottom-nav-item">
-        <span class="nav-icon">💌</span>
-        <span>留言</span>
-    </a>
-</nav>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        // 开屏加载
+        (function() {
+            var splash = document.getElementById('splashScreen');
+            var minTime = 1800,
+                maxTime = 3500;
+            var start = Date.now();
+            var done = false;
+            document.body.style.overflow = 'hidden';
 
-<script th:inline="javascript">
-    /*<![CDATA[*/
-    // ========== 年龄与倒计时计算 ==========
-    (function() {
-        var birthday = new Date(2017, 1, 24); // 2017年2月24日（月份从0开始）
-        var now = new Date();
+            function dismiss() {
+                if (done) return;
+                done = true;
+                splash.classList.add('fade-out');
+                var handler = function() {
+                    splash.removeEventListener('transitionend', handler);
+                    if (splash.parentNode) splash.parentNode.removeChild(splash);
+                    document.body.style.overflow = '';
+                };
+                splash.addEventListener('transitionend', handler);
+                setTimeout(function() {
+                    if (splash.parentNode) splash.parentNode.removeChild(splash);
+                    document.body.style.overflow = '';
+                }, 1000);
+            }
 
-        // 计算周岁和月龄
-        var y = now.getFullYear() - birthday.getFullYear();
-        var m = now.getMonth() - birthday.getMonth();
-        var d = now.getDate() - birthday.getDate();
-        if (d < 0) { m--;
-            d += new Date(now.getFullYear(), now.getMonth(), 0).getDate(); }
-        if (m < 0) { y--;
-            m += 12; }
+            function ready() {
+                var elapsed = Date.now() - start;
+                var delay = Math.max(0, minTime - elapsed);
+                delay = Math.min(delay, maxTime - elapsed);
+                if (delay <= 0) dismiss();
+                else setTimeout(dismiss, delay);
+            }
+            if (document.readyState === 'complete') ready();
+            else window.addEventListener('load', ready);
+            setTimeout(function() { if (!done) dismiss(); }, maxTime);
+        })();
 
-        var ageEl = document.getElementById('ageNumber');
-        if (ageEl) {
-            ageEl.textContent = y + '岁' + m + '个月' + d + '天';
-            // 数字弹跳动画
-            ageEl.style.animation = 'none';
-            ageEl.offsetHeight;
-            ageEl.style.animation = 'numberPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both';
+        // 动态年龄计算
+        (function() {
+            var birthday = new Date(2017, 1, 24);
+            var now = new Date();
+            var y = now.getFullYear() - birthday.getFullYear();
+            var m = now.getMonth() - birthday.getMonth();
+            var d = now.getDate() - birthday.getDate();
+            if (d < 0) { m--;
+                d += new Date(now.getFullYear(), now.getMonth(), 0).getDate(); }
+            if (m < 0) { y--;
+                m += 12; }
+            document.getElementById('ageNumber').textContent = y + '岁' + m + '个月' + d + '天';
+            var totalDays = Math.floor((now - birthday) / (1000 * 60 * 60 * 24));
+            document.getElementById('totalDays').textContent = totalDays;
+            var nextBirthday = new Date(now.getFullYear(), 1, 24);
+            if (now > nextBirthday) nextBirthday.setFullYear(nextBirthday.getFullYear() + 1);
+            document.getElementById('birthdayCountdown').textContent = Math.ceil((nextBirthday - now) / (1000 * 60 * 60 * 24));
+        })();
+
+        // 头像上传功能
+        (function() {
+            var polaroidFrame = document.getElementById('polaroidFrame');
+            var fileInput = document.getElementById('avatarInput');
+            var avatarImg = document.getElementById('avatarImg');
+            var photoContainer = document.getElementById('polaroidPhoto');
+
+            polaroidFrame.addEventListener('click', function() {
+                fileInput.click();
+            });
+
+            fileInput.addEventListener('change', function(e) {
+                var file = e.target.files[0];
+                if (!file) return;
+                var reader = new FileReader();
+                reader.onload = function(event) {
+                    avatarImg.src = event.target.result;
+                    avatarImg.style.display = 'block';
+                    photoContainer.classList.add('has-image');
+                };
+                reader.readAsDataURL(file);
+            });
+        })();
+
+        // 侧边栏切换
+        function toggleSidebar() {
+            var ov = document.getElementById('sidebarOverlay');
+            var pn = document.getElementById('sidebarPanel');
+            ov.classList.toggle('active');
+            pn.classList.toggle('active');
+            document.body.style.overflow = ov.classList.contains('active') ? 'hidden' : '';
         }
 
-        // 总天数
-        var totalDays = Math.floor((now.getTime() - birthday.getTime()) / (1000 * 60 * 60 * 24));
-        var totalDaysEl = document.getElementById('totalDays');
-        if (totalDaysEl) {
-            totalDaysEl.textContent = totalDays;
-            totalDaysEl.style.animation = 'none';
-            totalDaysEl.offsetHeight;
-            totalDaysEl.style.animation = 'numberPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both';
-            totalDaysEl.style.animationDelay = '0.15s';
-        }
-
-        // 生日倒计时
-        var nextBirthday = new Date(now.getFullYear(), 1, 24); // 2月24日
-        if (now > nextBirthday) nextBirthday.setFullYear(nextBirthday.getFullYear() + 1);
-        var countdown = Math.ceil((nextBirthday - now) / (1000 * 60 * 60 * 24));
-        var countdownEl = document.getElementById('birthdayCountdown');
-        if (countdownEl) {
-            countdownEl.textContent = countdown;
-        }
-    })();
-
-    // ========== 侧边栏切换 ==========
-    function toggleSidebar() {
-        var overlay = document.getElementById('sidebarOverlay');
-        var panel = document.getElementById('sidebarPanel');
-        var isActive = overlay.classList.contains('active');
-        if (isActive) {
-            overlay.classList.remove('active');
-            panel.classList.remove('active');
-            document.body.style.overflow = '';
-        } else {
-            overlay.classList.add('active');
-            panel.classList.add('active');
+        // 添加弹窗
+        function openAddOverlay() {
+            document.getElementById('addOverlay').classList.add('active');
             document.body.style.overflow = 'hidden';
         }
-    }
 
-    // 点击侧边栏链接后关闭侧边栏
-    document.querySelectorAll('.sidebar-link').forEach(function(link) {
-        link.addEventListener('click', function() {
-            setTimeout(function() {
-                var overlay = document.getElementById('sidebarOverlay');
-                var panel = document.getElementById('sidebarPanel');
-                overlay.classList.remove('active');
-                panel.classList.remove('active');
-                document.body.style.overflow = '';
-            }, 200);
-        });
-    });
-
-    // ========== 添加弹窗 ==========
-    function openAddOverlay() {
-        var overlay = document.getElementById('addOverlay');
-        overlay.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeAddOverlay() {
-        var overlay = document.getElementById('addOverlay');
-        overlay.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-
-    // 点击遮罩关闭
-    document.getElementById('addOverlay').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeAddOverlay();
-        }
-    });
-
-    // 点击添加选项后关闭弹窗
-    document.querySelectorAll('.add-option').forEach(function(opt) {
-        opt.addEventListener('click', function() {
-            setTimeout(closeAddOverlay, 150);
-        });
-    });
-
-    // ========== 滚动返回顶部按钮 ==========
-    window.addEventListener('scroll', function() {
-        var btn = document.getElementById('backToTop');
-        if (btn) {
-            btn.style.display = window.scrollY > 400 ? 'flex' : 'none';
-            btn.style.alignItems = 'center';
-            btn.style.justifyContent = 'center';
-        }
-    });
-
-    // ========== 移动端二次确认退出 ==========
-    var toastMsg = document.getElementById('toastMsg');
-    var exitTimer = null;
-    var isFirstBack = true;
-
-    function showToast(text) {
-        if (!toastMsg) return;
-        toastMsg.textContent = text;
-        toastMsg.classList.add('show');
-        if (exitTimer) clearTimeout(exitTimer);
-        exitTimer = setTimeout(function() { toastMsg.classList.remove('show'); }, 1500);
-    }
-
-    function hasOpenOverlay() {
-        var addOverlay = document.getElementById('addOverlay');
-        var sidebarOverlay = document.getElementById('sidebarOverlay');
-        return (addOverlay && addOverlay.classList.contains('active')) ||
-            (sidebarOverlay && sidebarOverlay.classList.contains('active'));
-    }
-
-    window.history.pushState({ page: "home" }, "", window.location.href);
-    window.addEventListener('popstate', function(event) {
-        if (hasOpenOverlay()) {
-            // 关闭所有打开的覆盖层
-            var addOverlay = document.getElementById('addOverlay');
-            var sidebarOverlay = document.getElementById('sidebarOverlay');
-            var sidebarPanel = document.getElementById('sidebarPanel');
-            if (addOverlay) addOverlay.classList.remove('active');
-            if (sidebarOverlay) sidebarOverlay.classList.remove('active');
-            if (sidebarPanel) sidebarPanel.classList.remove('active');
+        function closeAddOverlay() {
+            document.getElementById('addOverlay').classList.remove('active');
             document.body.style.overflow = '';
-            window.history.pushState({ page: "home" }, "", window.location.href);
-            return;
         }
+        document.getElementById('addOverlay').addEventListener('click', function(e) { if (e.target === this) closeAddOverlay(); });
 
-        if (isFirstBack) {
-            showToast('再按一次返回退出');
-            isFirstBack = false;
-            window.history.pushState({ page: "home" }, "", window.location.href);
-        } else {
-            window.history.back();
-        }
-        setTimeout(function() {
-            isFirstBack = true;
-        }, 3000);
-    });
-
-    // ========== 底部导航高亮 ==========
-    (function() {
-        var currentPath = window.location.pathname;
-        var navItems = document.querySelectorAll('.bottom-nav-item');
-        navItems.forEach(function(item) {
-            var href = item.getAttribute('href');
-            if (href && currentPath === href) {
-                item.classList.add('active');
-            } else if (href && currentPath.startsWith(href) && href !== '/') {
-                item.classList.add('active');
-            }
+        // 底部导航高亮
+        var path = window.location.pathname;
+        document.querySelectorAll('.bottom-nav-item').forEach(function(item) {
+            if (item.getAttribute('href') === path) item.classList.add('active');
         });
-        // 首页特殊处理
-        if (currentPath === '/' || currentPath === '') {
-            navItems.forEach(function(item) {
-                if (item.getAttribute('href') === '/') {
-                    item.classList.add('active');
-                }
-            });
-        }
-    })();
-
-    /*]]>*/
-</script>
+        /*]]>*/
+    </script>
 </body>
 </html>
