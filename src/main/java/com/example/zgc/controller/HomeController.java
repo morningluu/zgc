@@ -84,7 +84,9 @@ public class HomeController {
     @GetMapping("/growth")
     public String growth(Model model) {
         List<GrowthRecord> records = recordService.findByCategory("growth");
+        List<GrowthRecord> scoreRecords = recordService.findByCategory("score");
         model.addAttribute("records", records);
+        model.addAttribute("scoreRecords", scoreRecords);
         return "growth";
     }
 
@@ -105,6 +107,31 @@ public class HomeController {
         }
         if (weightKg != null && !weightKg.trim().isEmpty()) {
             record.setWeightKg(Double.parseDouble(weightKg));
+        }
+        record.setRecordedBy(recordedBy);
+        recordService.save(record);
+        return "redirect:/growth";
+    }
+
+    @PostMapping("/growth/addScore")
+    public String addScore(@RequestParam String title,
+                           @RequestParam String recordDate,
+                           @RequestParam(required = false) String chinese,
+                           @RequestParam(required = false) String math,
+                           @RequestParam(required = false) String english,
+                           @RequestParam String recordedBy) {
+        GrowthRecord record = new GrowthRecord();
+        record.setCategory("score");
+        record.setTitle(title);
+        record.setRecordDate(LocalDate.parse(recordDate));
+        if (chinese != null && !chinese.trim().isEmpty()) {
+            record.setChinese(Double.parseDouble(chinese));
+        }
+        if (math != null && !math.trim().isEmpty()) {
+            record.setMath(Double.parseDouble(math));
+        }
+        if (english != null && !english.trim().isEmpty()) {
+            record.setEnglish(Double.parseDouble(english));
         }
         record.setRecordedBy(recordedBy);
         recordService.save(record);
@@ -156,6 +183,17 @@ public class HomeController {
     public String deleteRecord(@PathVariable Long id) {
         GrowthRecord record = recordService.findById(id);
         if (record != null) {
+            recordService.delete(id);
+            return "ok";
+        }
+        return "error";
+    }
+
+    @PostMapping("/deleteScore/{id}")
+    @ResponseBody
+    public String deleteScoreRecord(@PathVariable Long id) {
+        GrowthRecord record = recordService.findById(id);
+        if (record != null && "score".equals(record.getCategory())) {
             recordService.delete(id);
             return "ok";
         }
