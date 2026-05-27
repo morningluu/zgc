@@ -9,207 +9,1526 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🌱</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: "Noto Sans SC", sans-serif; background: linear-gradient(180deg, #FFF8F5 0%, #F8F0FF 30%, #F0F8FF 60%, #FFF8F0 100%); background-attachment: fixed; color: #5D4E6D; min-height: 100vh; overflow-x: hidden; }
+        :root {
+            --pink: #FFB5C2;
+            --pink-deep: #FF9AB2;
+            --pink-light: #FFE0E8;
+            --purple: #C8B8E8;
+            --purple-deep: #B8A9D4;
+            --purple-light: #E8E0F5;
+            --blue: #B5D8F7;
+            --blue-light: #E0F0F8;
+            --green: #B5E8D5;
+            --green-light: #E0F5EB;
+            --yellow: #FFE8C0;
+            --yellow-light: #FFF8E8;
+            --white-soft: #FFFBF8;
+            --text-primary: #5D4E6D;
+            --text-secondary: #8B7D9B;
+            --text-light: #9B8DAB;
+            --card-bg: rgba(255, 255, 255, 0.78);
+            --nav-bg: rgba(255, 252, 248, 0.94);
+            --shadow-sm: 0 4px 16px rgba(180, 160, 200, 0.08);
+            --shadow-md: 0 8px 28px rgba(180, 160, 200, 0.13);
+            --shadow-lg: 0 16px 44px rgba(180, 160, 200, 0.18);
+            --radius-xl: 28px;
+            --radius-lg: 22px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
+            --transition-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Noto Sans SC", sans-serif;
+            background: linear-gradient(175deg,
+                    #FFF8F5 0%, #FEF5F8 8%, #F8F0FF 22%,
+                    #F5F0FA 35%, #F0F5FB 50%, #F5F8F5 65%,
+                    #FFFBF0 78%, #FFF8F5 100%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+            padding-bottom: 100px;
+            position: relative;
+        }
+
+        /* ========== 背景装饰：浮动云朵 & 星光 ========== */
+        .bg-decorations {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.55);
+            border-radius: 50%;
+            filter: blur(30px);
+            animation: cloudFloat linear infinite;
+        }
+        .cloud:nth-child(1) {
+            width: 180px;
+            height: 90px;
+            top: 6%;
+            left: -5%;
+            animation-duration: 28s;
+            opacity: 0.5;
+        }
+        .cloud:nth-child(2) {
+            width: 140px;
+            height: 70px;
+            top: 18%;
+            right: -8%;
+            animation-duration: 34s;
+            animation-delay: -12s;
+            opacity: 0.45;
+        }
+        .cloud:nth-child(3) {
+            width: 200px;
+            height: 100px;
+            top: 55%;
+            left: 30%;
+            animation-duration: 38s;
+            animation-delay: -20s;
+            opacity: 0.35;
+        }
+        .cloud:nth-child(4) {
+            width: 120px;
+            height: 60px;
+            top: 72%;
+            right: 15%;
+            animation-duration: 30s;
+            animation-delay: -6s;
+            opacity: 0.4;
+        }
+        @keyframes cloudFloat {
+            0% {
+                transform: translateX(0) translateY(0);
+            }
+            25% {
+                transform: translateX(40px) translateY(-18px);
+            }
+            50% {
+                transform: translateX(10px) translateY(-6px);
+            }
+            75% {
+                transform: translateX(-20px) translateY(-22px);
+            }
+            100% {
+                transform: translateX(0) translateY(0);
+            }
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #FFD8A8;
+            border-radius: 50%;
+            animation: sparkleFloat 5s ease-in-out infinite;
+            box-shadow: 0 0 8px 2px rgba(255, 216, 168, 0.6);
+        }
+        .sparkle:nth-child(5) {
+            top: 12%;
+            left: 18%;
+            animation-delay: 0s;
+            background: #FFE0C0;
+            box-shadow: 0 0 10px 3px rgba(255, 224, 192, 0.7);
+            width: 5px;
+            height: 5px;
+        }
+        .sparkle:nth-child(6) {
+            top: 25%;
+            left: 75%;
+            animation-delay: -1.8s;
+            background: #FFD4B8;
+            box-shadow: 0 0 7px 2px rgba(255, 212, 184, 0.55);
+            width: 3px;
+            height: 3px;
+        }
+        .sparkle:nth-child(7) {
+            top: 48%;
+            left: 8%;
+            animation-delay: -3.2s;
+            background: #FFECD0;
+            box-shadow: 0 0 9px 3px rgba(255, 236, 208, 0.65);
+        }
+        .sparkle:nth-child(8) {
+            top: 68%;
+            left: 82%;
+            animation-delay: -4.5s;
+            background: #FFE8CC;
+            box-shadow: 0 0 6px 2px rgba(255, 232, 204, 0.5);
+            width: 3px;
+            height: 3px;
+        }
+        @keyframes sparkleFloat {
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: translateY(0) scale(1);
+            }
+            30% {
+                opacity: 1;
+                transform: translateY(-16px) scale(1.6);
+            }
+            60% {
+                opacity: 0.45;
+                transform: translateY(-6px) scale(0.8);
+            }
+        }
+
+        /* ========== 顶部状态栏 ========== */
+        .top-bar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border-bottom: 1px solid rgba(200, 180, 220, 0.1);
+            padding: 0 16px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .top-bar-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        .top-bar-logo {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FFE0E8, #FFB5C2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1em;
+            animation: logoBreathe 3s ease-in-out infinite;
+            box-shadow: 0 3px 12px rgba(255, 181, 194, 0.35);
+        }
+        @keyframes logoBreathe {
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 3px 12px rgba(255, 181, 194, 0.35);
+            }
+            50% {
+                transform: scale(1.08);
+                box-shadow: 0 6px 20px rgba(255, 181, 194, 0.5);
+            }
+        }
+        .top-bar-appname {
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            font-size: 1.05em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #E8788A, #B8A9D4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .top-bar-mine {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(200, 180, 220, 0.12);
+            cursor: pointer;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s var(--transition-bounce);
+            color: var(--text-primary);
+            position: relative;
+        }
+        .top-bar-mine:active {
+            transform: scale(0.88);
+            background: rgba(200, 180, 220, 0.25);
+        }
+        .top-bar-mine:hover {
+            background: rgba(200, 180, 220, 0.2);
+        }
+
+        /* ========== 侧边栏遮罩 & 面板 ========== */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.35);
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s var(--transition-smooth);
+        }
+        .sidebar-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .sidebar-panel {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: 300px;
+            max-width: 82vw;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 2001;
+            transition: right 0.4s var(--transition-smooth);
+            padding: 24px 20px;
+            display: flex;
+            flex-direction: column;
+            border-radius: var(--radius-xl) 0 0 var(--radius-xl);
+            box-shadow: -8px 0 36px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar-panel.active {
+            right: 0;
+        }
+        .sidebar-close {
+            align-self: flex-end;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(200, 180, 220, 0.15);
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: all 0.3s var(--transition-bounce);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .sidebar-close:active {
+            transform: scale(0.85);
+        }
+        .sidebar-user-info {
+            text-align: center;
+            padding: 16px 0 24px;
+        }
+        .sidebar-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FFE0E8, #FFB5C2, #E8E0F5);
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2em;
+            box-shadow: 0 6px 24px rgba(255, 181, 194, 0.3);
+            animation: avatarBreathe 3.5s ease-in-out infinite;
+        }
+        @keyframes avatarBreathe {
+            0%,
+            100% {
+                box-shadow: 0 6px 24px rgba(255, 181, 194, 0.3);
+            }
+            50% {
+                box-shadow: 0 10px 32px rgba(255, 181, 194, 0.5);
+            }
+        }
+        .sidebar-username {
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            font-size: 1.2em;
+            color: var(--text-primary);
+        }
+        .sidebar-links {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 13px 16px;
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            transition: all 0.3s var(--transition-smooth);
+            font-size: 0.95em;
+        }
+        .sidebar-link:hover {
+            background: rgba(255, 180, 190, 0.15);
+        }
+        .sidebar-link:active {
+            transform: scale(0.96);
+            background: rgba(255, 180, 190, 0.25);
+        }
+
+        /* ========== Toast提示 ========== */
         .toast-message {
             position: fixed;
-            bottom: 30%;
+            bottom: 28%;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0,0,0,0.7);
+            background: rgba(80, 60, 90, 0.82);
             color: white;
-            padding: 10px 20px;
+            padding: 10px 22px;
             border-radius: 40px;
             font-size: 0.9rem;
             z-index: 10000;
             pointer-events: none;
             white-space: nowrap;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px);
             transition: opacity 0.3s;
             opacity: 0;
+            letter-spacing: 0.03em;
         }
-        .toast-message.show { opacity: 1; }
-        .main-nav { position: sticky; top: 0; z-index: 1000; background: rgba(255,255,255,0.82); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(200,180,220,0.18); padding: 0 20px; }
-        .nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 64px; }
-        .nav-brand { display: flex; align-items: center; gap: 8px; text-decoration: none; font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.3em; font-weight: 700; background: linear-gradient(135deg, #FF9AB2, #B8A9D4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .nav-brand .brand-emoji { font-size: 1.4em; animation: bounce 2s infinite; -webkit-text-fill-color: initial; }
-        .nav-links { display: flex; gap: 4px; align-items: center; }
-        .nav-link { display: flex; align-items: center; gap: 4px; padding: 8px 14px; border-radius: 25px; text-decoration: none; color: #5D4E6D; font-size: 0.88em; font-weight: 500; transition: all 0.3s; white-space: nowrap; }
-        .nav-link:hover { background: rgba(255,180,190,0.2); transform: translateY(-2px); }
-        .nav-link.active { background: rgba(255,180,190,0.25); font-weight: 700; }
-        .nav-toggle { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 8px; }
-        .nav-toggle span { width: 22px; height: 2px; background: #5D4E6D; border-radius: 2px; }
+        .toast-message.show {
+            opacity: 1;
+        }
 
-        .hero { text-align: center; padding: 50px 20px 30px; position: relative; }
-        .hero-badge { display: inline-block; background: linear-gradient(135deg, #FFB5C2, #FF9AB2); color: white; padding: 10px 28px; border-radius: 50px; font-weight: 700; font-size: 0.9em; box-shadow: 0 6px 24px rgba(255,154,178,0.4); margin-bottom: 20px; letter-spacing: 0.04em; }
-        .hero-title { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 2.8em; font-weight: 700; color: #E8788A; margin-bottom: 12px; line-height: 1.3; }
-        .hero-subtitle { color: #9B8DAB; font-size: 0.95em; margin-bottom: 24px; font-weight: 400; }
-        .hero-info-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-        .hero-age { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.85); padding: 12px 24px; border-radius: 20px; font-weight: 500; box-shadow: 0 4px 16px rgba(0,0,0,0.05); font-size: 0.9em; color: #6D5E7D; }
-        .hero-age .age-number { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.5em; color: #E8788A; font-weight: 700; }
+        /* ========== 主内容容器 ========== */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 12px 18px 20px;
+            position: relative;
+            z-index: 1;
+        }
 
-        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px 60px; }
-        .quick-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 40px; }
-        .quick-card { background: rgba(255,255,255,0.82); backdrop-filter: blur(10px); border-radius: 20px; padding: 24px 14px; text-align: center; text-decoration: none; color: #5D4E6D; box-shadow: 0 6px 24px rgba(180,160,200,0.1); transition: all 0.35s; }
-        .quick-card:hover { transform: translateY(-6px); box-shadow: 0 14px 36px rgba(180,160,200,0.22); }
-        .quick-card .qc-icon { font-size: 2.5em; display: block; margin-bottom: 10px; }
-        .quick-card .qc-title { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.1em; margin-bottom: 4px; color: #5D4E6D; }
-        .quick-card .qc-desc { font-size: 0.78em; color: #9B8DAB; }
+        /* ========== 宝宝信息卡片 ========== */
+        .baby-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-radius: var(--radius-xl);
+            padding: 22px 20px 18px;
+            box-shadow: var(--shadow-lg);
+            animation: cardFloat 5s ease-in-out infinite;
+            position: relative;
+            overflow: visible;
+            transition: all 0.4s var(--transition-smooth);
+        }
+        @keyframes cardFloat {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-7px);
+            }
+        }
+        .baby-card-inner {
+            display: flex;
+            gap: 18px;
+            align-items: stretch;
+        }
+        /* 左侧头像区 */
+        .baby-avatar-wrap {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: transform 0.35s var(--transition-bounce);
+            position: relative;
+        }
+        .baby-avatar-wrap:active {
+            transform: scale(0.9);
+        }
+        .baby-avatar-ring {
+            width: 88px;
+            height: 88px;
+            border-radius: 50%;
+            padding: 5px;
+            background: conic-gradient(from 0deg,
+                    #FFB5C2, #FFE0E8, #E8E0F5, #B5D8F7,
+                    #B5E8D5, #FFE8C0, #FFB5C2);
+            animation: ringRotate 8s linear infinite, ringBreathe 3s ease-in-out infinite;
+            box-shadow: 0 6px 22px rgba(200, 170, 200, 0.25);
+        }
+        @keyframes ringRotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        @keyframes ringBreathe {
+            0%,
+            100% {
+                box-shadow: 0 6px 22px rgba(200, 170, 200, 0.25);
+            }
+            50% {
+                box-shadow: 0 10px 32px rgba(200, 170, 200, 0.45);
+            }
+        }
+        .baby-avatar-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #FFF5F5, #FFE8EC, #F8F0FF);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.8em;
+            overflow: hidden;
+            border: 3px solid rgba(255, 255, 255, 0.7);
+        }
+        .baby-avatar-inner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .baby-nickname {
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            font-size: 1.15em;
+            color: var(--text-primary);
+            font-weight: 700;
+            letter-spacing: 0.04em;
+        }
 
-        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
-        .section-header h2 { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.5em; color: #5D4E6D; }
-        .record-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
-        .record-card { background: rgba(255,255,255,0.82); backdrop-filter: blur(10px); border-radius: 20px; overflow: hidden; box-shadow: 0 6px 24px rgba(180,160,200,0.1); transition: all 0.35s; position: relative; }
-        .record-card:hover { transform: translateY(-4px); box-shadow: 0 14px 36px rgba(180,160,200,0.22); }
-        .record-card img { width: 100%; height: 200px; object-fit: cover; }
-        .record-card .rc-body { padding: 16px 18px; }
-        .record-card .rc-date { font-size: 0.78em; color: #B8A9D4; font-weight: 500; margin-bottom: 2px; }
-        .record-card .rc-title { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.1em; margin-bottom: 4px; color: #5D4E6D; }
-        .record-card .rc-desc { font-size: 0.85em; color: #8B7D9B; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .record-card .rc-tag { display: inline-block; font-size: 0.72em; padding: 2px 10px; border-radius: 12px; font-weight: 600; margin-bottom: 6px; }
-        .tag-gallery { background: #FFE0E8; color: #E8788A; }
-        .tag-growth { background: #E0F5EB; color: #5D8A6E; }
-        .tag-diary { background: #FFF0E0; color: #C08050; }
-        .tag-messages { background: #E8E0F5; color: #7B68A0; }
-        /* 首页不显示删除按钮，因此样式保留但不影响（按钮已被移除） */
-        .empty-state { text-align: center; padding: 50px; color: #8B7D9B; }
-        .empty-state .empty-icon { font-size: 3.5em; margin-bottom: 12px; }
-        .main-footer { text-align: center; padding: 40px 20px; background: linear-gradient(180deg, transparent, rgba(200,180,220,0.12)); }
-        .footer-text { font-family: "ZCOOL KuaiLe", sans-serif; color: #9B8DAB; font-size: 0.95em; }
+        /* 右侧信息区 */
+        .baby-info-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            justify-content: center;
+        }
+        .baby-info-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.6s var(--transition-smooth) both;
+        }
+        .baby-info-row:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+        .baby-info-row:nth-child(2) {
+            animation-delay: 0.25s;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .baby-info-label {
+            font-size: 0.75em;
+            color: var(--text-light);
+            white-space: nowrap;
+            font-weight: 500;
+        }
+        .baby-info-value {
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            font-size: 1.25em;
+            font-weight: 700;
+            color: #E8788A;
+            animation: numberPop 0.5s var(--transition-bounce) both;
+            animation-delay: 0.4s;
+        }
+        .baby-info-value.countdown {
+            color: #C08050;
+            animation: countdownPulse 1.5s ease-in-out infinite;
+            animation-delay: 0s;
+        }
+        @keyframes numberPop {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        @keyframes countdownPulse {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.12);
+            }
+        }
+        .baby-info-icon {
+            font-size: 1.1em;
+            display: inline-block;
+        }
 
-        #backToTop { position: fixed; bottom: 30px; right: 30px; z-index: 999; width: 46px; height: 46px; border-radius: 50%; border: none; background: rgba(255,255,255,0.9); box-shadow: 0 4px 16px rgba(0,0,0,0.1); font-size: 1.3em; cursor: pointer; display: none; transition: all 0.3s; }
-        #backToTop:hover { transform: scale(1.1); }
+        /* 卡片底部横栏：身高体重 */
+        .baby-stats-bar {
+            display: flex;
+            gap: 14px;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px dashed rgba(200, 180, 220, 0.22);
+            animation: statsSway 4s ease-in-out infinite;
+        }
+        @keyframes statsSway {
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(3px);
+            }
+            75% {
+                transform: translateX(-3px);
+            }
+        }
+        .baby-stat-item {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(240, 235, 250, 0.4);
+            border-radius: var(--radius-sm);
+            padding: 10px 12px;
+            transition: all 0.3s var(--transition-bounce);
+            cursor: default;
+        }
+        .baby-stat-item:hover {
+            background: rgba(240, 235, 250, 0.65);
+            transform: translateY(-2px);
+        }
+        .baby-stat-icon {
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+        .baby-stat-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .baby-stat-label {
+            font-size: 0.68em;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+        .baby-stat-value {
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #5D8A6E;
+        }
 
-        @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+        /* ========== 快捷功能入口 ========== */
+        .quick-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .quick-action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 16px 20px;
+            border-radius: var(--radius-lg);
+            border: none;
+            cursor: pointer;
+            background: var(--card-bg);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.35s var(--transition-bounce);
+            text-decoration: none;
+            color: var(--text-primary);
+            min-width: 90px;
+            position: relative;
+        }
+        .quick-action-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+            background: rgba(255, 255, 255, 0.9);
+        }
+        .quick-action-btn:active {
+            transform: scale(0.88);
+            box-shadow: var(--shadow-sm);
+        }
+        .quick-action-icon {
+            font-size: 2em;
+            transition: transform 0.35s var(--transition-bounce);
+            display: block;
+        }
+        .quick-action-btn:active .quick-action-icon {
+            transform: scale(1.3);
+        }
+        .quick-action-label {
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            font-size: 0.88em;
+            font-weight: 600;
+            color: var(--text-secondary);
+            letter-spacing: 0.03em;
+        }
+        .quick-action-btn:nth-child(1) {
+            background: linear-gradient(135deg, rgba(255, 224, 232, 0.5), rgba(255, 255, 255, 0.7));
+        }
+        .quick-action-btn:nth-child(2) {
+            background: linear-gradient(135deg, rgba(224, 245, 235, 0.5), rgba(255, 255, 255, 0.7));
+        }
+        .quick-action-btn:nth-child(3) {
+            background: linear-gradient(135deg, rgba(232, 224, 245, 0.5), rgba(255, 255, 255, 0.7));
+        }
 
-        @media (max-width: 768px) {
-            .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; background: rgba(255,255,255,0.96); flex-direction: column; padding: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.05); }
-            .nav-links.active { display: flex; }
-            .nav-toggle { display: flex; }
-            .hero-title { font-size: 2em; }
-            .quick-grid { grid-template-columns: repeat(2, 1fr); }
-            .record-grid { grid-template-columns: 1fr; }
-            .hero-info-row { flex-direction: column; align-items: center; }
+        /* ========== 最新成长记录区 ========== */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 22px 0 14px;
+            padding: 0 4px;
+        }
+        .section-header h2 {
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            font-size: 1.3em;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .record-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .record-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.35s var(--transition-smooth);
+            animation: fadeInUp 0.55s var(--transition-smooth) both;
+            position: relative;
+        }
+        .record-card:nth-child(1) {
+            animation-delay: 0.05s;
+        }
+        .record-card:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+        .record-card:nth-child(3) {
+            animation-delay: 0.25s;
+        }
+        .record-card:nth-child(4) {
+            animation-delay: 0.35s;
+        }
+        .record-card:nth-child(5) {
+            animation-delay: 0.45s;
+        }
+        .record-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+        .record-card:active {
+            transform: scale(0.97);
+        }
+        .record-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+        }
+        .record-card .rc-body {
+            padding: 14px 16px;
+        }
+        .record-card .rc-date {
+            font-size: 0.74em;
+            color: #B8A9D4;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+        .record-card .rc-title {
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            font-size: 1.05em;
+            margin-bottom: 3px;
+            color: var(--text-primary);
+        }
+        .record-card .rc-desc {
+            font-size: 0.82em;
+            color: var(--text-secondary);
+            line-height: 1.45;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .record-card .rc-tag {
+            display: inline-block;
+            font-size: 0.7em;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            letter-spacing: 0.03em;
+        }
+        .tag-gallery {
+            background: #FFE0E8;
+            color: #E8788A;
+        }
+        .tag-growth {
+            background: #E0F5EB;
+            color: #5D8A6E;
+        }
+        .tag-diary {
+            background: #FFF0E0;
+            color: #C08050;
+        }
+        .tag-messages {
+            background: #E8E0F5;
+            color: #7B68A0;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 44px 20px;
+            color: var(--text-light);
+            animation: fadeInUp 0.5s var(--transition-smooth) both;
+        }
+        .empty-state .empty-icon {
+            font-size: 3.2em;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* ========== 底部导航栏 ========== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: var(--nav-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-top: 1px solid rgba(200, 180, 220, 0.1);
+            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 6px 8px 12px;
+            box-shadow: 0 -6px 28px rgba(180, 160, 200, 0.1);
+            transition: all 0.3s var(--transition-smooth);
+        }
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            text-decoration: none;
+            color: var(--text-light);
+            font-size: 0.68em;
+            font-weight: 500;
+            padding: 6px 10px;
+            border-radius: var(--radius-md);
+            transition: all 0.3s var(--transition-bounce);
+            position: relative;
+            letter-spacing: 0.03em;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: inherit;
+        }
+        .bottom-nav-item .nav-icon {
+            font-size: 1.55em;
+            transition: transform 0.3s var(--transition-bounce);
+            display: block;
+        }
+        .bottom-nav-item.active {
+            color: #E8788A;
+            font-weight: 700;
+        }
+        .bottom-nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            width: 22px;
+            height: 3px;
+            border-radius: 3px;
+            background: #E8788A;
+            animation: navIndicator 0.4s var(--transition-bounce);
+        }
+        @keyframes navIndicator {
+            from {
+                transform: scaleX(0);
+            }
+            to {
+                transform: scaleX(1);
+            }
+        }
+        .bottom-nav-item:active {
+            transform: scale(0.85);
+        }
+        .bottom-nav-item:hover {
+            color: #E8788A;
+        }
+        /* +号特殊按钮 */
+        .bottom-nav-add {
+            position: relative;
+            top: -22px;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FFB5C2, #FF9AB2);
+            border: 4px solid rgba(255, 255, 255, 0.85);
+            box-shadow: 0 8px 26px rgba(255, 154, 178, 0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6em;
+            color: white;
+            cursor: pointer;
+            transition: all 0.35s var(--transition-bounce);
+            z-index: 5;
+            animation: addBtnBreathe 2.5s ease-in-out infinite;
+        }
+        @keyframes addBtnBreathe {
+            0%,
+            100% {
+                box-shadow: 0 8px 26px rgba(255, 154, 178, 0.45);
+            }
+            50% {
+                box-shadow: 0 14px 36px rgba(255, 154, 178, 0.65);
+            }
+        }
+        .bottom-nav-add:active {
+            transform: scale(0.78) rotate(45deg);
+            box-shadow: 0 4px 14px rgba(255, 154, 178, 0.5);
+        }
+        .bottom-nav-add:hover {
+            transform: scale(1.08);
+            box-shadow: 0 12px 32px rgba(255, 154, 178, 0.6);
+        }
+        .bottom-nav-add-label {
+            position: absolute;
+            bottom: -24px;
+            font-size: 0.65em;
+            color: #E8788A;
+            font-weight: 700;
+            white-space: nowrap;
+            letter-spacing: 0.04em;
+        }
+
+        /* ========== 添加弹窗 ========== */
+        .add-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 3000;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s var(--transition-smooth);
+        }
+        .add-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .add-sheet {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+            width: 100%;
+            max-width: 500px;
+            padding: 28px 20px 40px;
+            transform: translateY(100%);
+            transition: transform 0.4s var(--transition-smooth);
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.12);
+        }
+        .add-overlay.active .add-sheet {
+            transform: translateY(0);
+        }
+        .add-sheet-title {
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            font-size: 1.2em;
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+        .add-sheet-options {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .add-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 18px 16px;
+            border-radius: var(--radius-lg);
+            background: rgba(245, 240, 250, 0.6);
+            border: none;
+            cursor: pointer;
+            min-width: 85px;
+            transition: all 0.3s var(--transition-bounce);
+            text-decoration: none;
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+        .add-option:active {
+            transform: scale(0.85);
+            background: rgba(255, 200, 210, 0.4);
+        }
+        .add-option-icon {
+            font-size: 2.2em;
+        }
+        .add-option-label {
+            font-size: 0.82em;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+        }
+        .add-sheet-close {
+            display: block;
+            margin: 18px auto 0;
+            padding: 10px 30px;
+            border-radius: 30px;
+            border: none;
+            background: rgba(200, 180, 220, 0.2);
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            color: var(--text-secondary);
+            transition: all 0.3s var(--transition-bounce);
+            letter-spacing: 0.04em;
+        }
+        .add-sheet-close:active {
+            transform: scale(0.9);
+            background: rgba(200, 180, 220, 0.35);
+        }
+
+        /* ========== 页脚 ========== */
+        .main-footer {
+            text-align: center;
+            padding: 30px 20px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .footer-text {
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            color: var(--text-light);
+            font-size: 0.85em;
+            letter-spacing: 0.04em;
+        }
+
+        /* ========== 回到顶部按钮 ========== */
+        #backToTop {
+            position: fixed;
+            bottom: 110px;
+            right: 20px;
+            z-index: 999;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.85);
+            box-shadow: var(--shadow-sm);
+            font-size: 1.1em;
+            cursor: pointer;
+            display: none;
+            transition: all 0.3s var(--transition-bounce);
+            color: var(--text-primary);
+            backdrop-filter: blur(8px);
+        }
+        #backToTop:hover {
+            transform: scale(1.12);
+            box-shadow: var(--shadow-md);
+        }
+        #backToTop:active {
+            transform: scale(0.85);
+        }
+
+        /* ========== 响应式 - 手机端 ========== */
+        @media (max-width: 600px) {
+            .baby-card-inner {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 12px;
+            }
+            .baby-avatar-ring {
+                width: 76px;
+                height: 76px;
+                padding: 4px;
+            }
+            .baby-avatar-inner {
+                font-size: 2.4em;
+            }
+            .baby-info-right {
+                align-items: center;
+                gap: 5px;
+            }
+            .baby-info-row {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .baby-stats-bar {
+                flex-direction: row;
+                gap: 10px;
+            }
+            .baby-stat-item {
+                padding: 8px 10px;
+            }
+            .quick-actions {
+                gap: 10px;
+            }
+            .quick-action-btn {
+                padding: 14px 16px;
+                min-width: 75px;
+                border-radius: var(--radius-md);
+            }
+            .quick-action-icon {
+                font-size: 1.7em;
+            }
+            .quick-action-label {
+                font-size: 0.78em;
+            }
+            .record-card img {
+                height: 150px;
+            }
+            .bottom-nav {
+                padding: 4px 4px 10px;
+                border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            }
+            .bottom-nav-item {
+                font-size: 0.62em;
+                padding: 4px 6px;
+            }
+            .bottom-nav-item .nav-icon {
+                font-size: 1.35em;
+            }
+            .bottom-nav-add {
+                width: 46px;
+                height: 46px;
+                top: -18px;
+                font-size: 1.4em;
+                border-width: 3px;
+            }
+            .bottom-nav-add-label {
+                bottom: -20px;
+                font-size: 0.6em;
+            }
+            .top-bar {
+                height: 50px;
+                padding: 0 12px;
+            }
+            .top-bar-logo {
+                width: 28px;
+                height: 28px;
+                font-size: 0.95em;
+            }
+            .top-bar-appname {
+                font-size: 0.9em;
+            }
+            .top-bar-mine {
+                width: 32px;
+                height: 32px;
+                font-size: 1.1em;
+            }
+            .container {
+                padding: 8px 10px 14px;
+            }
+            .baby-card {
+                padding: 16px 14px 14px;
+                border-radius: var(--radius-lg);
+            }
+            .sidebar-panel {
+                width: 280px;
+                max-width: 78vw;
+            }
+            #backToTop {
+                bottom: 100px;
+                right: 12px;
+                width: 36px;
+                height: 36px;
+                font-size: 1em;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="toast-message" id="toastMsg">提示</div>
+    <!-- ========== 背景装饰 ========== -->
+    <div class="bg-decorations">
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="sparkle"></div>
+        <div class="sparkle"></div>
+        <div class="sparkle"></div>
+        <div class="sparkle"></div>
+    </div>
 
-<nav class="main-nav">
-    <div class="nav-inner">
-        <a href="/" class="nav-brand"><span class="brand-emoji">🌱</span> 首页</a>
-        <div class="nav-links" id="navLinks">
-            <a href="/" class="nav-link active">🏠 首页</a>
-            <a href="/gallery" class="nav-link">📷 相册</a>
-            <a href="/growth" class="nav-link">📊 数据</a>
-            <a href="/diary" class="nav-link">📝 日记</a>
-            <a href="/messages" class="nav-link">💌 留言</a>
-            <a sec:authorize="!isAuthenticated()" href="/login" class="nav-link">🔐 登录</a>
-            <a sec:authorize="isAuthenticated()" href="/logout" class="nav-link">🚪 退出</a>
+    <!-- ========== Toast提示 ========== -->
+    <div class="toast-message" id="toastMsg">提示</div>
+
+    <!-- ========== 顶部状态栏 ========== -->
+    <header class="top-bar">
+        <a href="/" class="top-bar-brand">
+            <div class="top-bar-logo">🌱</div>
+            <span class="top-bar-appname">成长手册</span>
+        </a>
+        <button class="top-bar-mine" id="btnMine" aria-label="我的" onclick="toggleSidebar()">👤</button>
+    </header>
+
+    <!-- ========== 侧边栏遮罩 ========== -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    <!-- ========== 侧边栏面板 ========== -->
+    <aside class="sidebar-panel" id="sidebarPanel">
+        <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+        <div class="sidebar-user-info">
+            <div class="sidebar-avatar">🧸</div>
+            <div class="sidebar-username" sec:authorize="isAuthenticated()">
+                <span sec:authentication="name">用户</span>
+            </div>
+            <div class="sidebar-username" sec:authorize="!isAuthenticated()">访客</div>
         </div>
-        <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('active')">
-            <span></span><span></span><span></span>
-        </button>
-    </div>
-</nav>
+        <div class="sidebar-links">
+            <a sec:authorize="!isAuthenticated()" href="/login" class="sidebar-link">🔐 登录账号</a>
+            <a sec:authorize="isAuthenticated()" href="/logout" class="sidebar-link">🚪 退出登录</a>
+            <a href="/gallery" class="sidebar-link">📷 相册图集</a>
+            <a href="/growth" class="sidebar-link">📊 成长数据</a>
+            <a href="/messages" class="sidebar-link">💌 家人留言</a>
+        </div>
+    </aside>
 
-<section class="hero">
-    <div class="hero-badge">记录每一个珍贵瞬间</div>
-    <h1 class="hero-title">赵高钏的成长记录手册</h1>
-    <p class="hero-subtitle">用爱与温暖，陪伴宝宝快乐长大</p>
-    <div class="hero-info-row">
-        <div class="hero-age"><span>🎈 今天宝宝</span><span class="age-number" id="ageNumber">--</span></div>
-        <div class="hero-age"><span>🎂 下一次生日倒计时</span><span class="age-number" id="birthdayCountdown">--</span><span>天</span></div>
-    </div>
-</section>
+    <!-- ========== 主内容 ========== -->
+    <main class="container">
 
-<div class="container">
-    <div class="quick-grid">
-        <a href="/gallery" class="quick-card"><span class="qc-icon">📷</span><div class="qc-title">相册图集</div><div class="qc-desc">珍藏每一张笑脸</div></a>
-        <a href="/growth" class="quick-card"><span class="qc-icon">📊</span><div class="qc-title">成长数据</div><div class="qc-desc">身高体重记录</div></a>
-        <a href="/diary" class="quick-card"><span class="qc-icon">📝</span><div class="qc-title">趣事日记</div><div class="qc-desc">点滴美好文字</div></a>
-        <a href="/messages" class="quick-card"><span class="qc-icon">💌</span><div class="qc-title">时光留言</div><div class="qc-desc">家人的温暖寄语</div></a>
-    </div>
+        <!-- 宝宝信息卡片 -->
+        <div class="baby-card">
+            <div class="baby-card-inner">
+                <!-- 左侧头像区 -->
+                <div class="baby-avatar-wrap" onclick="window.location.href='/gallery'">
+                    <div class="baby-avatar-ring">
+                        <div class="baby-avatar-inner">
+                            <span>👶</span>
+                        </div>
+                    </div>
+                    <span class="baby-nickname">赵高钏</span>
+                </div>
+                <!-- 右侧信息区 -->
+                <div class="baby-info-right">
+                    <div class="baby-info-row">
+                        <span class="baby-info-label">🎂 出生日期</span>
+                        <span class="baby-info-value">2017年2月24日</span>
+                    </div>
+                    <div class="baby-info-row">
+                        <span class="baby-info-label">🎈 当前年龄</span>
+                        <span class="baby-info-value" id="ageNumber">--</span>
+                    </div>
+                    <div class="baby-info-row">
+                        <span class="baby-info-icon">🌍</span>
+                        <span class="baby-info-label">来到世上</span>
+                        <span class="baby-info-value" id="totalDays">--</span>
+                        <span class="baby-info-label">天</span>
+                    </div>
+                    <div class="baby-info-row">
+                        <span class="baby-info-icon">🎂</span>
+                        <span class="baby-info-label">生日倒计时</span>
+                        <span class="baby-info-value countdown" id="birthdayCountdown">--</span>
+                        <span class="baby-info-label">天</span>
+                    </div>
+                </div>
+            </div>
+            <!-- 底部横栏：身高体重 -->
+            <div class="baby-stats-bar">
+                <div class="baby-stat-item">
+                    <span class="baby-stat-icon">📏</span>
+                    <div class="baby-stat-info">
+                        <span class="baby-stat-label">身高</span>
+                        <span class="baby-stat-value" id="statHeight">
+                            <span th:if="${latestHeight != null}" th:text="${latestHeight} + ' cm'">-- cm</span>
+                            <span th:if="${latestHeight == null}">-- cm</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="baby-stat-item">
+                    <span class="baby-stat-icon">⚖️</span>
+                    <div class="baby-stat-info">
+                        <span class="baby-stat-label">体重</span>
+                        <span class="baby-stat-value" id="statWeight">
+                            <span th:if="${latestWeight != null}" th:text="${latestWeight} + ' kg'">-- kg</span>
+                            <span th:if="${latestWeight == null}">-- kg</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <div class="section-header"><h2>🌟 最新成长记录</h2></div>
+        <!-- 快捷功能入口 -->
+        <div class="quick-actions">
+            <a href="/gallery" class="quick-action-btn">
+                <span class="quick-action-icon">📷</span>
+                <span class="quick-action-label">精选相册</span>
+            </a>
+            <a href="/growth" class="quick-action-btn">
+                <span class="quick-action-icon">📊</span>
+                <span class="quick-action-label">成长记录</span>
+            </a>
+            <a href="/messages" class="quick-action-btn">
+                <span class="quick-action-icon">💌</span>
+                <span class="quick-action-label">家人留言</span>
+            </a>
+        </div>
 
-    <div th:if="${#lists.isEmpty(records)}" class="empty-state">
-        <div class="empty-icon">📸</div>
-        <p>还没有成长记录哦</p>
-        <p style="font-size:0.9em;">登录后开始记录宝宝的每一个珍贵瞬间吧</p>
-    </div>
-
-    <div class="record-grid" id="recordsContainer">
-        <div class="record-card" th:each="record : ${records}" data-id="${record.id}">
-            <!-- 注意：首页不显示删除按钮，删除请到对应的相册/数据/日记/留言页面操作 -->
-            <img th:if="${record.photoPath != null}" th:src="@{${record.photoPath}}" alt="照片"
-                 onerror="this.style.display='none'">
-            <div class="rc-body">
-                <span class="rc-tag" th:classappend="${record.category == 'gallery' ? 'tag-gallery' : (record.category == 'growth' ? 'tag-growth' : (record.category == 'diary' ? 'tag-diary' : 'tag-messages'))}"
-                      th:text="${record.category == 'gallery' ? '📷 相册' : (record.category == 'growth' ? '📊 数据' : (record.category == 'diary' ? '📝 日记' : '💌 留言'))}">分类</span>
+        <!-- 最新成长记录 -->
+        <div class="section-header">
+            <h2>🌟 最新成长记录</h2>
+        </div>
+        <div th:if="${#lists.isEmpty(records)}" class="empty-state">
+            <span class="empty-icon">📸</span>
+            <p>还没有成长记录哦</p>
+            <p style="font-size:0.85em;margin-top:4px;">点击底部 + 开始记录宝宝的珍贵瞬间吧</p>
+        </div>
+        <div class="record-grid" id="recordsContainer">
+            <div class="record-card" th:each="record : ${records}" data-id="${record.id}">
+                <img th:if="${record.photoPath != null}" th:src="@{${record.photoPath}}" alt="照片"
+                onerror="this.style.display='none'">
+                <div class="rc-body">
+                    <span class="rc-tag"
+                    th:classappend="${record.category == 'gallery' ? 'tag-gallery' : (record.category == 'growth' ? 'tag-growth' : (record.category == 'diary' ? 'tag-diary' : 'tag-messages'))}"
+                th:text="${record.category == 'gallery' ? '📷 相册' : (record.category == 'growth' ? '📊 数据' : (record.category == 'diary' ? '📝 日记' : '💌 留言'))}">分类</span>
                 <div class="rc-date" th:text="${#temporals.format(record.recordDate, 'yyyy年MM月dd日')}">日期</div>
                 <div class="rc-title" th:text="${record.title}">标题</div>
                 <div class="rc-desc" th:text="${record.description}">描述</div>
             </div>
         </div>
     </div>
+</main>
+
+<!-- ========== 页脚 ========== -->
+<footer class="main-footer">
+    <p class="footer-text">用爱与温暖，记录每一个珍贵的成长瞬间</p>
+</footer>
+
+<!-- ========== 回到顶部 ========== -->
+<button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="回到顶部">⬆</button>
+
+<!-- ========== 添加弹窗（+号触发） ========== -->
+<div class="add-overlay" id="addOverlay">
+    <div class="add-sheet">
+        <div class="add-sheet-title">✨ 添加新记录</div>
+        <div class="add-sheet-options">
+            <a href="/gallery" class="add-option">
+                <span class="add-option-icon">📷</span>
+                <span class="add-option-label">上传照片</span>
+            </a>
+            <a href="/growth" class="add-option">
+                <span class="add-option-icon">📊</span>
+                <span class="add-option-label">记录数据</span>
+            </a>
+            <a href="/messages" class="add-option">
+                <span class="add-option-icon">💌</span>
+                <span class="add-option-label">写留言</span>
+            </a>
+        </div>
+        <button class="add-sheet-close" onclick="closeAddOverlay()">取 消</button>
+    </div>
 </div>
 
-<footer class="main-footer"><p class="footer-text">用爱与温暖，记录每一个珍贵的成长瞬间</p></footer>
-
-<button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆</button>
+<!-- ========== 底部导航栏 ========== -->
+<nav class="bottom-nav" id="bottomNav">
+    <a href="/" class="bottom-nav-item active">
+        <span class="nav-icon">🏠</span>
+        <span>首页</span>
+    </a>
+    <a href="/gallery" class="bottom-nav-item">
+        <span class="nav-icon">📷</span>
+        <span>相册</span>
+    </a>
+    <button class="bottom-nav-add" id="btnAdd" onclick="openAddOverlay()" aria-label="添加">
+        <span>+</span>
+        <span class="bottom-nav-add-label">添加</span>
+    </button>
+    <a href="/growth" class="bottom-nav-item">
+        <span class="nav-icon">📊</span>
+        <span>数据</span>
+    </a>
+    <a href="/messages" class="bottom-nav-item">
+        <span class="nav-icon">💌</span>
+        <span>留言</span>
+    </a>
+</nav>
 
 <script th:inline="javascript">
     /*<![CDATA[*/
-    // 年龄计算
+    // ========== 年龄与倒计时计算 ==========
     (function() {
-        var birthday = new Date(2017, 1, 24);
+        var birthday = new Date(2017, 1, 24); // 2017年2月24日（月份从0开始）
         var now = new Date();
+
+        // 计算周岁和月龄
         var y = now.getFullYear() - birthday.getFullYear();
         var m = now.getMonth() - birthday.getMonth();
         var d = now.getDate() - birthday.getDate();
-        if (d < 0) { m--; d += new Date(now.getFullYear(), now.getMonth(), 0).getDate(); }
-        if (m < 0) { y--; m += 12; }
-        document.getElementById('ageNumber').textContent = y + '岁' + m + '个月' + d + '天';
+        if (d < 0) { m--;
+            d += new Date(now.getFullYear(), now.getMonth(), 0).getDate(); }
+        if (m < 0) { y--;
+            m += 12; }
 
-        var nextBirthday = new Date(now.getFullYear(), 1, 24);
+        var ageEl = document.getElementById('ageNumber');
+        if (ageEl) {
+            ageEl.textContent = y + '岁' + m + '个月' + d + '天';
+            // 数字弹跳动画
+            ageEl.style.animation = 'none';
+            ageEl.offsetHeight;
+            ageEl.style.animation = 'numberPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both';
+        }
+
+        // 总天数
+        var totalDays = Math.floor((now.getTime() - birthday.getTime()) / (1000 * 60 * 60 * 24));
+        var totalDaysEl = document.getElementById('totalDays');
+        if (totalDaysEl) {
+            totalDaysEl.textContent = totalDays;
+            totalDaysEl.style.animation = 'none';
+            totalDaysEl.offsetHeight;
+            totalDaysEl.style.animation = 'numberPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both';
+            totalDaysEl.style.animationDelay = '0.15s';
+        }
+
+        // 生日倒计时
+        var nextBirthday = new Date(now.getFullYear(), 1, 24); // 2月24日
         if (now > nextBirthday) nextBirthday.setFullYear(nextBirthday.getFullYear() + 1);
-        document.getElementById('birthdayCountdown').textContent = Math.ceil((nextBirthday - now) / (1000*60*60*24));
+        var countdown = Math.ceil((nextBirthday - now) / (1000 * 60 * 60 * 24));
+        var countdownEl = document.getElementById('birthdayCountdown');
+        if (countdownEl) {
+            countdownEl.textContent = countdown;
+        }
     })();
 
-    // 滚动返回顶部
-    window.addEventListener('scroll', function() { document.getElementById('backToTop').style.display = window.scrollY > 300 ? 'block' : 'none'; });
-    // 移动端菜单关闭
-    document.querySelectorAll('#navLinks .nav-link').forEach(function(l) { l.addEventListener('click', function() { document.getElementById('navLinks').classList.remove('active'); }); });
+    // ========== 侧边栏切换 ==========
+    function toggleSidebar() {
+        var overlay = document.getElementById('sidebarOverlay');
+        var panel = document.getElementById('sidebarPanel');
+        var isActive = overlay.classList.contains('active');
+        if (isActive) {
+            overlay.classList.remove('active');
+            panel.classList.remove('active');
+            document.body.style.overflow = '';
+        } else {
+            overlay.classList.add('active');
+            panel.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+    }
 
-    // ========== 二次确认退出（手机端） ==========
+    // 点击侧边栏链接后关闭侧边栏
+    document.querySelectorAll('.sidebar-link').forEach(function(link) {
+        link.addEventListener('click', function() {
+            setTimeout(function() {
+                var overlay = document.getElementById('sidebarOverlay');
+                var panel = document.getElementById('sidebarPanel');
+                overlay.classList.remove('active');
+                panel.classList.remove('active');
+                document.body.style.overflow = '';
+            }, 200);
+        });
+    });
+
+    // ========== 添加弹窗 ==========
+    function openAddOverlay() {
+        var overlay = document.getElementById('addOverlay');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeAddOverlay() {
+        var overlay = document.getElementById('addOverlay');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    // 点击遮罩关闭
+    document.getElementById('addOverlay').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeAddOverlay();
+        }
+    });
+
+    // 点击添加选项后关闭弹窗
+    document.querySelectorAll('.add-option').forEach(function(opt) {
+        opt.addEventListener('click', function() {
+            setTimeout(closeAddOverlay, 150);
+        });
+    });
+
+    // ========== 滚动返回顶部按钮 ==========
+    window.addEventListener('scroll', function() {
+        var btn = document.getElementById('backToTop');
+        if (btn) {
+            btn.style.display = window.scrollY > 400 ? 'flex' : 'none';
+            btn.style.alignItems = 'center';
+            btn.style.justifyContent = 'center';
+        }
+    });
+
+    // ========== 移动端二次确认退出 ==========
     var toastMsg = document.getElementById('toastMsg');
     var exitTimer = null;
     var isFirstBack = true;
 
     function showToast(text) {
+        if (!toastMsg) return;
         toastMsg.textContent = text;
         toastMsg.classList.add('show');
         if (exitTimer) clearTimeout(exitTimer);
         exitTimer = setTimeout(function() { toastMsg.classList.remove('show'); }, 1500);
     }
 
-    // 检查是否有打开的全屏覆盖层（例如相册大图、添加弹窗等），这些页面会独立处理返回，这里只处理首页本身
     function hasOpenOverlay() {
-        // 首页通常没有大图弹窗，但可能有其他页面（比如相册的大图）在首页不存在，为了通用，检查所有可能的活动覆盖层
-        var overlays = document.querySelectorAll('.photo-viewer.active, .add-overlay.active');
-        return overlays.length > 0;
+        var addOverlay = document.getElementById('addOverlay');
+        var sidebarOverlay = document.getElementById('sidebarOverlay');
+        return (addOverlay && addOverlay.classList.contains('active')) ||
+            (sidebarOverlay && sidebarOverlay.classList.contains('active'));
     }
 
     window.history.pushState({ page: "home" }, "", window.location.href);
     window.addEventListener('popstate', function(event) {
-        // 如果存在打开的覆盖层（弹窗），关闭它们，不退出
         if (hasOpenOverlay()) {
-            var overlays = document.querySelectorAll('.photo-viewer.active, .add-overlay.active');
-            overlays.forEach(function(ov) { ov.classList.remove('active'); });
-            // 阻止默认返回行为，重新推入状态
+            // 关闭所有打开的覆盖层
+            var addOverlay = document.getElementById('addOverlay');
+            var sidebarOverlay = document.getElementById('sidebarOverlay');
+            var sidebarPanel = document.getElementById('sidebarPanel');
+            if (addOverlay) addOverlay.classList.remove('active');
+            if (sidebarOverlay) sidebarOverlay.classList.remove('active');
+            if (sidebarPanel) sidebarPanel.classList.remove('active');
+            document.body.style.overflow = '';
             window.history.pushState({ page: "home" }, "", window.location.href);
             return;
         }
@@ -217,19 +1536,38 @@
         if (isFirstBack) {
             showToast('再按一次返回退出');
             isFirstBack = false;
-            // 重新推入一个状态，让下一次返回再次触发
             window.history.pushState({ page: "home" }, "", window.location.href);
         } else {
-            // 真正退出
             window.history.back();
         }
-        // 3秒后重置标志
         setTimeout(function() {
             isFirstBack = true;
         }, 3000);
     });
+
+    // ========== 底部导航高亮 ==========
+    (function() {
+        var currentPath = window.location.pathname;
+        var navItems = document.querySelectorAll('.bottom-nav-item');
+        navItems.forEach(function(item) {
+            var href = item.getAttribute('href');
+            if (href && currentPath === href) {
+                item.classList.add('active');
+            } else if (href && currentPath.startsWith(href) && href !== '/') {
+                item.classList.add('active');
+            }
+        });
+        // 首页特殊处理
+        if (currentPath === '/' || currentPath === '') {
+            navItems.forEach(function(item) {
+                if (item.getAttribute('href') === '/') {
+                    item.classList.add('active');
+                }
+            });
+        }
+    })();
+
     /*]]>*/
 </script>
-
 </body>
 </html>
