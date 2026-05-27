@@ -27,7 +27,35 @@ public class HomeController {
     @GetMapping("/")
     public String home(Model model) {
         List<GrowthRecord> records = recordService.findAllByOrderByRecordDateDesc();
+        
+        // ✅ 计算最新的身高和体重
+        Double latestHeight = null;
+        Double latestWeight = null;
+        LocalDate latestHeightDate = null;
+        LocalDate latestWeightDate = null;
+        
+        for (GrowthRecord record : records) {
+            if (record.getHeightCm() != null) {
+                if (latestHeight == null || 
+                    (record.getRecordDate() != null && 
+                     (latestHeightDate == null || record.getRecordDate().isAfter(latestHeightDate)))) {
+                    latestHeight = record.getHeightCm();
+                    latestHeightDate = record.getRecordDate();
+                }
+            }
+            if (record.getWeightKg() != null) {
+                if (latestWeight == null || 
+                    (record.getRecordDate() != null && 
+                     (latestWeightDate == null || record.getRecordDate().isAfter(latestWeightDate)))) {
+                    latestWeight = record.getWeightKg();
+                    latestWeightDate = record.getRecordDate();
+                }
+            }
+        }
+        
         model.addAttribute("records", records);
+        model.addAttribute("latestHeight", latestHeight);
+        model.addAttribute("latestWeight", latestWeight);
         return "index";
     }
 
@@ -166,14 +194,12 @@ public class HomeController {
         return "redirect:/messages";
     }
 
-    // ✅ 修改：删除后重定向回原页面
     @PostMapping("/delete/{id}")
     public String deleteRecord(@PathVariable Long id, @RequestHeader(value = "Referer", defaultValue = "/") String referer) {
         recordService.delete(id);
         return "redirect:" + referer;
     }
 
-    // ✅ 修改：删除成绩后重定向回 growth 页面
     @PostMapping("/deleteScore/{id}")
     public String deleteScoreRecord(@PathVariable Long id) {
         recordService.delete(id);
