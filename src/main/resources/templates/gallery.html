@@ -356,7 +356,6 @@
     document.getElementById('downloadBtn').onclick=function(){var r=records[viewerIndex];if(!r||!r.photoPath)return;var a=document.createElement('a');a.href=r.photoPath;a.download=r.title||'photo';a.click();};
     document.getElementById('featuredBtn').onclick=function(){if(!requireAuth())return;var r=records[viewerIndex];if(r)toggleFeaturedById(r.id);};
     document.getElementById('deleteBtn').onclick=function(){if(!requireAuth())return;var r=records[viewerIndex];if(r)deleteById(r.id);};
-    window.addEventListener('popstate',function(e){if(viewerOpen){closeViewer(true);e.preventDefault();}});
 
     // ✅ 删除操作需要登录
     window.deleteById=function(id){
@@ -412,6 +411,32 @@
     window.submitBatchPhotos=async function(){if(!compressedFiles.length){showToast('请选择照片');return;}var date=document.getElementById('batchDate').value;if(!date){showToast('请选择日期');return;}var title=document.getElementById('batchTitle').value,desc=document.getElementById('batchDesc').value;var proms=compressedFiles.map(f=>{var fd=new FormData();fd.append('title',title);fd.append('description',desc);fd.append('recordDate',date);fd.append('photo',f);return fetch('/gallery/add',{method:'POST',body:fd}).then(r=>r.ok?r.json():null);});var results=await Promise.all(proms);closeAddForm();var newRecs=results.filter(r=>r);if(newRecs.length){records=newRecs.concat(records);renderFullGallery();featuredRecords=records.filter(r=>r.featured);slideshowRecords=featuredRecords.length>0?featuredRecords:records;originalSlideCount=slideshowRecords.length;buildSlideshow();showToast('成功添加 '+newRecs.length+' 张');}else showToast('上传失败');compressedFiles=[];fileHashes.clear();};
 
     window.addEventListener('scroll',()=>{document.getElementById('backToTop').style.display=window.scrollY>400?'flex':'none';});
+
+    // ========== ✅ 修改位置1：返回首页逻辑（优先关闭弹窗/大图，否则回首页）==========
+    (function() {
+        if (window.location.pathname === '/' || window.location.pathname === '') return;
+        history.replaceState({ subPage: true }, '', window.location.href);
+
+        window.addEventListener('popstate', function(event) {
+            // 1. 优先关闭上传照片弹窗
+            var addForm = document.getElementById('addFormOverlay');
+            if (addForm && addForm.classList.contains('active')) {
+                closeAddForm();
+                history.pushState({ subPage: true }, '', window.location.href);
+                return;
+            }
+
+            // 2. 如果全屏查看器正在显示，则关闭查看器
+            if (viewerOpen) {
+                closeViewer(true);
+                event.preventDefault();
+                return;
+            }
+
+            // 3. 都没有 → 返回首页
+            window.location.replace('/');
+        });
+    })();
 
     renderFullGallery();
     buildSlideshow();
