@@ -229,17 +229,7 @@
     </div>
 </div>
 
-<div class="add-overlay" id="addMenuOverlay" onclick="if(event.target===this)closeAddMenu()">
-    <div class="add-sheet">
-        <div class="add-sheet-title">✨ 添加新记录</div>
-        <div class="add-sheet-options">
-            <button class="add-option" onclick="openAddForm(); closeAddMenu();"><span class="add-option-icon">📷</span><span class="add-option-label">上传照片</span></button>
-            <a href="/growth" class="add-option"><span class="add-option-icon">📊</span><span class="add-option-label">记录数据</span></a>
-            <a href="/messages" class="add-option"><span class="add-option-icon">💌</span><span class="add-option-label">写留言</span></a>
-        </div>
-        <button class="add-sheet-close" onclick="closeAddMenu()">取 消</button>
-    </div>
-</div>
+
 
 <div class="form-overlay" id="addFormOverlay" onclick="if(event.target===this)closeAddForm()">
     <div class="form-card">
@@ -256,7 +246,7 @@
 <nav class="bottom-nav">
     <a href="/" class="bottom-nav-item"><span class="nav-icon">🏠</span><span>首页</span></a>
     <a href="/gallery" class="bottom-nav-item active"><span class="nav-icon">📷</span><span>相册</span></a>
-    <button class="bottom-nav-add" onclick="openAddMenu()" aria-label="添加"><span>+</span><span class="bottom-nav-add-label">添加</span></button>
+   <button class="bottom-nav-add" onclick="openAddForm()" aria-label="添加"><span>+</span><span class="bottom-nav-add-label">添加</span></button>
     <a href="/growth" class="bottom-nav-item"><span class="nav-icon">📊</span><span>数据</span></a>
     <a href="/messages" class="bottom-nav-item"><span class="nav-icon">💌</span><span>留言</span></a>
 </nav>
