@@ -54,190 +54,6 @@
       -webkit-overflow-scrolling: touch;
     }
 
-    /* 开屏动画 */
-    .splash-screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 99999;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(170deg, #FFF5F2, #FEF3F7, #FBF2FC, #F6F1FB, #F3F4FA, #F5F8F7, #FFF9F0, #FFF6F3);
-      transition: opacity 0.5s, visibility 0.5s;
-      opacity: 1;
-      visibility: visible;
-      pointer-events: all;
-      user-select: none;
-    }
-    .splash-screen.fade-out {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
-    .splash-cloud {
-      position: absolute;
-      background: rgba(255, 255, 255, 0.5);
-      border-radius: 50%;
-      filter: blur(35px);
-      pointer-events: none;
-      animation: splashCloudFloat linear infinite;
-    }
-    .splash-cloud:nth-child(1) {
-      width: 160px;
-      height: 80px;
-      top: 8%;
-      left: -10%;
-      animation-duration: 26s;
-      opacity: 0.5;
-    }
-    .splash-cloud:nth-child(2) {
-      width: 120px;
-      height: 60px;
-      top: 22%;
-      right: -12%;
-      animation-duration: 32s;
-      animation-delay: -14s;
-      opacity: 0.4;
-    }
-    .splash-cloud:nth-child(3) {
-      width: 140px;
-      height: 70px;
-      bottom: 20%;
-      left: 15%;
-      animation-duration: 30s;
-      animation-delay: -8s;
-      opacity: 0.38;
-    }
-    @keyframes splashCloudFloat {
-      0% {
-        transform: translateX(0) translateY(0);
-      }
-      25% {
-        transform: translateX(30px) translateY(-14px);
-      }
-      50% {
-        transform: translateX(8px) translateY(-4px);
-      }
-      75% {
-        transform: translateX(-18px) translateY(-18px);
-      }
-      100% {
-        transform: translateX(0) translateY(0);
-      }
-    }
-    .splash-logo-area {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .splash-logo-wrap {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      background: linear-gradient(145deg, #FFF8F5, #FFEEF2, #FDF5FF);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 3.2em;
-      box-shadow: 0 8px 32px rgba(255, 181, 194, 0.3);
-      animation: splashLogoBreathe 3s ease-in-out infinite;
-    }
-    @keyframes splashLogoBreathe {
-      0%,
-      100% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.06);
-      }
-    }
-    .splash-baby-name {
-      font-family: "ZCOOL KuaiLe", sans-serif;
-      font-size: 1.5em;
-      font-weight: 700;
-      color: #E8788A;
-      margin-top: 8px;
-      letter-spacing: 0.06em;
-    }
-    .splash-bottom {
-      position: absolute;
-      bottom: 14%;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-    }
-    .splash-dots {
-      display: flex;
-      gap: 12px;
-    }
-    .splash-dot {
-      width: 13px;
-      height: 13px;
-      border-radius: 50%;
-      animation: splashDotBounce 1.2s ease-in-out infinite;
-    }
-    .splash-dot:nth-child(1) {
-      background: #FFB5C2;
-      animation-delay: 0s;
-    }
-    .splash-dot:nth-child(2) {
-      background: #C8B8E8;
-      animation-delay: 0.14s;
-    }
-    .splash-dot:nth-child(3) {
-      background: #B5D8F7;
-      animation-delay: 0.28s;
-    }
-    .splash-dot:nth-child(4) {
-      background: #B5E8D5;
-      animation-delay: 0.42s;
-    }
-    .splash-dot:nth-child(5) {
-      background: #FFD4A8;
-      animation-delay: 0.56s;
-    }
-    @keyframes splashDotBounce {
-      0%,
-      100% {
-        transform: translateY(0) scale(1);
-        opacity: 0.5;
-      }
-      30% {
-        transform: translateY(-18px) scale(1.35);
-        opacity: 1;
-      }
-      60% {
-        transform: translateY(-6px) scale(0.9);
-        opacity: 0.7;
-      }
-    }
-    .splash-loading-text {
-      font-family: "ZCOOL KuaiLe", sans-serif;
-      font-size: 0.95em;
-      color: #B8A9D4;
-      letter-spacing: 0.06em;
-      animation: splashTextShimmer 2.5s ease-in-out infinite;
-    }
-    @keyframes splashTextShimmer {
-      0%,
-      100% {
-        opacity: 0.55;
-      }
-      50% {
-        opacity: 1;
-      }
-    }
-
-    /* 退出确认提示 */
     .exit-toast {
       position: fixed;
       bottom: 110px;
@@ -271,7 +87,6 @@
       font-weight: 400;
     }
 
-    /* 顶部栏 */
     .top-bar {
       position: sticky;
       top: 0;
@@ -329,7 +144,6 @@
       background: rgba(200, 180, 220, 0.25);
     }
 
-    /* 侧边栏 */
     .sidebar-overlay {
       position: fixed;
       top: 0;
@@ -412,7 +226,26 @@
       transition: all 0.3s;
     }
 
-    /* 主容器 */
+    .toast-message {
+      position: fixed;
+      bottom: 28%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(80,60,90,0.82);
+      color: white;
+      padding: 10px 22px;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      z-index: 10000;
+      pointer-events: none;
+      backdrop-filter: blur(10px);
+      transition: opacity 0.3s;
+      opacity: 0;
+    }
+    .toast-message.show {
+      opacity: 1;
+    }
+
     .container {
       max-width: 600px;
       margin: 0 auto;
@@ -421,7 +254,6 @@
       z-index: 1;
     }
 
-    /* 宝宝卡片 */
     .card-group {
       display: flex;
       flex-direction: column;
@@ -489,19 +321,10 @@
       animation: polaroidSway 7s ease-in-out infinite;
     }
     @keyframes polaroidSway {
-      0%,
-      100% {
-        transform: rotate(-1.2deg);
-      }
-      30% {
-        transform: rotate(-2deg);
-      }
-      60% {
-        transform: rotate(-0.3deg);
-      }
-      85% {
-        transform: rotate(-1.5deg);
-      }
+      0%, 100% { transform: rotate(-1.2deg); }
+      30% { transform: rotate(-2deg); }
+      60% { transform: rotate(-0.3deg); }
+      85% { transform: rotate(-1.5deg); }
     }
     .polaroid-photo {
       width: 100%;
@@ -605,18 +428,10 @@
       font-size: 1em;
       margin-left: auto;
     }
-    .info-slip.birthday .slip-value {
-      color: #C08050;
-    }
-    .info-slip.age .slip-value {
-      color: #E8788A;
-    }
-    .info-slip.height .slip-value {
-      color: #5D8A6E;
-    }
-    .info-slip.weight .slip-value {
-      color: #5D8A6E;
-    }
+    .info-slip.birthday .slip-value { color: #C08050; }
+    .info-slip.age .slip-value { color: #E8788A; }
+    .info-slip.height .slip-value { color: #5D8A6E; }
+    .info-slip.weight .slip-value { color: #5D8A6E; }
 
     .bottom-tickets {
       display: flex;
@@ -638,13 +453,8 @@
       gap: 5px;
       border: 1px solid rgba(220, 200, 180, 0.25);
     }
-    .ticket-icon {
-      font-size: 1.6em;
-    }
-    .ticket-label {
-      font-size: 0.8em;
-      color: #8B7D9B;
-    }
+    .ticket-icon { font-size: 1.6em; }
+    .ticket-label { font-size: 0.8em; color: #8B7D9B; }
     .ticket-value-row {
       display: flex;
       align-items: baseline;
@@ -653,18 +463,10 @@
       font-weight: 700;
       color: #C08050;
     }
-    .ticket-value-row .ticket-number {
-      font-size: 1.6em;
-    }
-    .ticket-value-row .ticket-unit {
-      font-size: 0.85em;
-      color: #B8A9D4;
-    }
-    .ticket-card.countdown .ticket-value-row {
-      color: #E8788A;
-    }
+    .ticket-value-row .ticket-number { font-size: 1.6em; }
+    .ticket-value-row .ticket-unit { font-size: 0.85em; color: #B8A9D4; }
+    .ticket-card.countdown .ticket-value-row { color: #E8788A; }
 
-    /* 记录区域 */
     .section-header h2 {
       font-family: "ZCOOL KuaiLe", sans-serif;
       font-size: 1.3em;
@@ -729,6 +531,18 @@
       border-radius: 20px;
       letter-spacing: 0.04em;
     }
+    .record-category.cat-growth {
+      background: linear-gradient(135deg, #B5E8D5, #7ECBA1);
+    }
+    .record-category.cat-score {
+      background: linear-gradient(135deg, #B5D8F7, #7EB8E0);
+    }
+    .record-category.cat-gallery {
+      background: linear-gradient(135deg, #FFB5C2, #FF8FA0);
+    }
+    .record-category.cat-messages {
+      background: linear-gradient(135deg, #FFD4A8, #FFB878);
+    }
     .record-date {
       font-size: 0.8em;
       color: #9B8DAB;
@@ -745,8 +559,27 @@
       color: #8B7D9B;
       line-height: 1.5;
     }
+    .record-data-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    .data-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.78em;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.6);
+      border: 1px solid rgba(200,180,220,0.3);
+    }
+    .data-tag.height-tag { color: #5D8A6E; border-color: rgba(93,138,110,0.3); }
+    .data-tag.weight-tag { color: #8B6E5E; border-color: rgba(139,110,94,0.3); }
+    .data-tag.score-tag { color: #5D7E8A; border-color: rgba(93,126,138,0.3); }
 
-    /* 底部导航 */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -774,12 +607,8 @@
       gap: 3px;
       transition: color 0.25s;
     }
-    .bottom-nav-item span {
-      font-size: 1.5em;
-    }
-    .bottom-nav-item.active {
-      color: #E8788A;
-    }
+    .bottom-nav-item span { font-size: 1.5em; }
+    .bottom-nav-item.active { color: #E8788A; }
     .bottom-nav-add {
       position: relative;
       top: -22px;
@@ -796,9 +625,14 @@
       align-items: center;
       justify-content: center;
       transition: transform 0.3s var(--transition-bounce), box-shadow 0.3s;
+      animation: addBtnBreathe 2.5s ease-in-out infinite;
     }
+    @keyframes addBtnBreathe {
+      0%, 100% { box-shadow: 0 8px 26px rgba(255,154,178,0.45); }
+      50% { box-shadow: 0 14px 36px rgba(255,154,178,0.65); }
+    }
+    .bottom-nav-add:active { transform: scale(0.78) rotate(45deg); }
 
-    /* 添加浮层 */
     .add-overlay {
       position: fixed;
       top: 0;
@@ -858,16 +692,15 @@
       color: var(--text-primary);
       transition: all 0.3s var(--transition-bounce);
       cursor: pointer;
+      border: none;
+      font-family: inherit;
     }
-    .add-card-icon {
-      font-size: 2.5em;
-      margin-bottom: 6px;
+    .add-card-item:active {
+      transform: scale(0.9);
+      background: rgba(255, 200, 210, 0.4);
     }
-    .add-card-label {
-      font-family: "ZCOOL KuaiLe", sans-serif;
-      font-weight: 700;
-      font-size: 0.95em;
-    }
+    .add-card-icon { font-size: 2.5em; margin-bottom: 6px; }
+    .add-card-label { font-family: "ZCOOL KuaiLe", sans-serif; font-weight: 700; font-size: 0.95em; }
     .add-sheet-cancel {
       display: block;
       margin: 0 auto;
@@ -878,36 +711,148 @@
       color: #8B7D9B;
       cursor: pointer;
       font-size: 0.9em;
+      font-family: inherit;
+    }
+
+    .form-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 5000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s;
+    }
+    .form-overlay.active { opacity: 1; pointer-events: auto; }
+    .form-card {
+      background: white;
+      border-radius: var(--radius-xl);
+      padding: 28px 22px;
+      width: 90vw;
+      max-width: 420px;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+    .form-card h3 {
+      font-family: "ZCOOL KuaiLe", sans-serif;
+      text-align: center;
+      margin-bottom: 6px;
+      font-size: 1.3em;
+      color: #E8788A;
+    }
+    .form-subtitle {
+      text-align: center;
+      color: #B8A9D4;
+      font-size: 0.8em;
+      margin-bottom: 20px;
+    }
+    .field-group { margin-bottom: 16px; }
+    .field-label {
+      font-size: 0.85em;
+      font-weight: 600;
+      color: #8B7D9B;
+      margin-bottom: 6px;
+    }
+    .form-card input, .form-card textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid #f0e6f6;
+      border-radius: 20px;
+      font-family: inherit;
+      font-size: 0.95em;
+      background: #FFFAFD;
+      outline: none;
+    }
+    .form-row { display: flex; gap: 12px; }
+    .form-row .field-group { flex: 1; }
+    .custom-date-wrap { position: relative; }
+    .custom-date-wrap input[type="date"] {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid #f0e6f6;
+      border-radius: 20px;
+      background: #FFFAFD;
+      cursor: pointer;
+    }
+    .custom-date-wrap .date-icon {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      font-size: 1.2em;
+      color: #FF9AB2;
+    }
+    .file-upload-box {
+      padding: 20px;
+      border: 2px dashed #FFD4E0;
+      border-radius: 20px;
+      text-align: center;
+      background: #FFF5F8;
+      cursor: pointer;
+      position: relative;
+    }
+    .file-upload-box input {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #FFB5C2, #FF9AB2);
+      border: none;
+      border-radius: 40px;
+      color: white;
+      font-weight: 700;
+      font-size: 1em;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 8px;
+      font-family: inherit;
+    }
+    .btn-submit:active { transform: scale(0.96); }
+    .add-sheet-cancel-btn {
+      display: block;
+      margin: 16px auto 0;
+      padding: 10px 30px;
+      border-radius: 30px;
+      border: none;
+      background: rgba(200,180,220,0.2);
+      color: #8B7D9B;
+      cursor: pointer;
+      font-size: 0.9em;
+      font-family: inherit;
+    }
+    @media (max-width: 768px) {
+      .form-row { flex-direction: column; gap: 0; }
     }
   </style>
 </head>
 <body>
-<!-- 开屏界面 -->
-<div class="splash-screen" id="splashScreen">
-  <div class="splash-cloud"></div><div class="splash-cloud"></div><div class="splash-cloud"></div>
-  <div class="splash-logo-area">
-    <div class="splash-logo-wrap"><span>🌱</span></div>
-    <div class="splash-baby-name">赵高钏</div>
-  </div>
-  <div class="splash-bottom">
-    <div class="splash-dots"><span class="splash-dot"></span><span class="splash-dot"></span><span class="splash-dot"></span><span class="splash-dot"></span><span class="splash-dot"></span></div>
-    <span class="splash-loading-text">正在加载成长的回忆…</span>
-  </div>
-</div>
 
-<!-- 退出确认提示 -->
+<div class="toast-message" id="toastMsg">提示</div>
 <div class="exit-toast" id="exitToast">
   <span>确认退出吗？</span>
   <span class="exit-toast-sub">再次点击返回键退出</span>
 </div>
 
-<!-- 顶部栏 -->
 <header class="top-bar">
   <a href="/" class="top-bar-brand"><div class="top-bar-logo">🌱</div><span class="top-bar-appname">成长手册</span></a>
   <button class="top-bar-mine" onclick="toggleSidebar()">👤</button>
 </header>
 
-<!-- 侧边栏 -->
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 <aside class="sidebar-panel" id="sidebarPanel">
   <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
@@ -977,11 +922,21 @@
       <img class="record-photo" th:if="${record.photoPath != null}" th:src="@{${record.photoPath}}" alt="成长照片" loading="lazy" onerror="this.style.display='none'">
       <div class="record-info">
         <div class="record-meta">
-          <span class="record-category" th:data-category="${record.category}" th:text="${record.category}">分类</span>
+          <span class="record-category" th:classappend="${record.category == 'growth'} ? 'cat-growth' : (${record.category == 'score'} ? 'cat-score' : (${record.category == 'gallery'} ? 'cat-gallery' : (${record.category == 'messages'} ? 'cat-messages' : '')))" th:text="${record.category}">分类</span>
           <span class="record-date" th:text="${#temporals.format(record.recordDate, 'yyyy年MM月dd日')}">日期</span>
         </div>
         <div class="record-title" th:text="${record.title}">标题</div>
         <div class="record-desc" th:text="${record.description}">描述内容</div>
+        <div class="record-data-tags">
+          <span class="data-tag height-tag" th:if="${record.heightCm != null}">📏 身高 <span th:text="${record.heightCm}">--</span> cm</span>
+          <span class="data-tag weight-tag" th:if="${record.weightKg != null}">⚖️ 体重 <span th:text="${record.weightKg}">--</span> kg</span>
+          <span class="data-tag score-tag" th:if="${record.chinese != null || record.math != null || record.english != null}">
+            📚 
+            <span th:if="${record.chinese != null}">语文<span th:text="${record.chinese}">--</span> </span>
+            <span th:if="${record.math != null}">数学<span th:text="${record.math}">--</span> </span>
+            <span th:if="${record.english != null}">英语<span th:text="${record.english}">--</span></span>
+          </span>
+        </div>
       </div>
     </div>
   </div>
@@ -990,178 +945,108 @@
 <nav class="bottom-nav">
   <a href="/" class="bottom-nav-item active"><span>🏠</span>首页</a>
   <a href="/gallery" class="bottom-nav-item"><span>📷</span>相册</a>
-  <button class="bottom-nav-add" onclick="openAddOverlay()">+</button>
+  <button class="bottom-nav-add" onclick="handleAddClick()">+</button>
   <a href="/growth" class="bottom-nav-item"><span>📊</span>数据</a>
   <a href="/messages" class="bottom-nav-item"><span>💌</span>留言</a>
 </nav>
 
+<!-- 添加浮层 -->
 <div class="add-overlay" id="addOverlay">
   <div class="add-sheet">
     <div class="add-sheet-title">✨ 添加新记录</div>
     <div class="add-sheet-cards">
-      <a href="/gallery?action=add" class="add-card-item">
+      <button class="add-card-item" onclick="openPhotoForm()">
         <span class="add-card-icon">📷</span>
         <span class="add-card-label">上传照片</span>
-      </a>
-      <a href="/growth?action=add" class="add-card-item">
+      </button>
+      <button class="add-card-item" onclick="openGrowthForm()">
         <span class="add-card-icon">📊</span>
         <span class="add-card-label">记录数据</span>
-      </a>
-      <a href="/messages?action=add" class="add-card-item">
+      </button>
+      <button class="add-card-item" onclick="openMessageForm()">
         <span class="add-card-icon">💌</span>
         <span class="add-card-label">写留言</span>
-      </a>
+      </button>
     </div>
     <button class="add-sheet-cancel" onclick="closeAddOverlay()">取消</button>
   </div>
 </div>
 
+<!-- 照片上传弹窗 -->
+<div class="form-overlay" id="photoFormOverlay" onclick="if(event.target===this)closePhotoForm()">
+  <div class="form-card">
+    <h3>📷 上传照片</h3>
+    <p class="form-subtitle">记录宝宝精彩瞬间</p>
+    <form th:action="@{/gallery/add}" method="post" enctype="multipart/form-data">
+      <div class="field-group"><div class="field-label">📝 照片标题</div><input type="text" name="title" placeholder="如：宝宝第一次走路"></div>
+      <div class="field-group"><div class="field-label">💬 描述</div><textarea name="description" rows="2" placeholder="记录下这一刻..."></textarea></div>
+      <div class="field-group"><div class="field-label">📅 日期 <span style="color:#E8788A;">*必填</span></div><div class="custom-date-wrap"><input type="date" name="recordDate" required><span class="date-icon">📆</span></div></div>
+      <div class="field-group"><div class="field-label">🖼️ 选择照片 <span style="color:#E8788A;">*必填</span></div><div class="file-upload-box"><input type="file" name="photo" accept="image/*" required>📷 点击选择照片</div></div>
+      <button type="submit" class="btn-submit">✨ 上传照片</button>
+    </form>
+    <button class="add-sheet-cancel-btn" onclick="closePhotoForm()">取消</button>
+  </div>
+</div>
+
+<!-- 成长数据弹窗 -->
+<div class="form-overlay" id="growthFormOverlay" onclick="if(event.target===this)closeGrowthForm()">
+  <div class="form-card">
+    <h3>📊 记录成长数据</h3>
+    <p class="form-subtitle">记录身高体重或学业成绩</p>
+    <form th:action="@{/growth/add}" method="post">
+      <div class="field-group"><div class="field-label">📅 日期 <span style="color:#E8788A;">*必填</span></div><div class="custom-date-wrap"><input type="date" name="recordDate" required><span class="date-icon">📆</span></div></div>
+      <div class="form-row">
+        <div class="field-group"><div class="field-label">📏 身高 (cm)</div><input type="number" name="heightCm" step="0.1" placeholder="如：85.5"></div>
+        <div class="field-group"><div class="field-label">⚖️ 体重 (kg)</div><input type="number" name="weightKg" step="0.1" placeholder="如：12.5"></div>
+      </div>
+      <div class="field-group"><div class="field-label">📝 备注</div><input type="text" name="title" placeholder="如：3月体检"></div>
+      <div class="field-group"><div class="field-label">👤 记录人 <span style="color:#E8788A;">*必填</span></div><input type="text" name="recordedBy" placeholder="妈妈" required></div>
+      <button type="submit" class="btn-submit">✨ 保存数据</button>
+    </form>
+    <button class="add-sheet-cancel-btn" onclick="closeGrowthForm()">取消</button>
+  </div>
+</div>
+
+<!-- 留言弹窗 -->
+<div class="form-overlay" id="messageFormOverlay" onclick="if(event.target===this)closeMessageForm()">
+  <div class="form-card">
+    <h3>💌 写下留言</h3>
+    <p class="form-subtitle">留下对宝宝的温暖寄语</p>
+    <form th:action="@{/messages/add}" method="post">
+      <div class="field-group"><div class="field-label">📝 称呼 <span style="color:#E8788A;">*必填</span></div><input type="text" name="title" placeholder="如：爸爸、妈妈..." required></div>
+      <div class="field-group"><div class="field-label">💬 留言内容 <span style="color:#E8788A;">*必填</span></div><textarea name="description" rows="3" placeholder="写下你想对宝宝说的话..." required></textarea></div>
+      <div class="field-group"><div class="field-label">📅 日期 <span style="color:#E8788A;">*必填</span></div><div class="custom-date-wrap"><input type="date" name="recordDate" required><span class="date-icon">📆</span></div></div>
+      <button type="submit" class="btn-submit">✨ 发布留言</button>
+    </form>
+    <button class="add-sheet-cancel-btn" onclick="closeMessageForm()">取消</button>
+  </div>
+</div>
+
 <script th:inline="javascript">
   /*<![CDATA[*/
-  // 开屏逻辑
-  (function() {
-    var splash = document.getElementById('splashScreen');
-    var minTime = 1800, maxTime = 3500;
-    var start = Date.now(), done = false;
-    document.body.style.overflow = 'hidden';
-    function dismiss() {
-      if (done) return;
-      done = true;
-      splash.classList.add('fade-out');
-      var handler = function() {
-        splash.removeEventListener('transitionend', handler);
-        if (splash.parentNode) splash.parentNode.removeChild(splash);
-        document.body.style.overflow = '';
-      };
-      splash.addEventListener('transitionend', handler);
-      setTimeout(function() {
-        if (splash.parentNode) splash.parentNode.removeChild(splash);
-        document.body.style.overflow = '';
-      }, 1000);
-    }
-    function ready() {
-      var elapsed = Date.now() - start;
-      var delay = Math.max(0, minTime - elapsed);
-      delay = Math.min(delay, maxTime - elapsed);
-      if (delay <= 0) dismiss();
-      else setTimeout(dismiss, delay);
-    }
-    if (document.readyState === 'complete') ready();
-    else window.addEventListener('load', ready);
-    setTimeout(function() { if (!done) dismiss(); }, maxTime);
-  })();
+  var isAuthenticated = /*[[${#authorization.expression('isAuthenticated()')}]]*/ false;
 
-  // 动态年龄与倒计时 (出生日期：2017.2.14)
-  (function() {
-    var birthday = new Date(2017, 1, 14); // 月份从0开始，1代表二月
-    var now = new Date();
-    var y = now.getFullYear() - birthday.getFullYear();
-    var m = now.getMonth() - birthday.getMonth();
-    var d = now.getDate() - birthday.getDate();
-    if (d < 0) {
-      m--;
-      d += new Date(now.getFullYear(), now.getMonth(), 0).getDate();
-    }
-    if (m < 0) {
-      y--;
-      m += 12;
-    }
-    // 年龄格式：几岁几月
-    document.getElementById('ageNumber').textContent = y + '岁' + m + '个月';
-    var totalDays = Math.floor((now - birthday) / (1000 * 60 * 60 * 24));
-    document.getElementById('totalDays').textContent = totalDays;
-    var nextBirthday = new Date(now.getFullYear(), 1, 14);
-    if (now > nextBirthday) nextBirthday.setFullYear(nextBirthday.getFullYear() + 1);
-    document.getElementById('birthdayCountdown').textContent = Math.ceil((nextBirthday - now) / (1000 * 60 * 60 * 24));
-  })();
+  function showToast(msg) {
+    var t = document.getElementById('toastMsg');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 1500);
+  }
 
-  // 头像上传与本地存储
-  (function() {
-    var avatarImg = document.getElementById('avatarImg');
-    var photoContainer = document.getElementById('polaroidPhoto');
-    var fileInput = document.getElementById('avatarInput');
-    var polaroidFrame = document.getElementById('polaroidFrame');
-    var storageKey = 'babyAvatar';
-    var savedAvatar = localStorage.getItem(storageKey);
-    if (savedAvatar) {
-      avatarImg.src = savedAvatar;
-      avatarImg.classList.add('show');
-      photoContainer.classList.add('has-image');
+  // ✅ 权限检查
+  function requireAuth() {
+    if (!isAuthenticated) {
+      showToast('请先登录');
+      setTimeout(function() { window.location.href = '/login'; }, 600);
+      return false;
     }
-    polaroidFrame.addEventListener('click', function() { fileInput.click(); });
-    fileInput.addEventListener('change', function(e) {
-      var file = e.target.files[0];
-      if (!file) return;
-      var reader = new FileReader();
-      reader.onload = function(event) {
-        var base64 = event.target.result;
-        try { localStorage.setItem(storageKey, base64); } catch (err) { alert('头像保存失败，可能存储空间已满。'); return; }
-        avatarImg.src = base64;
-        avatarImg.classList.add('show');
-        photoContainer.classList.add('has-image');
-      };
-      reader.readAsDataURL(file);
-    });
-  })();
+    return true;
+  }
 
-  // 从records中提取最新身高体重（兜底更新）
-  (function() {
-    var records = /*[[${records}]]*/ [];
-    var heightElem = document.getElementById('statHeight');
-    var weightElem = document.getElementById('statWeight');
-    if (!heightElem || !weightElem) return;
-    if (heightElem.textContent === '待记录' || heightElem.textContent === '') {
-      var latestH = null;
-      if (records && records.length > 0) {
-        for (var i = 0; i < records.length; i++) {
-          var r = records[i];
-          if (r.heightCm != null && (!latestH || r.recordDate > latestH.date)) {
-            latestH = { val: r.heightCm, date: r.recordDate };
-          }
-        }
-      }
-      if (latestH) heightElem.textContent = latestH.val + ' cm';
-    }
-    if (weightElem.textContent === '待记录' || weightElem.textContent === '') {
-      var latestW = null;
-      if (records && records.length > 0) {
-        for (var j = 0; j < records.length; j++) {
-          var r2 = records[j];
-          if (r2.weightKg != null && (!latestW || r2.recordDate > latestW.date)) {
-            latestW = { val: r2.weightKg, date: r2.recordDate };
-          }
-        }
-      }
-      if (latestW) weightElem.textContent = latestW.val + ' kg';
-    }
-  })();
-
-  // 分类中文映射 (gallery=相册，growth=成长数据，messages=留言)
-  (function() {
-    var categoryMap = {
-      'gallery': '相册',
-      'growth': '成长数据',
-      'messages': '留言',
-      'HEIGHT': '身高',
-      'WEIGHT': '体重',
-      'PHOTO': '照片',
-      'DAILY': '日常',
-      'MILESTONE': '里程碑'
-    };
-    document.querySelectorAll('.record-category').forEach(function(el) {
-      var raw = el.getAttribute('data-category') || el.textContent.trim();
-      var mapped = categoryMap[raw] || raw;
-      if (mapped !== el.textContent.trim()) {
-        el.textContent = mapped;
-      }
-    });
-  })();
-
-  // 侧边栏
-  function toggleSidebar() {
-    var ov = document.getElementById('sidebarOverlay'), pn = document.getElementById('sidebarPanel');
-    ov.classList.toggle('active'); pn.classList.toggle('active');
-    document.body.style.overflow = ov.classList.contains('active') ? 'hidden' : '';
+  // ✅ +号点击处理
+  function handleAddClick() {
+    if (!requireAuth()) return;
+    openAddOverlay();
   }
 
   // 添加浮层
@@ -1175,107 +1060,116 @@
   }
   document.getElementById('addOverlay').addEventListener('click', function(e) { if (e.target === this) closeAddOverlay(); });
 
+  // 照片弹窗
+  function openPhotoForm() {
+    closeAddOverlay();
+    document.getElementById('photoFormOverlay').classList.add('active');
+  }
+  function closePhotoForm() {
+    document.getElementById('photoFormOverlay').classList.remove('active');
+  }
+
+  // 成长数据弹窗
+  function openGrowthForm() {
+    closeAddOverlay();
+    document.getElementById('growthFormOverlay').classList.add('active');
+  }
+  function closeGrowthForm() {
+    document.getElementById('growthFormOverlay').classList.remove('active');
+  }
+
+  // 留言弹窗
+  function openMessageForm() {
+    closeAddOverlay();
+    document.getElementById('messageFormOverlay').classList.add('active');
+  }
+  function closeMessageForm() {
+    document.getElementById('messageFormOverlay').classList.remove('active');
+  }
+
+  // 年龄计算
+  (function() {
+    var birthday = new Date(2017, 1, 14);
+    var now = new Date();
+    var y = now.getFullYear() - birthday.getFullYear();
+    var m = now.getMonth() - birthday.getMonth();
+    var d = now.getDate() - birthday.getDate();
+    if (d < 0) { m--; d += new Date(now.getFullYear(), now.getMonth(), 0).getDate(); }
+    if (m < 0) { y--; m += 12; }
+    document.getElementById('ageNumber').textContent = y + '岁' + m + '个月';
+    var totalDays = Math.floor((now - birthday) / (1000 * 60 * 60 * 24));
+    document.getElementById('totalDays').textContent = totalDays;
+    var nextBirthday = new Date(now.getFullYear(), 1, 14);
+    if (now > nextBirthday) nextBirthday.setFullYear(nextBirthday.getFullYear() + 1);
+    document.getElementById('birthdayCountdown').textContent = Math.ceil((nextBirthday - now) / (1000 * 60 * 60 * 24));
+  })();
+
+  // 头像
+  (function() {
+    var avatarImg = document.getElementById('avatarImg');
+    var photoContainer = document.getElementById('polaroidPhoto');
+    var fileInput = document.getElementById('avatarInput');
+    var saved = localStorage.getItem('babyAvatar');
+    if (saved) { avatarImg.src = saved; avatarImg.classList.add('show'); photoContainer.classList.add('has-image'); }
+    document.getElementById('polaroidFrame').addEventListener('click', function() { fileInput.click(); });
+    fileInput.addEventListener('change', function(e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        try { localStorage.setItem('babyAvatar', ev.target.result); } catch(err) { showToast('存储空间不足'); return; }
+        avatarImg.src = ev.target.result;
+        avatarImg.classList.add('show');
+        photoContainer.classList.add('has-image');
+      };
+      reader.readAsDataURL(file);
+    });
+  })();
+
+  // 分类映射
+  (function() {
+    var map = { 'gallery':'相册', 'growth':'成长数据', 'messages':'留言', 'score':'学业成绩' };
+    document.querySelectorAll('.record-category').forEach(function(el) {
+      var raw = el.textContent.trim();
+      if (map[raw]) el.textContent = map[raw];
+    });
+  })();
+
+  // 侧边栏
+  function toggleSidebar() {
+    var ov = document.getElementById('sidebarOverlay'), pn = document.getElementById('sidebarPanel');
+    ov.classList.toggle('active'); pn.classList.toggle('active');
+    document.body.style.overflow = ov.classList.contains('active') ? 'hidden' : '';
+  }
+
   // 底部导航高亮
   var path = window.location.pathname;
   document.querySelectorAll('.bottom-nav-item').forEach(function(item) {
     if (item.getAttribute('href') === path) item.classList.add('active');
   });
 
-  // ========== 手机版二次确认返回功能 ==========
+  // 二次返回确认
   (function() {
-    var confirmExit = false;
-    var isExiting = false;
-    var toastTimer = null;
+    var confirmExit = false, isExiting = false, timer = null;
     var exitToast = document.getElementById('exitToast');
-    var resetDelay = 3500; // 3.5秒后重置确认状态
-
-    // 向历史记录添加一个状态，用于拦截返回
     if (window.history && window.history.pushState) {
       window.history.pushState('forward', null, window.location.href);
     }
-
-    function showToast() {
-      if (exitToast) exitToast.classList.add('visible');
-    }
-
-    function hideToast() {
-      if (exitToast) exitToast.classList.remove('visible');
-    }
-
-    function resetConfirm() {
-      confirmExit = false;
-      hideToast();
-      clearTimeout(toastTimer);
-      toastTimer = null;
-    }
-
+    function show() { if (exitToast) exitToast.classList.add('visible'); }
+    function hide() { if (exitToast) exitToast.classList.remove('visible'); }
+    function reset() { confirmExit = false; hide(); clearTimeout(timer); }
     function doExit() {
-      isExiting = true;
-      hideToast();
-      // 尝试关闭窗口（适用于微信等环境）
-      if (typeof WeixinJSBridge !== 'undefined' && WeixinJSBridge.call) {
-        try { WeixinJSBridge.call('closeWindow'); } catch (e) {}
-      }
-      // 使用history后退
-      setTimeout(function() {
-        if (window.history && window.history.back) {
-          window.history.back();
-        }
-        // 如果back后仍在页面，尝试再次关闭
-        setTimeout(function() {
-          if (typeof WeixinJSBridge !== 'undefined' && WeixinJSBridge.call) {
-            try { WeixinJSBridge.call('closeWindow'); } catch (e) {}
-          }
-          try { window.close(); } catch (e) {}
-        }, 300);
-      }, 50);
+      isExiting = true; hide();
+      if (typeof WeixinJSBridge !== 'undefined') try { WeixinJSBridge.call('closeWindow'); } catch(e) {}
+      setTimeout(function() { window.history.back(); setTimeout(function() { try { window.close(); } catch(e) {} }, 300); }, 50);
     }
-
     window.addEventListener('popstate', function(e) {
       if (isExiting) return;
-
-      if (confirmExit) {
-        // 用户已经确认过，执行退出
-        doExit();
-        return;
-      }
-
-      // 第一次返回，显示确认提示
-      confirmExit = true;
-      showToast();
-
-      // 重新push一个状态，防止直接退出
-      if (window.history && window.history.pushState) {
-        window.history.pushState('forward', null, window.location.href);
-      }
-
-      // 定时重置确认状态
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(function() {
-        resetConfirm();
-      }, resetDelay);
-    });
-
-    // 点击页面内链接时，隐藏toast（页面即将跳转）
-    document.addEventListener('click', function(e) {
-      var target = e.target;
-      while (target && target !== document.body) {
-        if (target.tagName === 'A' && target.getAttribute('href') &&
-            !target.getAttribute('href').startsWith('#') &&
-            target.getAttribute('href') !== 'javascript:void(0)') {
-          hideToast();
-          confirmExit = false;
-          clearTimeout(toastTimer);
-          toastTimer = null;
-          return;
-        }
-        target = target.parentElement;
-      }
-    }, true);
-
-    window.addEventListener('beforeunload', function() {
-      resetConfirm();
-      isExiting = false;
+      if (confirmExit) { doExit(); return; }
+      confirmExit = true; show();
+      if (window.history && window.history.pushState) window.history.pushState('forward', null, window.location.href);
+      clearTimeout(timer);
+      timer = setTimeout(reset, 3500);
     });
   })();
   /*]]>*/
