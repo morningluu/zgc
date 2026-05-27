@@ -8,809 +8,285 @@
     <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --pink: #FFB5C2;
-            --pink-deep: #FF9AB2;
-            --pink-light: #FFE0E8;
-            --purple: #C8B8E8;
-            --purple-deep: #B8A9D4;
-            --purple-light: #E8E0F5;
-            --blue: #B5D8F7;
-            --blue-light: #E0F0F8;
-            --green: #B5E8D5;
-            --green-light: #E0F5EB;
-            --yellow: #FFE8C0;
-            --yellow-light: #FFF8E8;
-            --white-soft: #FFFBF8;
-            --text-primary: #5D4E6D;
-            --text-secondary: #8B7D9B;
-            --text-light: #9B8DAB;
-            --card-bg: rgba(255, 255, 255, 0.78);
-            --nav-bg: rgba(255, 252, 248, 0.94);
-            --shadow-sm: 0 4px 16px rgba(180, 160, 200, 0.08);
-            --shadow-md: 0 8px 28px rgba(180, 160, 200, 0.13);
-            --shadow-lg: 0 16px 44px rgba(180, 160, 200, 0.18);
-            --radius-xl: 28px;
-            --radius-lg: 22px;
-            --radius-md: 16px;
-            --radius-sm: 12px;
+            --pink: #FFB5C2; --pink-deep: #FF9AB2; --pink-light: #FFE0E8;
+            --purple: #C8B8E8; --purple-deep: #B8A9D4; --purple-light: #E8E0F5;
+            --blue: #B5D8F7; --blue-light: #E0F0F8; --green: #B5E8D5; --green-light: #E0F5EB;
+            --yellow: #FFE8C0; --yellow-light: #FFF8E8; --text-primary: #5D4E6D;
+            --text-secondary: #8B7D9B; --text-light: #9B8DAB; --card-bg: rgba(255,255,255,0.78);
+            --nav-bg: rgba(255,252,248,0.94); --shadow-sm: 0 4px 16px rgba(180,160,200,0.08);
+            --shadow-md: 0 8px 28px rgba(180,160,200,0.13); --shadow-lg: 0 16px 44px rgba(180,160,200,0.18);
+            --radius-xl: 28px; --radius-lg: 22px; --radius-md: 16px; --radius-sm: 12px;
             --transition-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
             --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
         }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: "Noto Sans SC", sans-serif;
             background: linear-gradient(175deg, #FFF8F5 0%, #FEF5F8 8%, #F8F0FF 22%, #F5F0FA 35%, #F0F5FB 50%, #F5F8F5 65%, #FFFBF0 78%, #FFF8F5 100%);
-            background-attachment: fixed;
-            color: var(--text-primary);
-            min-height: 100vh;
-            overflow-x: hidden;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-font-smoothing: antialiased;
-            padding-bottom: 100px;
-            position: relative;
+            background-attachment: fixed; color: var(--text-primary); min-height: 100vh;
+            overflow-x: hidden; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased;
+            padding-bottom: 100px; position: relative;
         }
 
-        /* 开屏界面 (已省略部分动画样式，保留核心) */
+        /* 开屏动画 */
         .splash-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 99999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 99999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
             background: linear-gradient(170deg, #FFF5F2, #FEF3F7, #FBF2FC, #F6F1FB, #F3F4FA, #F5F8F7, #FFF9F0, #FFF6F3);
-            transition: opacity 0.5s, visibility 0.5s;
-            opacity: 1;
-            visibility: visible;
-            pointer-events: all;
-            user-select: none;
+            transition: opacity 0.5s, visibility 0.5s; opacity: 1; visibility: visible; pointer-events: all; user-select: none;
         }
-        .splash-screen.fade-out {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
+        .splash-screen.fade-out { opacity: 0; visibility: hidden; pointer-events: none; }
         .splash-cloud {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 50%;
-            filter: blur(35px);
-            pointer-events: none;
-            animation: splashCloudFloat linear infinite;
+            position: absolute; background: rgba(255,255,255,0.5); border-radius: 50%; filter: blur(35px);
+            pointer-events: none; animation: splashCloudFloat linear infinite;
         }
-        .splash-cloud:nth-child(1) {
-            width: 160px;
-            height: 80px;
-            top: 8%;
-            left: -10%;
-            animation-duration: 26s;
-            opacity: 0.5;
-        }
-        .splash-cloud:nth-child(2) {
-            width: 120px;
-            height: 60px;
-            top: 22%;
-            right: -12%;
-            animation-duration: 32s;
-            animation-delay: -14s;
-            opacity: 0.4;
-        }
-        .splash-cloud:nth-child(3) {
-            width: 140px;
-            height: 70px;
-            bottom: 20%;
-            left: 15%;
-            animation-duration: 30s;
-            animation-delay: -8s;
-            opacity: 0.38;
-        }
+        .splash-cloud:nth-child(1) { width: 160px; height: 80px; top: 8%; left: -10%; animation-duration: 26s; opacity: 0.5; }
+        .splash-cloud:nth-child(2) { width: 120px; height: 60px; top: 22%; right: -12%; animation-duration: 32s; animation-delay: -14s; opacity: 0.4; }
+        .splash-cloud:nth-child(3) { width: 140px; height: 70px; bottom: 20%; left: 15%; animation-duration: 30s; animation-delay: -8s; opacity: 0.38; }
         @keyframes splashCloudFloat {
-            0% {
-                transform: translateX(0) translateY(0);
-            }
-            25% {
-                transform: translateX(30px) translateY(-14px);
-            }
-            50% {
-                transform: translateX(8px) translateY(-4px);
-            }
-            75% {
-                transform: translateX(-18px) translateY(-18px);
-            }
-            100% {
-                transform: translateX(0) translateY(0);
-            }
+            0% { transform: translateX(0) translateY(0); }
+            25% { transform: translateX(30px) translateY(-14px); }
+            50% { transform: translateX(8px) translateY(-4px); }
+            75% { transform: translateX(-18px) translateY(-18px); }
+            100% { transform: translateX(0) translateY(0); }
         }
-        .splash-logo-area {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+        .splash-logo-area { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; }
         .splash-logo-wrap {
-            position: relative;
-            z-index: 3;
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: linear-gradient(145deg, #FFF8F5, #FFEEF2, #FDF5FF);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3.2em;
-            box-shadow: 0 8px 32px rgba(255, 181, 194, 0.3);
-            animation: splashLogoBreathe 3s ease-in-out infinite;
+            width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(145deg, #FFF8F5, #FFEEF2, #FDF5FF);
+            display: flex; align-items: center; justify-content: center; font-size: 3.2em;
+            box-shadow: 0 8px 32px rgba(255,181,194,0.3); animation: splashLogoBreathe 3s ease-in-out infinite;
         }
-        @keyframes splashLogoBreathe {
-            0%,
-            100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.06);
-            }
-        }
-        .splash-baby-name {
-            font-family: "ZCOOL KuaiLe", sans-serif;
-            font-size: 1.5em;
-            font-weight: 700;
-            color: #E8788A;
-            margin-top: 8px;
-            letter-spacing: 0.06em;
-            z-index: 3;
-        }
-        .splash-bottom {
-            position: absolute;
-            bottom: 14%;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 16px;
-        }
-        .splash-dots {
-            display: flex;
-            gap: 12px;
-        }
+        @keyframes splashLogoBreathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+        .splash-baby-name { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.5em; font-weight: 700; color: #E8788A; margin-top: 8px; letter-spacing: 0.06em; }
+        .splash-bottom { position: absolute; bottom: 14%; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 16px; }
+        .splash-dots { display: flex; gap: 12px; }
         .splash-dot {
-            width: 13px;
-            height: 13px;
-            border-radius: 50%;
-            animation: splashDotBounce 1.2s ease-in-out infinite;
+            width: 13px; height: 13px; border-radius: 50%; animation: splashDotBounce 1.2s ease-in-out infinite;
         }
-        .splash-dot:nth-child(1) {
-            background: #FFB5C2;
-            animation-delay: 0s;
-        }
-        .splash-dot:nth-child(2) {
-            background: #C8B8E8;
-            animation-delay: 0.14s;
-        }
-        .splash-dot:nth-child(3) {
-            background: #B5D8F7;
-            animation-delay: 0.28s;
-        }
-        .splash-dot:nth-child(4) {
-            background: #B5E8D5;
-            animation-delay: 0.42s;
-        }
-        .splash-dot:nth-child(5) {
-            background: #FFD4A8;
-            animation-delay: 0.56s;
-        }
+        .splash-dot:nth-child(1) { background: #FFB5C2; animation-delay: 0s; }
+        .splash-dot:nth-child(2) { background: #C8B8E8; animation-delay: 0.14s; }
+        .splash-dot:nth-child(3) { background: #B5D8F7; animation-delay: 0.28s; }
+        .splash-dot:nth-child(4) { background: #B5E8D5; animation-delay: 0.42s; }
+        .splash-dot:nth-child(5) { background: #FFD4A8; animation-delay: 0.56s; }
         @keyframes splashDotBounce {
-            0%,
-            100% {
-                transform: translateY(0) scale(1);
-                opacity: 0.5;
-            }
-            30% {
-                transform: translateY(-18px) scale(1.35);
-                opacity: 1;
-            }
-            60% {
-                transform: translateY(-6px) scale(0.9);
-                opacity: 0.7;
-            }
+            0%,100% { transform: translateY(0) scale(1); opacity: 0.5; }
+            30% { transform: translateY(-18px) scale(1.35); opacity: 1; }
+            60% { transform: translateY(-6px) scale(0.9); opacity: 0.7; }
         }
-        .splash-loading-text {
-            font-family: "ZCOOL KuaiLe", sans-serif;
-            font-size: 0.95em;
-            color: #B8A9D4;
-            letter-spacing: 0.06em;
-            animation: splashTextShimmer 2.5s ease-in-out infinite;
-        }
-        @keyframes splashTextShimmer {
-            0%,
-            100% {
-                opacity: 0.55;
-            }
-            50% {
-                opacity: 1;
-            }
-        }
+        .splash-loading-text { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 0.95em; color: #B8A9D4; letter-spacing: 0.06em; animation: splashTextShimmer 2.5s ease-in-out infinite; }
+        @keyframes splashTextShimmer { 0%,100% { opacity: 0.55; } 50% { opacity: 1; } }
 
         /* 顶部栏 */
         .top-bar {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(22px);
-            -webkit-backdrop-filter: blur(22px);
-            border-bottom: 1px solid rgba(200, 180, 220, 0.1);
-            padding: 0 16px;
-            height: 56px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            position: sticky; top: 0; z-index: 1000; background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+            border-bottom: 1px solid rgba(200,180,220,0.1); padding: 0 16px; height: 56px;
+            display: flex; align-items: center; justify-content: space-between;
         }
-        .top-bar-brand {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-        }
+        .top-bar-brand { display: flex; align-items: center; gap: 8px; text-decoration: none; }
         .top-bar-logo {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #FFE0E8, #FFB5C2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1em;
-            box-shadow: 0 3px 12px rgba(255, 181, 194, 0.35);
+            width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #FFE0E8, #FFB5C2);
+            display: flex; align-items: center; justify-content: center; font-size: 1.1em;
+            box-shadow: 0 3px 12px rgba(255,181,194,0.35);
         }
         .top-bar-appname {
-            font-family: "ZCOOL KuaiLe", sans-serif;
-            font-size: 1.05em;
-            font-weight: 700;
-            background: linear-gradient(135deg, #E8788A, #B8A9D4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.05em; font-weight: 700;
+            background: linear-gradient(135deg, #E8788A, #B8A9D4); -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent; background-clip: text;
         }
         .top-bar-mine {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            border: none;
-            background: rgba(200, 180, 220, 0.12);
-            cursor: pointer;
-            font-size: 1.3em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 38px; height: 38px; border-radius: 50%; border: none; background: rgba(200,180,220,0.12);
+            cursor: pointer; font-size: 1.3em; display: flex; align-items: center; justify-content: center;
         }
 
         /* 侧边栏 */
         .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.35);
-            z-index: 2000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.35s;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.35);
+            z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.35s;
         }
-        .sidebar-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
         .sidebar-panel {
-            position: fixed;
-            top: 0;
-            right: -320px;
-            width: 300px;
-            max-width: 82vw;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.96);
-            backdrop-filter: blur(20px);
-            z-index: 2001;
-            transition: right 0.4s;
-            padding: 24px 20px;
-            display: flex;
-            flex-direction: column;
-            border-radius: var(--radius-xl) 0 0 var(--radius-xl);
-            box-shadow: -8px 0 36px rgba(0, 0, 0, 0.1);
+            position: fixed; top: 0; right: -320px; width: 300px; max-width: 82vw; height: 100%;
+            background: rgba(255,255,255,0.96); backdrop-filter: blur(20px); z-index: 2001;
+            transition: right 0.4s; padding: 24px 20px; display: flex; flex-direction: column;
+            border-radius: var(--radius-xl) 0 0 var(--radius-xl); box-shadow: -8px 0 36px rgba(0,0,0,0.1);
         }
-        .sidebar-panel.active {
-            right: 0;
-        }
+        .sidebar-panel.active { right: 0; }
         .sidebar-close {
-            align-self: flex-end;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: none;
-            background: rgba(200, 180, 220, 0.15);
-            cursor: pointer;
-            font-size: 1.2em;
+            align-self: flex-end; width: 36px; height: 36px; border-radius: 50%; border: none;
+            background: rgba(200,180,220,0.15); cursor: pointer; font-size: 1.2em;
         }
-        .sidebar-user-info {
-            text-align: center;
-            padding: 16px 0 24px;
-        }
+        .sidebar-user-info { text-align: center; padding: 16px 0 24px; }
         .sidebar-avatar {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #FFE0E8, #FFB5C2, #E8E0F5);
-            margin: 0 auto 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.2em;
+            width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, #FFE0E8, #FFB5C2, #E8E0F5);
+            margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; font-size: 2.2em;
         }
-        .sidebar-username {
-            font-family: "ZCOOL KuaiLe", sans-serif;
-            font-size: 1.2em;
-        }
-        .sidebar-links {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
+        .sidebar-username { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.2em; }
+        .sidebar-links { display: flex; flex-direction: column; gap: 6px; }
         .sidebar-link {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 13px 16px;
-            border-radius: var(--radius-md);
-            text-decoration: none;
-            color: var(--text-primary);
-            font-weight: 500;
-            transition: all 0.3s;
+            display: flex; align-items: center; gap: 10px; padding: 13px 16px; border-radius: var(--radius-md);
+            text-decoration: none; color: var(--text-primary); font-weight: 500; transition: all 0.3s;
         }
 
-        /* 主内容容器 */
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 12px 18px 20px;
-            position: relative;
-            z-index: 1;
-        }
+        /* 主容器 */
+        .container { max-width: 600px; margin: 0 auto; padding: 12px 18px 20px; position: relative; z-index: 1; }
 
-        /* 手账宝宝卡片 */
-        .card-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 20px;
-        }
+        /* 宝宝卡片 */
+        .card-group { display: flex; flex-direction: column; align-items: center; gap: 16px; margin-bottom: 20px; }
         .journal {
-            position: relative;
-            width: 100%;
-            background: #FFF9F2;
-            border-radius: 24px 24px 18px 18px;
-            box-shadow: 0 10px 32px rgba(160, 130, 110, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.9);
-            display: flex;
-            overflow: hidden;
+            position: relative; width: 100%; background: #FFF9F2; border-radius: 24px 24px 18px 18px;
+            box-shadow: 0 10px 32px rgba(160,130,110,0.2), inset 0 1px 0 rgba(255,255,255,0.9);
+            display: flex; overflow: hidden;
         }
         .journal-spine {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            top: 14px;
-            bottom: 14px;
-            width: 1px;
-            background: repeating-linear-gradient(to bottom, rgba(180, 150, 130, 0.4) 0px, rgba(180, 150, 130, 0.4) 5px, transparent 5px, transparent 11px);
-            z-index: 2;
-            pointer-events: none;
+            position: absolute; left: 50%; transform: translateX(-50%); top: 14px; bottom: 14px; width: 1px;
+            background: repeating-linear-gradient(to bottom, rgba(180,150,130,0.4) 0px, rgba(180,150,130,0.4) 5px, transparent 5px, transparent 11px);
+            z-index: 2; pointer-events: none;
         }
-        .journal-spine::before,
-        .journal-spine::after {
-            content: '';
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #D4B896;
-            box-shadow: 0 0 0 3px rgba(210, 180, 150, 0.35);
+        .journal-spine::before, .journal-spine::after {
+            content: ''; position: absolute; left: 50%; transform: translateX(-50%); width: 10px; height: 10px;
+            border-radius: 50%; background: #D4B896; box-shadow: 0 0 0 3px rgba(210,180,150,0.35);
         }
-        .journal-spine::before {
-            top: -4px;
-        }
-        .journal-spine::after {
-            bottom: -4px;
-        }
-        .page-left {
-            flex: 1 1 50%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px 14px 20px 20px;
-            z-index: 1;
-        }
+        .journal-spine::before { top: -4px; } .journal-spine::after { bottom: -4px; }
+        .page-left { flex: 1 1 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 14px 20px 20px; z-index: 1; }
         .polaroid-frame {
-            width: 100%;
-            aspect-ratio: 3 / 4;
-            background: #FFFEF9;
-            border-radius: 8px;
-            padding: 9px 9px 30px 9px;
-            box-shadow: 3px 5px 18px rgba(140, 110, 80, 0.2);
-            position: relative;
-            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s;
-            cursor: pointer;
-            transform: rotate(-1.2deg);
-            animation: polaroidSway 7s ease-in-out infinite;
+            width: 100%; aspect-ratio: 3 / 4; background: #FFFEF9; border-radius: 8px; padding: 9px 9px 30px 9px;
+            box-shadow: 3px 5px 18px rgba(140,110,80,0.2); position: relative; cursor: pointer;
+            transform: rotate(-1.2deg); animation: polaroidSway 7s ease-in-out infinite;
         }
         @keyframes polaroidSway {
-            0%,
-            100% {
-                transform: rotate(-1.2deg);
-            }
-            30% {
-                transform: rotate(-2deg);
-            }
-            60% {
-                transform: rotate(-0.3deg);
-            }
-            85% {
-                transform: rotate(-1.5deg);
-            }
+            0%,100% { transform: rotate(-1.2deg); } 30% { transform: rotate(-2deg); }
+            60% { transform: rotate(-0.3deg); } 85% { transform: rotate(-1.5deg); }
         }
         .polaroid-photo {
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            background: linear-gradient(160deg, #FFF5F5, #FFE8EC, #FDF0F8, #FFF8F5);
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 4.5em;
-            overflow: hidden;
-            position: relative;
+            width: 100%; aspect-ratio: 1 / 1; background: linear-gradient(160deg, #FFF5F5, #FFE8EC, #FDF0F8, #FFF8F5);
+            border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 4.5em;
+            overflow: hidden; position: relative;
         }
-        .polaroid-photo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 4px;
-            display: none;
-        }
-        .polaroid-photo img.show {
-            display: block;
-        }
-        .polaroid-photo .default-emoji {
-            position: absolute;
-            transition: opacity 0.3s;
-        }
-        .polaroid-photo.has-image .default-emoji {
-            opacity: 0;
-        }
+        .polaroid-photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; display: none; }
+        .polaroid-photo img.show { display: block; }
+        .polaroid-photo .default-emoji { position: absolute; transition: opacity 0.3s; }
+        .polaroid-photo.has-image .default-emoji { opacity: 0; }
         .polaroid-caption {
-            position: absolute;
-            bottom: 8px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-family: "ZCOOL KuaiLe", sans-serif;
-            font-size: 1.05em;
-            color: #8B6E5E;
-            font-weight: 700;
-            letter-spacing: 0.06em;
-            white-space: nowrap;
+            position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+            font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.05em; color: #8B6E5E; font-weight: 700; letter-spacing: 0.06em;
         }
-        .washi-tape {
-            position: absolute;
-            z-index: 3;
-            pointer-events: none;
-        }
-        .washi-tape-1 {
-            top: -8px;
-            left: 16%;
-            width: 52px;
-            height: 18px;
-            background: rgba(255, 181, 194, 0.75);
-            border-radius: 3px;
-            transform: rotate(-9deg);
-            box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.06);
-        }
-        .washi-tape-2 {
-            top: -5px;
-            right: 20%;
-            width: 42px;
-            height: 15px;
-            background: rgba(200, 184, 232, 0.7);
-            border-radius: 2px;
-            transform: rotate(6deg);
-            box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.05);
-        }
-        .page-right {
-            flex: 1 1 50%;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding: 20px 20px 20px 10px;
-            justify-content: center;
-            z-index: 1;
-        }
+        .washi-tape { position: absolute; z-index: 3; pointer-events: none; }
+        .washi-tape-1 { top: -8px; left: 16%; width: 52px; height: 18px; background: rgba(255,181,194,0.75); border-radius: 3px; transform: rotate(-9deg); }
+        .washi-tape-2 { top: -5px; right: 20%; width: 42px; height: 15px; background: rgba(200,184,232,0.7); border-radius: 2px; transform: rotate(6deg); }
+        .page-right { flex: 1 1 50%; display: flex; flex-direction: column; gap: 10px; padding: 20px 20px 20px 10px; justify-content: center; z-index: 1; }
         .info-slip {
-            background: #FFFEF7;
-            border-radius: 4px 18px 18px 4px;
-            padding: 11px 14px;
-            box-shadow: 1px 3px 9px rgba(180, 150, 130, 0.14);
-            font-size: 0.9em;
-            color: #5D4E6D;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.25s;
-            border-left: 3px solid transparent;
+            background: #FFFEF7; border-radius: 4px 18px 18px 4px; padding: 11px 14px;
+            box-shadow: 1px 3px 9px rgba(180,150,130,0.14); font-size: 0.9em; color: #5D4E6D;
+            display: flex; align-items: center; gap: 8px; transition: all 0.25s; border-left: 3px solid transparent;
         }
-        .info-slip:hover {
-            transform: translateX(4px);
-            border-left-color: #FFD4C0;
-        }
-        .info-slip .slip-icon {
-            font-size: 1.2em;
-            flex-shrink: 0;
-        }
-        .info-slip .slip-label {
-            font-size: 0.78em;
-            color: #9B8DAB;
-            flex-shrink: 0;
-        }
-        .info-slip .slip-value {
-            font-family: "ZCOOL KuaiLe", sans-serif;
-            font-weight: 700;
-            font-size: 1em;
-            margin-left: auto;
-            letter-spacing: 0.03em;
-            text-align: right;
-        }
-        .info-slip.birthday .slip-value {
-            color: #C08050;
-        }
-        .info-slip.age .slip-value {
-            color: #E8788A;
-        }
-        .info-slip.height .slip-value {
-            color: #5D8A6E;
-        }
-        .info-slip.weight .slip-value {
-            color: #5D8A6E;
-        }
+        .info-slip:hover { transform: translateX(4px); border-left-color: #FFD4C0; }
+        .info-slip .slip-icon { font-size: 1.2em; }
+        .info-slip .slip-label { font-size: 0.78em; color: #9B8DAB; }
+        .info-slip .slip-value { font-family: "ZCOOL KuaiLe", sans-serif; font-weight: 700; font-size: 1em; margin-left: auto; }
+        .info-slip.birthday .slip-value { color: #C08050; }
+        .info-slip.age .slip-value { color: #E8788A; }
+        .info-slip.height .slip-value { color: #5D8A6E; }
+        .info-slip.weight .slip-value { color: #5D8A6E; }
 
-        .bottom-tickets {
-            display: flex;
-            gap: 14px;
-            width: 100%;
-            padding: 0 4px;
-        }
+        .bottom-tickets { display: flex; gap: 14px; width: 100%; padding: 0 4px; }
         .ticket-card {
-            flex: 1;
-            background: #FFFEF9;
-            border-radius: 16px;
-            padding: 16px 10px 14px;
-            text-align: center;
-            box-shadow: 0 7px 20px rgba(160, 130, 100, 0.16);
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            cursor: default;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            border: 1px solid rgba(220, 200, 180, 0.25);
+            flex: 1; background: #FFFEF9; border-radius: 16px; padding: 16px 10px 14px; text-align: center;
+            box-shadow: 0 7px 20px rgba(160,130,100,0.16); transition: all 0.3s;
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
+            border: 1px solid rgba(220,200,180,0.25);
         }
-        .ticket-icon {
-            font-size: 1.6em;
-            display: block;
-            animation: ticketIconBounce 2.8s ease-in-out infinite;
-        }
-        @keyframes ticketIconBounce {
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-            30% {
-                transform: translateY(-7px);
-            }
-            55% {
-                transform: translateY(-2px);
-            }
-        }
-        .ticket-label {
-            font-size: 0.8em;
-            color: #8B7D9B;
-            font-weight: 500;
-        }
-        .ticket-value-row {
-            display: flex;
-            align-items: baseline;
-            justify-content: center;
-            gap: 4px;
-            font-family: "ZCOOL KuaiLe", sans-serif;
-            font-weight: 700;
-            color: #C08050;
-        }
-        .ticket-value-row .ticket-number {
-            font-size: 1.6em;
-            line-height: 1.1;
-        }
-        .ticket-value-row .ticket-unit {
-            font-size: 0.85em;
-            color: #B8A9D4;
-        }
-        .ticket-card.countdown .ticket-value-row {
-            color: #E8788A;
-        }
-        .ticket-card.countdown .ticket-number {
-            animation: countdownPulse 1.8s ease-in-out infinite;
-        }
-        @keyframes countdownPulse {
-            0%,
-            100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.1);
-            }
-        }
+        .ticket-icon { font-size: 1.6em; } .ticket-label { font-size: 0.8em; color: #8B7D9B; }
+        .ticket-value-row { display: flex; align-items: baseline; gap: 4px; font-family: "ZCOOL KuaiLe", sans-serif; font-weight: 700; color: #C08050; }
+        .ticket-value-row .ticket-number { font-size: 1.6em; } .ticket-value-row .ticket-unit { font-size: 0.85em; color: #B8A9D4; }
+        .ticket-card.countdown .ticket-value-row { color: #E8788A; }
 
-        /* 快捷入口与记录区保持不变 */
-        .quick-actions {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            margin: 20px 0;
-            flex-wrap: wrap;
-        }
-        .quick-action-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            padding: 16px 20px;
-            border-radius: var(--radius-lg);
-            border: none;
-            cursor: pointer;
-            background: var(--card-bg);
-            backdrop-filter: blur(8px);
-            box-shadow: var(--shadow-sm);
-            transition: all 0.35s;
-            text-decoration: none;
-            color: var(--text-primary);
-            min-width: 90px;
-        }
-        .section-header h2 {
-            font-family: "ZCOOL KuaiLe", sans-serif;
-            font-size: 1.3em;
-            margin: 22px 0 14px;
-        }
-        .record-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
+        /* 记录区域标题 */
+        .section-header h2 { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.3em; margin: 22px 0 14px; color: var(--text-primary); }
+
+        .empty-state { text-align: center; padding: 30px 20px; color: #B8A9D4; font-family: "ZCOOL KuaiLe", sans-serif; }
+
+        /* 记录卡片网格 */
+        .record-grid { display: flex; flex-direction: column; gap: 14px; }
         .record-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            box-shadow: var(--shadow-sm);
+            background: var(--card-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm);
+            transition: box-shadow 0.3s var(--transition-smooth), transform 0.3s var(--transition-smooth);
         }
-        .record-card img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
+        .record-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+        .record-photo {
+            display: block; width: 100%; max-height: 260px; object-fit: contain;
+            background: #faf8f6; border-bottom: 1px solid rgba(200,180,220,0.08);
         }
-        .rc-tag {
-            display: inline-block;
-            font-size: 0.7em;
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-weight: 600;
+        .record-info { padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
+        .record-meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+        .record-category {
+            display: inline-flex; align-items: center; gap: 5px; font-size: 0.82em; font-weight: 600;
+            color: #fff; background: linear-gradient(135deg, #C8B8E8, #B8A9D4); padding: 4px 12px;
+            border-radius: 20px; letter-spacing: 0.04em;
         }
-        .tag-gallery {
-            background: #FFE0E8;
-            color: #E8788A;
-        }
-        .tag-growth {
-            background: #E0F5EB;
-            color: #5D8A6E;
-        }
+        .record-date { font-size: 0.8em; color: #9B8DAB; white-space: nowrap; }
+        .record-title { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.05em; font-weight: 700; color: #5D4E6D; }
+        .record-desc { font-size: 0.85em; color: #8B7D9B; line-height: 1.5; }
 
         /* 底部导航 */
         .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            background: var(--nav-bg);
-            backdrop-filter: blur(24px);
-            border-top: 1px solid rgba(200, 180, 220, 0.1);
-            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            padding: 6px 8px 12px;
+            position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000;
+            background: var(--nav-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border-top: 1px solid rgba(200,180,220,0.1); border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+            display: flex; align-items: center; justify-content: space-around; padding: 6px 8px 12px;
         }
         .bottom-nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: var(--text-light);
-            font-size: 0.68em;
+            display: flex; flex-direction: column; align-items: center; text-decoration: none;
+            color: var(--text-light); font-size: 0.68em; gap: 3px; transition: color 0.25s;
         }
-        .bottom-nav-item.active {
-            color: #E8788A;
-            font-weight: 700;
-        }
+        .bottom-nav-item span { font-size: 1.5em; }
+        .bottom-nav-item.active { color: #E8788A; }
         .bottom-nav-add {
-            position: relative;
-            top: -22px;
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #FFB5C2, #FF9AB2);
-            border: 4px solid rgba(255, 255, 255, 0.85);
-            box-shadow: 0 8px 26px rgba(255, 154, 178, 0.45);
-            font-size: 1.6em;
-            color: white;
-            cursor: pointer;
+            position: relative; top: -22px; width: 52px; height: 52px; border-radius: 50%;
+            background: linear-gradient(135deg, #FFB5C2, #FF9AB2); border: 4px solid rgba(255,255,255,0.85);
+            box-shadow: 0 6px 22px rgba(255,154,178,0.35); font-size: 1.6em; color: white;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: transform 0.3s var(--transition-bounce), box-shadow 0.3s;
         }
+        .bottom-nav-add:hover { transform: scale(1.08); }
+
+        /* 添加浮层 */
         .add-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 3000;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.35s;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4);
+            z-index: 3000; display: flex; align-items: flex-end; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.35s;
         }
-        .add-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        .add-overlay.active { opacity: 1; pointer-events: auto; }
         .add-sheet {
-            background: rgba(255, 255, 255, 0.96);
-            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-            width: 100%;
-            max-width: 500px;
-            padding: 28px 20px 40px;
-            transform: translateY(100%);
-            transition: transform 0.4s;
+            background: rgba(255,255,255,0.96); backdrop-filter: blur(20px);
+            border-radius: var(--radius-xl) var(--radius-xl) 0 0; width: 100%; max-width: 500px;
+            padding: 28px 20px 40px; transform: translateY(100%); transition: transform 0.4s;
         }
-        .add-overlay.active .add-sheet {
-            transform: translateY(0);
+        .add-overlay.active .add-sheet { transform: translateY(0); }
+        .add-sheet-title { text-align: center; font-family: 'ZCOOL KuaiLe', sans-serif; font-size: 1.2em; color: #5D4E6D; margin-bottom: 20px; }
+        .add-sheet-cards { display: flex; gap: 16px; justify-content: center; margin: 20px 0; }
+        .add-card-item {
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 24px 12px; border-radius: var(--radius-lg); background: rgba(255,240,245,0.5);
+            border: 1px solid rgba(255,200,210,0.3); text-decoration: none; color: var(--text-primary);
+            transition: all 0.3s var(--transition-bounce); cursor: pointer;
         }
+        .add-card-item:hover { background: rgba(255,220,230,0.7); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(255,150,170,0.2); }
+        .add-card-icon { font-size: 2.5em; margin-bottom: 6px; }
+        .add-card-label { font-family: "ZCOOL KuaiLe", sans-serif; font-weight: 700; font-size: 0.95em; }
+        .add-sheet-cancel {
+            display: block; margin: 0 auto; padding: 10px 30px; border-radius: 30px; border: none;
+            background: rgba(200,180,220,0.2); color: #8B7D9B; cursor: pointer; font-size: 0.9em;
+            transition: all 0.3s;
+        }
+        .add-sheet-cancel:hover { background: rgba(200,180,220,0.35); color: #5D4E6D; }
     </style>
 </head>
 <body>
-    <!-- 开屏加载界面 -->
+    <!-- 开屏界面 -->
     <div class="splash-screen" id="splashScreen">
-        <div class="splash-cloud"></div>
-        <div class="splash-cloud"></div>
-        <div class="splash-cloud"></div>
+        <div class="splash-cloud"></div><div class="splash-cloud"></div><div class="splash-cloud"></div>
         <div class="splash-logo-area">
             <div class="splash-logo-wrap"><span>🌱</span></div>
             <div class="splash-baby-name">赵高钏</div>
@@ -823,10 +299,7 @@
 
     <!-- 顶部栏 -->
     <header class="top-bar">
-        <a href="/" class="top-bar-brand">
-            <div class="top-bar-logo">🌱</div>
-            <span class="top-bar-appname">成长手册</span>
-        </a>
+        <a href="/" class="top-bar-brand"><div class="top-bar-logo">🌱</div><span class="top-bar-appname">成长手册</span></a>
         <button class="top-bar-mine" onclick="toggleSidebar()">👤</button>
     </header>
 
@@ -849,7 +322,7 @@
     </aside>
 
     <main class="container">
-        <!-- 手账宝宝信息卡片 -->
+        <!-- 宝宝信息卡片组 -->
         <div class="card-group">
             <div class="journal">
                 <div class="journal-spine"></div>
@@ -859,7 +332,7 @@
                         <div class="washi-tape washi-tape-2"></div>
                         <div class="polaroid-photo" id="polaroidPhoto">
                             <span class="default-emoji">👶</span>
-                            <img id="avatarImg" src="#" alt="头像" style="display:none;">
+                            <img id="avatarImg" src="#" alt="头像">
                         </div>
                         <span class="polaroid-caption">赵高钏</span>
                     </div>
@@ -867,66 +340,46 @@
                 </div>
                 <div class="page-right">
                     <div class="info-slip birthday">
-                        <span class="slip-icon">🎂</span>
-                        <span class="slip-label">出生</span>
-                        <span class="slip-value">2017年2月24日</span>
+                        <span class="slip-icon">🎂</span><span class="slip-label">出生</span><span class="slip-value">2017年2月24日</span>
                     </div>
                     <div class="info-slip age">
-                        <span class="slip-icon">🎈</span>
-                        <span class="slip-label">年龄</span>
-                        <span class="slip-value" id="ageNumber">--</span>
+                        <span class="slip-icon">🎈</span><span class="slip-label">年龄</span><span class="slip-value" id="ageNumber">--</span>
                     </div>
                     <div class="info-slip height">
-                        <span class="slip-icon">📏</span>
-                        <span class="slip-label">身高</span>
-                        <!-- 使用单一表达式，Thymeleaf处理后会替换，静态时显示默认文本 -->
+                        <span class="slip-icon">📏</span><span class="slip-label">身高</span>
                         <span class="slip-value" id="statHeight" th:text="${latestHeight != null ? latestHeight + ' cm' : '待记录'}">待记录</span>
                     </div>
                     <div class="info-slip weight">
-                        <span class="slip-icon">⚖️</span>
-                        <span class="slip-label">体重</span>
+                        <span class="slip-icon">⚖️</span><span class="slip-label">体重</span>
                         <span class="slip-value" id="statWeight" th:text="${latestWeight != null ? latestWeight + ' kg' : '待记录'}">待记录</span>
                     </div>
                 </div>
             </div>
             <div class="bottom-tickets">
                 <div class="ticket-card">
-                    <span class="ticket-icon">🌍</span>
-                    <span class="ticket-label">来到世上</span>
-                    <div class="ticket-value-row">
-                        <span class="ticket-number" id="totalDays">--</span>
-                        <span class="ticket-unit">天</span>
-                    </div>
+                    <span class="ticket-icon">🌍</span><span class="ticket-label">来到世上</span>
+                    <div class="ticket-value-row"><span class="ticket-number" id="totalDays">--</span><span class="ticket-unit">天</span></div>
                 </div>
                 <div class="ticket-card countdown">
-                    <span class="ticket-icon">🎂</span>
-                    <span class="ticket-label">生日倒计时</span>
-                    <div class="ticket-value-row">
-                        <span class="ticket-number" id="birthdayCountdown">--</span>
-                        <span class="ticket-unit">天</span>
-                    </div>
+                    <span class="ticket-icon">🎂</span><span class="ticket-label">生日倒计时</span>
+                    <div class="ticket-value-row"><span class="ticket-number" id="birthdayCountdown">--</span><span class="ticket-unit">天</span></div>
                 </div>
             </div>
         </div>
 
-        <!-- 快捷入口 -->
-        <div class="quick-actions">
-            <a href="/gallery" class="quick-action-btn"><span>📷</span>精选相册</a>
-            <a href="/growth" class="quick-action-btn"><span>📊</span>成长记录</a>
-            <a href="/messages" class="quick-action-btn"><span>💌</span>家人留言</a>
-        </div>
-
-        <!-- 成长记录列表 -->
+        <!-- 最新成长记录区域 -->
         <div class="section-header"><h2>🌟 最新成长记录</h2></div>
-        <div th:if="${#lists.isEmpty(records)}">📸 还没有成长记录哦</div>
-        <div class="record-grid">
+        <div th:if="${#lists.isEmpty(records)}" class="empty-state">📸 还没有成长记录哦，点击下方 + 号开始记录吧～</div>
+        <div class="record-grid" th:if="${!#lists.isEmpty(records)}">
             <div class="record-card" th:each="record : ${records}">
-                <img th:if="${record.photoPath != null}" th:src="@{${record.photoPath}}" onerror="this.style.display='none'">
-                <div style="padding:14px 16px;">
-                    <span class="rc-tag" th:classappend="${record.category == 'gallery' ? 'tag-gallery' : (record.category == 'growth' ? 'tag-growth' : '')}" th:text="${record.category}"></span>
-                    <div th:text="${#temporals.format(record.recordDate, 'yyyy年MM月dd日')}"></div>
-                    <div th:text="${record.title}"></div>
-                    <div th:text="${record.description}"></div>
+                <img class="record-photo" th:if="${record.photoPath != null}" th:src="@{${record.photoPath}}" alt="成长照片" loading="lazy" onerror="this.style.display='none'">
+                <div class="record-info">
+                    <div class="record-meta">
+                        <span class="record-category" th:text="${record.category}">分类</span>
+                        <span class="record-date" th:text="${#temporals.format(record.recordDate, 'yyyy年MM月dd日')}">日期</span>
+                    </div>
+                    <div class="record-title" th:text="${record.title}">标题</div>
+                    <div class="record-desc" th:text="${record.description}">描述内容</div>
                 </div>
             </div>
         </div>
@@ -940,29 +393,37 @@
         <a href="/growth" class="bottom-nav-item"><span>📊</span>数据</a>
         <a href="/messages" class="bottom-nav-item"><span>💌</span>留言</a>
     </nav>
+
+    <!-- 添加浮层 -->
     <div class="add-overlay" id="addOverlay">
         <div class="add-sheet">
-            <div style="text-align:center;font-family:'ZCOOL KuaiLe',sans-serif;">✨ 添加新记录</div>
-            <div style="display:flex;gap:14px;justify-content:center;margin:20px 0;">
-                <a href="/gallery" style="text-decoration:none;color:#5D4E6D;">📷 上传照片</a>
-                <a href="/growth" style="text-decoration:none;color:#5D4E6D;">📊 记录数据</a>
-                <a href="/messages" style="text-decoration:none;color:#5D4E6D;">💌 写留言</a>
+            <div class="add-sheet-title">✨ 添加新记录</div>
+            <div class="add-sheet-cards">
+                <a href="/gallery?action=add" class="add-card-item">
+                    <span class="add-card-icon">📷</span>
+                    <span class="add-card-label">上传照片</span>
+                </a>
+                <a href="/growth?action=add" class="add-card-item">
+                    <span class="add-card-icon">📊</span>
+                    <span class="add-card-label">记录数据</span>
+                </a>
+                <a href="/messages?action=add" class="add-card-item">
+                    <span class="add-card-icon">💌</span>
+                    <span class="add-card-label">写留言</span>
+                </a>
             </div>
-            <button onclick="closeAddOverlay()" style="display:block;margin:0 auto;padding:10px 30px;border-radius:30px;border:none;background:rgba(200,180,220,0.2);">取消</button>
+            <button class="add-sheet-cancel" onclick="closeAddOverlay()">取消</button>
         </div>
     </div>
 
     <script th:inline="javascript">
         /*<![CDATA[*/
-        // 开屏加载
+        // 开屏逻辑
         (function() {
             var splash = document.getElementById('splashScreen');
-            var minTime = 1800,
-                maxTime = 3500;
-            var start = Date.now();
-            var done = false;
+            var minTime = 1800, maxTime = 3500;
+            var start = Date.now(), done = false;
             document.body.style.overflow = 'hidden';
-
             function dismiss() {
                 if (done) return;
                 done = true;
@@ -978,7 +439,6 @@
                     document.body.style.overflow = '';
                 }, 1000);
             }
-
             function ready() {
                 var elapsed = Date.now() - start;
                 var delay = Math.max(0, minTime - elapsed);
@@ -991,17 +451,15 @@
             setTimeout(function() { if (!done) dismiss(); }, maxTime);
         })();
 
-        // 动态年龄计算
+        // 动态年龄与倒计时
         (function() {
             var birthday = new Date(2017, 1, 24);
             var now = new Date();
             var y = now.getFullYear() - birthday.getFullYear();
             var m = now.getMonth() - birthday.getMonth();
             var d = now.getDate() - birthday.getDate();
-            if (d < 0) { m--;
-                d += new Date(now.getFullYear(), now.getMonth(), 0).getDate(); }
-            if (m < 0) { y--;
-                m += 12; }
+            if (d < 0) { m--; d += new Date(now.getFullYear(), now.getMonth(), 0).getDate(); }
+            if (m < 0) { y--; m += 12; }
             document.getElementById('ageNumber').textContent = y + '岁' + m + '个月' + d + '天';
             var totalDays = Math.floor((now - birthday) / (1000 * 60 * 60 * 24));
             document.getElementById('totalDays').textContent = totalDays;
@@ -1010,45 +468,80 @@
             document.getElementById('birthdayCountdown').textContent = Math.ceil((nextBirthday - now) / (1000 * 60 * 60 * 24));
         })();
 
-        // 头像上传功能
+        // 头像上传与本地存储
         (function() {
-            var polaroidFrame = document.getElementById('polaroidFrame');
-            var fileInput = document.getElementById('avatarInput');
             var avatarImg = document.getElementById('avatarImg');
             var photoContainer = document.getElementById('polaroidPhoto');
-
-            polaroidFrame.addEventListener('click', function() {
-                fileInput.click();
-            });
-
+            var fileInput = document.getElementById('avatarInput');
+            var polaroidFrame = document.getElementById('polaroidFrame');
+            var storageKey = 'babyAvatar';
+            var savedAvatar = localStorage.getItem(storageKey);
+            if (savedAvatar) {
+                avatarImg.src = savedAvatar;
+                avatarImg.classList.add('show');
+                photoContainer.classList.add('has-image');
+            }
+            polaroidFrame.addEventListener('click', function() { fileInput.click(); });
             fileInput.addEventListener('change', function(e) {
                 var file = e.target.files[0];
                 if (!file) return;
                 var reader = new FileReader();
                 reader.onload = function(event) {
-                    avatarImg.src = event.target.result;
-                    avatarImg.style.display = 'block';
+                    var base64 = event.target.result;
+                    try { localStorage.setItem(storageKey, base64); } catch (err) { alert('头像保存失败，可能存储空间已满。'); return; }
+                    avatarImg.src = base64;
+                    avatarImg.classList.add('show');
                     photoContainer.classList.add('has-image');
                 };
                 reader.readAsDataURL(file);
             });
         })();
 
-        // 侧边栏切换
+        // 从records中提取最新身高体重（兜底更新）
+        (function() {
+            var records = /*[[${records}]]*/ [];
+            var heightElem = document.getElementById('statHeight');
+            var weightElem = document.getElementById('statWeight');
+            if (!heightElem || !weightElem) return;
+            // 若后端已提供值且非“待记录”，则优先保留；否则尝试从records中获取
+            if (heightElem.textContent === '待记录' || heightElem.textContent === '') {
+                var latestH = null;
+                if (records && records.length > 0) {
+                    for (var i = 0; i < records.length; i++) {
+                        var r = records[i];
+                        if (r.heightCm != null && (!latestH || r.recordDate > latestH.date)) {
+                            latestH = { val: r.heightCm, date: r.recordDate };
+                        }
+                    }
+                }
+                if (latestH) heightElem.textContent = latestH.val + ' cm';
+            }
+            if (weightElem.textContent === '待记录' || weightElem.textContent === '') {
+                var latestW = null;
+                if (records && records.length > 0) {
+                    for (var j = 0; j < records.length; j++) {
+                        var r2 = records[j];
+                        if (r2.weightKg != null && (!latestW || r2.recordDate > latestW.date)) {
+                            latestW = { val: r2.weightKg, date: r2.recordDate };
+                        }
+                    }
+                }
+                if (latestW) weightElem.textContent = latestW.val + ' kg';
+            }
+        })();
+
+        // 侧边栏
         function toggleSidebar() {
-            var ov = document.getElementById('sidebarOverlay');
-            var pn = document.getElementById('sidebarPanel');
-            ov.classList.toggle('active');
-            pn.classList.toggle('active');
+            var ov = document.getElementById('sidebarOverlay'), pn = document.getElementById('sidebarPanel');
+            ov.classList.toggle('active'); pn.classList.toggle('active');
             document.body.style.overflow = ov.classList.contains('active') ? 'hidden' : '';
         }
 
-        // 添加弹窗
+        // 添加浮层
         function openAddOverlay() {
             document.getElementById('addOverlay').classList.add('active');
             document.body.style.overflow = 'hidden';
         }
-
         function closeAddOverlay() {
             document.getElementById('addOverlay').classList.remove('active');
             document.body.style.overflow = '';
