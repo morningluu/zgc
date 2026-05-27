@@ -33,9 +33,13 @@ public class GrowthRecord {
     @Column(name = "weight_kg")
     private Double weightKg;
 
-    // ✅ 新增：成绩字段
+    @Column(name = "chinese_score")
     private Double chinese;
+
+    @Column(name = "math_score")
     private Double math;
+
+    @Column(name = "english_score")
     private Double english;
 
     @Column(name = "recorded_by", length = 50)
@@ -44,7 +48,6 @@ public class GrowthRecord {
     @Column(name = "create_time")
     private LocalDateTime createTime;
 
-    // 精选标记
     @Column(nullable = false)
     private boolean featured = false;
 
@@ -55,47 +58,48 @@ public class GrowthRecord {
         }
     }
 
-    // ===== Getter & Setter =====
+    public GrowthRecord() {}
+
+    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-
+    
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
-
+    
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
-
+    
     public String getPhotoPath() { return photoPath; }
     public void setPhotoPath(String photoPath) { this.photoPath = photoPath; }
-
+    
     public LocalDate getRecordDate() { return recordDate; }
     public void setRecordDate(LocalDate recordDate) { this.recordDate = recordDate; }
-
+    
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
-
+    
     public Double getHeightCm() { return heightCm; }
     public void setHeightCm(Double heightCm) { this.heightCm = heightCm; }
-
+    
     public Double getWeightKg() { return weightKg; }
     public void setWeightKg(Double weightKg) { this.weightKg = weightKg; }
-
-    // ✅ 新增：成绩字段的 Getter & Setter
+    
     public Double getChinese() { return chinese; }
     public void setChinese(Double chinese) { this.chinese = chinese; }
-
+    
     public Double getMath() { return math; }
     public void setMath(Double math) { this.math = math; }
-
+    
     public Double getEnglish() { return english; }
     public void setEnglish(Double english) { this.english = english; }
-
+    
     public String getRecordedBy() { return recordedBy; }
     public void setRecordedBy(String recordedBy) { this.recordedBy = recordedBy; }
-
+    
     public LocalDateTime getCreateTime() { return createTime; }
     public void setCreateTime(LocalDateTime createTime) { this.createTime = createTime; }
-
+    
     public boolean isFeatured() { return featured; }
     public void setFeatured(boolean featured) { this.featured = featured; }
 }
