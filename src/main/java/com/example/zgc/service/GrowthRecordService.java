@@ -3,9 +3,12 @@ package com.example.zgc.service;
 import com.example.zgc.model.GrowthRecord;
 import com.example.zgc.repository.GrowthRecordRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Service
+@Transactional
 public class GrowthRecordService {
 
     private final GrowthRecordRepository repository;
@@ -22,7 +25,6 @@ public class GrowthRecordService {
         return repository.findAllByOrderByRecordDateDesc();
     }
 
-    // ✅ 新增：按分类查询
     public List<GrowthRecord> findByCategory(String category) {
         return repository.findByCategoryOrderByRecordDateDesc(category);
     }
@@ -33,5 +35,9 @@ public class GrowthRecordService {
 
     public void delete(Long id) {
         repository.deleteById(id);
+    }
+
+    public List<GrowthRecord> findAll() {
+        return repository.findAll();
     }
 }
