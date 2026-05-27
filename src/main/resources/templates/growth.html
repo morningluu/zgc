@@ -1,316 +1,805 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      lang="zh-CN">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>成长数据 - 赵高钏的成长手册</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🌱</text></svg>">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: "Noto Sans SC", sans-serif; background: linear-gradient(180deg, #FFF8F5 0%, #F8F0FF 30%, #FFF8F0 100%); color: #5D4E6D; min-height: 100vh; }
-        .main-nav { position: sticky; top: 0; z-index: 1000; background: rgba(255,255,255,0.82); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(200,180,220,0.18); padding: 0 20px; }
-        .nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 64px; }
-        .nav-brand { display: flex; align-items: center; gap: 8px; text-decoration: none; font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.3em; font-weight: 700; background: linear-gradient(135deg, #FF9AB2, #B8A9D4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .nav-brand span { -webkit-text-fill-color: initial; }
-        .nav-links { display: flex; gap: 4px; align-items: center; }
-        .nav-link { display: flex; align-items: center; gap: 4px; padding: 8px 14px; border-radius: 25px; text-decoration: none; color: #5D4E6D; font-size: 0.88em; font-weight: 500; transition: all 0.3s; }
-        .nav-link:hover { background: rgba(255,180,190,0.2); }
-        .nav-link.active { background: rgba(180,220,210,0.25); font-weight: 700; }
-        .nav-toggle { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 8px; }
-        .nav-toggle span { width: 22px; height: 2px; background: #5D4E6D; border-radius: 2px; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>成长数据 · 赵高钏的成长手册</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🌱</text></svg>">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: "Noto Sans SC", sans-serif;
+      background: linear-gradient(180deg, #FFF8F5 0%, #F8F0FF 30%, #FFF8F0 100%);
+      color: #5D4E6D;
+      min-height: 100vh;
+    }
+    .main-nav {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(200, 180, 220, 0.18);
+      padding: 0 20px;
+    }
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      font-family: "ZCOOL KuaiLe", sans-serif;
+      font-size: 1.3em;
+      font-weight: 700;
+      background: linear-gradient(135deg, #FF9AB2, #B8A9D4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .nav-brand span {
+      -webkit-text-fill-color: initial;
+    }
+    .nav-links {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 14px;
+      border-radius: 25px;
+      text-decoration: none;
+      color: #5D4E6D;
+      font-size: 0.88em;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+    .nav-link:hover {
+      background: rgba(255, 180, 190, 0.2);
+    }
+    .nav-link.active {
+      background: rgba(180, 220, 210, 0.25);
+      font-weight: 700;
+    }
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+    }
+    .nav-toggle span {
+      width: 22px;
+      height: 2px;
+      background: #5D4E6D;
+      border-radius: 2px;
+    }
 
-        .page-container { max-width: 1000px; margin: 0 auto; padding: 30px 20px 60px; }
-        .page-header { text-align: center; margin-bottom: 20px; }
-        .page-header h1 { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 2.2em; }
+    .page-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 30px 20px 60px;
+    }
+    .page-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .page-header h1 {
+      font-family: "ZCOOL KuaiLe", sans-serif;
+      font-size: 2.2em;
+    }
 
-        .add-section { text-align: center; margin-bottom: 20px; }
-        .btn-add { display: inline-block; padding: 10px 28px; border-radius: 25px; font-weight: 600; font-size: 0.95em; text-decoration: none; cursor: pointer; border: none; font-family: inherit; transition: all 0.3s; }
-        .btn-add-login { background: linear-gradient(135deg, #FFB5C2, #FFD4B8); color: white; box-shadow: 0 4px 16px rgba(255,180,160,0.3); }
-        .btn-add-active { background: linear-gradient(135deg, #B5E8D5, #B8D8F8); color: #5D7E6D; box-shadow: 0 4px 16px rgba(180,220,200,0.3); }
-        .btn-add:hover { transform: translateY(-2px); }
+    .add-section {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .btn-add {
+      display: inline-block;
+      padding: 10px 28px;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 0.95em;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      transition: all 0.3s;
+    }
+    .btn-add-login {
+      background: linear-gradient(135deg, #FFB5C2, #FFD4B8);
+      color: white;
+      box-shadow: 0 4px 16px rgba(255, 180, 160, 0.3);
+    }
+    .btn-add-active {
+      background: linear-gradient(135deg, #B5E8D5, #B8D8F8);
+      color: #5D7E6D;
+      box-shadow: 0 4px 16px rgba(180, 220, 200, 0.3);
+    }
+    .btn-add:hover {
+      transform: translateY(-2px);
+    }
 
-        /* 与相册完全一致的添加弹窗样式 */
-        .add-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4); z-index: 300; display: none;
-            align-items: center; justify-content: center; backdrop-filter: blur(6px);
-        }
-        .add-overlay.active { display: flex; }
-        .add-card {
-            background: white; border-radius: 28px; padding: 32px 24px;
-            width: 90vw; max-width: 420px; color: #5D4E6D;
-            max-height: 90vh; overflow-y: auto;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-        .add-card h3 { font-family: "ZCOOL KuaiLe", sans-serif; text-align: center; margin-bottom: 6px; font-size: 1.4em; color: #E8788A; }
-        .add-card .form-subtitle { text-align: center; color: #B8A9D4; font-size: 0.8em; margin-bottom: 24px; }
-        .field-group { margin-bottom: 18px; }
-        .field-label { font-size: 0.85em; font-weight: 600; color: #8B7D9B; margin-bottom: 6px; }
-        .add-card input, .add-card textarea {
-            width: 100%; padding: 12px 14px; border: 1.5px solid #f0e6f6; border-radius: 20px;
-            font-family: inherit; font-size: 0.95em; outline: none; background: #FFFAFD;
-        }
-        .form-row { display: flex; gap: 12px; }
-        .form-row .field-group { flex: 1; }
-        .custom-date-wrap { position: relative; }
-        .custom-date-wrap input[type="date"] {
-            width: 100%; padding: 12px 14px; border: 1.5px solid #f0e6f6; border-radius: 20px;
-            background: #FFFAFD; cursor: pointer;
-        }
-        .custom-date-wrap .date-icon {
-            position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-            pointer-events: none; font-size: 1.2em; color: #FF9AB2;
-        }
-        .btn-submit {
-            width: 100%; padding: 14px; background: linear-gradient(135deg, #FFB5C2, #FF9AB2);
-            border: none; border-radius: 40px; color: white; font-weight: 700;
-            font-size: 1em; cursor: pointer;
-            transition: all 0.3s;
-        }
-        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,154,178,0.4); }
+    /* 弹窗样式 */
+    .add-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 300;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(6px);
+    }
+    .add-overlay.active {
+      display: flex;
+    }
+    .add-card {
+      background: white;
+      border-radius: 28px;
+      padding: 32px 24px;
+      width: 90vw;
+      max-width: 420px;
+      color: #5D4E6D;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+    .add-card h3 {
+      font-family: "ZCOOL KuaiLe", sans-serif;
+      text-align: center;
+      margin-bottom: 6px;
+      font-size: 1.4em;
+      color: #E8788A;
+    }
+    .add-card .form-subtitle {
+      text-align: center;
+      color: #B8A9D4;
+      font-size: 0.8em;
+      margin-bottom: 24px;
+    }
+    .field-group {
+      margin-bottom: 18px;
+    }
+    .field-label {
+      font-size: 0.85em;
+      font-weight: 600;
+      color: #8B7D9B;
+      margin-bottom: 6px;
+    }
+    .add-card input,
+    .add-card textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid #f0e6f6;
+      border-radius: 20px;
+      font-family: inherit;
+      font-size: 0.95em;
+      outline: none;
+      background: #FFFAFD;
+    }
+    .form-row {
+      display: flex;
+      gap: 12px;
+    }
+    .form-row .field-group {
+      flex: 1;
+    }
+    .custom-date-wrap {
+      position: relative;
+    }
+    .custom-date-wrap input[type="date"] {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid #f0e6f6;
+      border-radius: 20px;
+      background: #FFFAFD;
+      cursor: pointer;
+    }
+    .custom-date-wrap .date-icon {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      font-size: 1.2em;
+      color: #FF9AB2;
+    }
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #FFB5C2, #FF9AB2);
+      border: none;
+      border-radius: 40px;
+      color: white;
+      font-weight: 700;
+      font-size: 1em;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 154, 178, 0.4);
+    }
 
-        .chart-card { background: rgba(255,255,255,0.85); border-radius: 20px; padding: 24px; box-shadow: 0 6px 24px rgba(180,160,200,0.1); margin-bottom: 24px; }
-        .chart-card h3 { font-family: "ZCOOL KuaiLe", sans-serif; margin-bottom: 16px; text-align: center; }
-        .chart-wrap { position: relative; width: 100%; height: 320px; }
-        .chart-empty { text-align: center; padding: 80px 20px; color: #B8A9D4; }
+    .chart-card {
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 6px 24px rgba(180, 160, 200, 0.1);
+      margin-bottom: 24px;
+    }
+    .chart-card h3 {
+      font-family: "ZCOOL KuaiLe", sans-serif;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .chart-wrap {
+      position: relative;
+      width: 100%;
+      height: 300px;
+    }
+    .chart-empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: #B8A9D4;
+      font-size: 0.95em;
+    }
 
-        .data-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
-        .data-card { background: rgba(255,255,255,0.8); border-radius: 20px; padding: 20px; box-shadow: 0 6px 24px rgba(180,160,200,0.1); text-align: center; }
-        .data-card .dc-icon { font-size: 2.5em; margin-bottom: 6px; }
-        .data-card .dc-value { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 2em; color: #FF9AB2; }
-        .data-card .dc-unit { font-size: 0.8em; color: #8B7D9B; }
-        .data-card .dc-label { color: #8B7D9B; font-size: 0.85em; margin-top: 4px; }
+    .data-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .data-card {
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 6px 24px rgba(180, 160, 200, 0.1);
+      text-align: center;
+    }
+    .data-card .dc-icon {
+      font-size: 2.5em;
+      margin-bottom: 6px;
+    }
+    .data-card .dc-value {
+      font-family: "ZCOOL KuaiLe", sans-serif;
+      font-size: 2em;
+      color: #FF9AB2;
+    }
+    .data-card .dc-unit {
+      font-size: 0.8em;
+      color: #8B7D9B;
+    }
+    .data-card .dc-label {
+      color: #8B7D9B;
+      font-size: 0.85em;
+      margin-top: 4px;
+    }
 
-        .record-table-wrap { background: rgba(255,255,255,0.85); border-radius: 20px; padding: 24px; box-shadow: 0 6px 24px rgba(180,160,200,0.1); overflow-x: auto; }
-        .record-table { width: 100%; border-collapse: collapse; font-size: 0.88em; }
-        .record-table th, .record-table td { padding: 12px 10px; text-align: center; border-bottom: 1px solid rgba(200,180,220,0.2); }
-        .record-table th { font-weight: 600; color: #8B7D9B; font-size: 0.82em; }
-        .btn-del { background: rgba(255,180,180,0.3); color: #D48888; border: none; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; cursor: pointer; text-decoration: none; font-weight: 600; }
-        .btn-del:hover { background: #FF6B6B; color: white; }
+    .record-table-wrap {
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 6px 24px rgba(180, 160, 200, 0.1);
+      overflow-x: auto;
+      margin-bottom: 24px;
+    }
+    .record-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88em;
+    }
+    .record-table th,
+    .record-table td {
+      padding: 12px 10px;
+      text-align: center;
+      border-bottom: 1px solid rgba(200, 180, 220, 0.2);
+    }
+    .record-table th {
+      font-weight: 600;
+      color: #8B7D9B;
+      font-size: 0.82em;
+    }
+    .btn-del {
+      background: rgba(255, 180, 180, 0.3);
+      color: #D48888;
+      border: none;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .btn-del:hover {
+      background: #FF6B6B;
+      color: white;
+    }
 
-        .main-footer { text-align: center; padding: 40px 20px; background: linear-gradient(180deg, transparent, rgba(200,180,220,0.12)); }
-        .footer-text { font-family: "ZCOOL KuaiLe", sans-serif; color: #8B7D9B; }
+    .score-tabs {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .score-tab {
+      padding: 8px 24px;
+      border-radius: 30px;
+      background: rgba(255,255,255,0.7);
+      border: 1px solid #e2d7ec;
+      font-weight: 600;
+      color: #5D4E6D;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.9em;
+    }
+    .score-tab.active {
+      background: #FFE5EC;
+      border-color: #FF9AB2;
+      color: #D45D7A;
+    }
 
-        #backToTop { position: fixed; bottom: 30px; right: 30px; z-index: 999; width: 46px; height: 46px; border-radius: 50%; border: none; background: rgba(255,255,255,0.9); box-shadow: 0 4px 16px rgba(0,0,0,0.1); font-size: 1.3em; cursor: pointer; display: none; transition: all 0.3s; }
-        #backToTop:hover { transform: scale(1.1); }
+    .main-footer {
+      text-align: center;
+      padding: 40px 20px;
+      background: linear-gradient(180deg, transparent, rgba(200, 180, 220, 0.12));
+    }
+    .footer-text {
+      font-family: "ZCOOL KuaiLe", sans-serif;
+      color: #8B7D9B;
+    }
 
-        @media (max-width: 768px) {
-            .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; background: rgba(255,255,255,0.96); flex-direction: column; padding: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.05); }
-            .nav-links.active { display: flex; }
-            .nav-toggle { display: flex; }
-            .data-cards { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-            .data-card { padding: 12px 6px; }
-            .data-card .dc-value { font-size: 1.3em; }
-            .form-row { flex-direction: column; gap: 0; }
-            .add-card { padding: 28px 20px; }
-        }
-    </style>
+    #backToTop {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 999;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      font-size: 1.3em;
+      cursor: pointer;
+      display: none;
+      transition: all 0.3s;
+    }
+    #backToTop:hover {
+      transform: scale(1.1);
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 64px;
+        left: 0;
+        right: 0;
+        background: rgba(255, 255, 255, 0.96);
+        flex-direction: column;
+        padding: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+      }
+      .nav-links.active {
+        display: flex;
+      }
+      .nav-toggle {
+        display: flex;
+      }
+      .data-cards {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+      .data-card {
+        padding: 12px 6px;
+      }
+      .data-card .dc-value {
+        font-size: 1.3em;
+      }
+      .form-row {
+        flex-direction: column;
+        gap: 0;
+      }
+      .add-card {
+        padding: 28px 20px;
+      }
+    }
+  </style>
 </head>
 <body>
-
 <nav class="main-nav">
-    <div class="nav-inner">
-        <a href="/" class="nav-brand"><span>🌱</span> 成长数据</a>
-        <div class="nav-links" id="navLinks">
-            <a href="/" class="nav-link">🏠 首页</a>
-            <a href="/gallery" class="nav-link">📷 相册</a>
-            <a href="/growth" class="nav-link active">📊 数据</a>
-            <a href="/diary" class="nav-link">📝 日记</a>
-            <a href="/messages" class="nav-link">💌 留言</a>
-            <a sec:authorize="!isAuthenticated()" href="/login" class="nav-link">🔐 登录</a>
-            <a sec:authorize="isAuthenticated()" href="/logout" class="nav-link">🚪 退出</a>
-        </div>
-        <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('active')">
-            <span></span><span></span><span></span>
-        </button>
+  <div class="nav-inner">
+    <a href="/" class="nav-brand"><span>🌱</span> 成长数据</a>
+    <div class="nav-links" id="navLinks">
+      <a href="/" class="nav-link">🏠 首页</a>
+      <a href="/gallery" class="nav-link">📷 相册</a>
+      <a href="/growth" class="nav-link active">📊 数据</a>
+      <a href="/diary" class="nav-link">📝 日记</a>
+      <a href="/messages" class="nav-link">💌 留言</a>
+      <a sec:authorize="!isAuthenticated()" href="/login" class="nav-link">🔐 登录</a>
+      <a sec:authorize="isAuthenticated()" href="/logout" class="nav-link">🚪 退出</a>
     </div>
+    <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('active')">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
 </nav>
 
 <div class="page-container">
-    <div class="page-header">
-        <h1>📊 成长数据</h1>
-        <p style="color:#8B7D9B;">记录宝宝身高体重，见证每一步成长</p>
-    </div>
+  <div class="page-header">
+    <h1>📊 成长数据</h1>
+    <p style="color:#8B7D9B;">记录身高体重 · 学业进步，每一步都算数</p>
+  </div>
 
+  <!-- 身高体重添加按钮 -->
+  <div class="add-section">
+    <a sec:authorize="!isAuthenticated()" href="/login" class="btn-add btn-add-login">＋ 添加身体数据（需登录）</a>
+    <button sec:authorize="isAuthenticated()" class="btn-add btn-add-active" onclick="openAddForm('growth')">＋ 添加身体数据</button>
+  </div>
+
+  <!-- 身高体重概览卡片 -->
+  <div class="data-cards">
+    <div class="data-card"><div class="dc-icon">📏</div><div class="dc-value" id="latestHeight">--</div><div class="dc-unit">cm</div><div class="dc-label">最新身高</div></div>
+    <div class="data-card"><div class="dc-icon">⚖️</div><div class="dc-value" id="latestWeight">--</div><div class="dc-unit">kg</div><div class="dc-label">最新体重</div></div>
+    <div class="data-card"><div class="dc-icon">📅</div><div class="dc-value" id="totalDays">--</div><div class="dc-unit">天</div><div class="dc-label">来到世界</div></div>
+  </div>
+
+  <!-- 身高体重趋势图 -->
+  <div class="chart-card">
+    <h3>📈 身高体重变化趋势</h3>
+    <div class="chart-wrap" id="growthChartWrap"><canvas id="growthChart"></canvas></div>
+    <div class="chart-empty" id="growthChartEmpty" style="display:none;">📊 添加身体数据后这里会显示折线图</div>
+  </div>
+
+  <!-- 身高体重记录表格 -->
+  <div class="record-table-wrap">
+    <h3 style="font-family:'ZCOOL KuaiLe',sans-serif;margin-bottom:14px;">📋 身体测量记录</h3>
+    <div th:if="${#lists.isEmpty(records)}" style="text-align:center;color:#8B7D9B;padding:20px;">暂无记录</div>
+    <table class="record-table" th:if="${!#lists.isEmpty(records)}">
+      <thead><tr><th>日期</th><th>身高(cm)</th><th>体重(kg)</th><th>备注</th><th>记录人</th><th sec:authorize="isAuthenticated()">操作</th></tr></thead>
+      <tbody>
+      <tr th:each="record : ${records}">
+        <td th:text="${#temporals.format(record.recordDate, 'yyyy/MM/dd')}"></td>
+        <td th:text="${record.heightCm != null ? record.heightCm : '-'}"></td>
+        <td th:text="${record.weightKg != null ? record.weightKg : '-'}"></td>
+        <td th:text="${record.title != null ? record.title : '-'}"></td>
+        <td th:text="${record.recordedBy != null ? record.recordedBy : '-'}"></td>
+        <td sec:authorize="isAuthenticated()">
+          <a class="btn-del" th:href="@{/delete/{id}(id=${record.id})}" onclick="return confirm('确定删除吗？')">🗑</a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========= 成绩记录区域 ========= -->
+  <div style="margin-top: 32px;">
+    <div class="page-header" style="margin-bottom: 12px;">
+      <h2 style="font-size: 1.8em;">📚 学业成绩</h2>
+    </div>
     <div class="add-section">
-        <a sec:authorize="!isAuthenticated()" href="/login" class="btn-add btn-add-login">＋ 添加数据（需登录）</a>
-        <button sec:authorize="isAuthenticated()" class="btn-add btn-add-active" onclick="openAddForm()">＋ 添加数据</button>
+      <button sec:authorize="isAuthenticated()" class="btn-add btn-add-active" onclick="openAddForm('score')">＋ 添加成绩</button>
+      <a sec:authorize="!isAuthenticated()" href="/login" class="btn-add btn-add-login">＋ 添加成绩（需登录）</a>
     </div>
 
-    <div class="data-cards">
-        <div class="data-card"><div class="dc-icon">📏</div><div class="dc-value" id="latestHeight">--</div><div class="dc-unit">cm</div><div class="dc-label">最新身高</div></div>
-        <div class="data-card"><div class="dc-icon">⚖️</div><div class="dc-value" id="latestWeight">--</div><div class="dc-unit">kg</div><div class="dc-label">最新体重</div></div>
-        <div class="data-card"><div class="dc-icon">📅</div><div class="dc-value" id="totalDays">--</div><div class="dc-unit">天</div><div class="dc-label">来到世界</div></div>
-    </div>
-
+    <!-- 成绩趋势卡片 -->
     <div class="chart-card">
-        <h3>📈 身高体重变化趋势</h3>
-        <div class="chart-wrap" id="chartWrap"><canvas id="growthChart"></canvas></div>
-        <div class="chart-empty" id="chartEmpty" style="display:none;">📊 添加数据后这里会显示折线图哦</div>
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+        <h3 style="margin-bottom: 0;">📈 成绩趋势</h3>
+        <div class="score-tabs" id="scoreTabs">
+          <span class="score-tab active" data-subject="chinese">语文</span>
+          <span class="score-tab" data-subject="math">数学</span>
+          <span class="score-tab" data-subject="english">英语</span>
+        </div>
+      </div>
+      <div class="chart-wrap" id="scoreChartWrap" style="margin-top: 16px;"><canvas id="scoreChart"></canvas></div>
+      <div class="chart-empty" id="scoreChartEmpty" style="display:none;">✨ 添加成绩后这里会显示折线图</div>
     </div>
 
+    <!-- 成绩记录表格 -->
     <div class="record-table-wrap">
-        <h3 style="font-family:'ZCOOL KuaiLe',sans-serif;margin-bottom:14px;">📋 测量记录</h3>
-        <div th:if="${#lists.isEmpty(records)}" style="text-align:center;color:#8B7D9B;padding:20px;">暂无记录，添加第一条数据吧</div>
-        <table class="record-table" th:if="${!#lists.isEmpty(records)}">
-            <thead><tr><th>日期</th><th>身高(cm)</th><th>体重(kg)</th><th>备注</th><th>记录人</th><th sec:authorize="isAuthenticated()">操作</th></tr></thead>
-            <tbody>
-            <tr th:each="record : ${records}">
-                <td th:text="${#temporals.format(record.recordDate, 'yyyy/MM/dd')}"></td>
-                <td th:text="${record.heightCm != null ? record.heightCm : '-'}"></td>
-                <td th:text="${record.weightKg != null ? record.weightKg : '-'}"></td>
-                <td th:text="${record.title != null ? record.title : '-'}"></td>
-                <td th:text="${record.recordedBy != null ? record.recordedBy : '-'}"></td>
-                <td sec:authorize="isAuthenticated()">
-                    <a class="btn-del" th:href="@{/delete/{id}(id=${record.id})}" onclick="return confirm('确定删除吗？')">🗑</a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+      <h3 style="font-family:'ZCOOL KuaiLe',sans-serif;margin-bottom:14px;">📋 成绩记录</h3>
+      <div th:if="${#lists.isEmpty(scoreRecords)}" style="text-align:center;color:#8B7D9B;padding:20px;">暂无成绩记录</div>
+      <table class="record-table" th:if="${!#lists.isEmpty(scoreRecords)}">
+        <thead><tr><th>日期</th><th>语文</th><th>数学</th><th>英语</th><th>备注</th><th>记录人</th><th sec:authorize="isAuthenticated()">操作</th></tr></thead>
+        <tbody>
+        <tr th:each="sr : ${scoreRecords}">
+          <td th:text="${#temporals.format(sr.recordDate, 'yyyy/MM/dd')}"></td>
+          <td th:text="${sr.chinese != null ? sr.chinese : '-'}"></td>
+          <td th:text="${sr.math != null ? sr.math : '-'}"></td>
+          <td th:text="${sr.english != null ? sr.english : '-'}"></td>
+          <td th:text="${sr.title != null ? sr.title : '-'}"></td>
+          <td th:text="${sr.recordedBy != null ? sr.recordedBy : '-'}"></td>
+          <td sec:authorize="isAuthenticated()">
+            <a class="btn-del" th:href="@{/deleteScore/{id}(id=${sr.id})}" onclick="return confirm('确定删除这条成绩吗？')">🗑</a>
+          </td>
+        </tr>
+        </tbody>
+      </table>
     </div>
+  </div>
+</div>
+
+<!-- 身高体重添加弹窗（复用原有结构） -->
+<div class="add-overlay" id="growthOverlay" onclick="if(event.target===this)closeAddForm('growth')">
+  <div class="add-card">
+    <h3>📊 添加成长数据</h3>
+    <p class="form-subtitle">记录宝宝身高体重</p>
+    <form action="/growth/add" method="post" onsubmit="setTimeout(function(){closeAddForm('growth'); window.location.reload();}, 500)">
+      <div class="field-group">
+        <div class="field-label">📅 测量日期 <span style="color:#E8788A;">*必填</span></div>
+        <div class="custom-date-wrap">
+          <input type="date" name="recordDate" required>
+          <span class="date-icon">📆</span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field-group">
+          <div class="field-label">📏 身高 (cm)</div>
+          <input type="number" name="heightCm" step="0.1" placeholder="如：85.5">
+        </div>
+        <div class="field-group">
+          <div class="field-label">⚖️ 体重 (kg)</div>
+          <input type="number" name="weightKg" step="0.1" placeholder="如：12.5">
+        </div>
+      </div>
+      <div class="field-group">
+        <div class="field-label">📝 备注</div>
+        <input type="text" name="title" placeholder="如：3月体检">
+      </div>
+      <div class="field-group">
+        <div class="field-label">👤 记录人 <span style="color:#E8788A;">*必填</span></div>
+        <input type="text" name="recordedBy" placeholder="妈妈" required>
+      </div>
+      <button type="submit" class="btn-submit">✨ 保存数据</button>
+    </form>
+  </div>
+</div>
+
+<!-- 成绩添加弹窗 -->
+<div class="add-overlay" id="scoreOverlay" onclick="if(event.target===this)closeAddForm('score')">
+  <div class="add-card">
+    <h3>📚 添加成绩</h3>
+    <p class="form-subtitle">记录语文·数学·英语成绩</p>
+    <form action="/growth/addScore" method="post" onsubmit="setTimeout(function(){closeAddForm('score'); window.location.reload();}, 500)">
+      <div class="field-group">
+        <div class="field-label">📅 考试/记录日期 <span style="color:#E8788A;">*必填</span></div>
+        <div class="custom-date-wrap">
+          <input type="date" name="recordDate" required>
+          <span class="date-icon">📆</span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field-group">
+          <div class="field-label">📖 语文</div>
+          <input type="number" name="chinese" step="0.5" placeholder="分数">
+        </div>
+        <div class="field-group">
+          <div class="field-label">🧮 数学</div>
+          <input type="number" name="math" step="0.5" placeholder="分数">
+        </div>
+      </div>
+      <div class="field-group">
+        <div class="field-label">🔤 英语</div>
+        <input type="number" name="english" step="0.5" placeholder="分数">
+      </div>
+      <div class="field-group">
+        <div class="field-label">📝 备注</div>
+        <input type="text" name="title" placeholder="如：期中考试">
+      </div>
+      <div class="field-group">
+        <div class="field-label">👤 记录人 <span style="color:#E8788A;">*必填</span></div>
+        <input type="text" name="recordedBy" placeholder="爸爸" required>
+      </div>
+      <button type="submit" class="btn-submit">✨ 保存成绩</button>
+    </form>
+  </div>
 </div>
 
 <footer class="main-footer"><p class="footer-text">用爱与温暖，记录每一个珍贵的成长瞬间</p></footer>
 <button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆</button>
 
-<!-- 与相册风格一致的添加数据弹窗 -->
-<div class="add-overlay" id="addOverlay" onclick="if(event.target===this)closeAddForm()">
-    <div class="add-card">
-        <h3>📊 添加成长数据</h3>
-        <p class="form-subtitle">记录宝宝身高体重，见证每一步成长</p>
-        <form action="/growth/add" method="post" onsubmit="setTimeout(function(){closeAddForm(); window.location.reload();}, 500)">
-            <div class="field-group">
-                <div class="field-label">📅 测量日期 <span class="required">*必填</span></div>
-                <div class="custom-date-wrap">
-                    <input type="date" name="recordDate" required>
-                    <span class="date-icon">📆</span>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="field-group">
-                    <div class="field-label">📏 身高 <span class="unit">(cm)</span></div>
-                    <input type="number" name="heightCm" step="0.1" placeholder="如：85.5">
-                </div>
-                <div class="field-group">
-                    <div class="field-label">⚖️ 体重 <span class="unit">(kg)</span></div>
-                    <input type="number" name="weightKg" step="0.1" placeholder="如：12.5">
-                </div>
-            </div>
-            <div class="field-group">
-                <div class="field-label">📝 备注 <span class="unit">(选填)</span></div>
-                <input type="text" name="title" placeholder="如：3月体检">
-            </div>
-            <div class="field-group">
-                <div class="field-label">👤 记录人 <span class="required">*必填</span></div>
-                <input type="text" name="recordedBy" placeholder="如：妈妈" required>
-            </div>
-            <button type="submit" class="btn-submit">✨ 保存数据</button>
-        </form>
-    </div>
-</div>
-
 <script th:inline="javascript">
-    (function() {
-        // 修正：JS月份从0开始，1表示二月
-        var birthday = new Date(2017, 1, 24); // 2017年2月24日
-        var today = new Date();
-        // 消除时区影响，以UTC日期计算天数
-        var birthdayUTC = Date.UTC(2017, 1, 24);
-        var todayUTC = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
-        var days = Math.floor((todayUTC - birthdayUTC) / (1000 * 60 * 60 * 24));
-        document.getElementById('totalDays').textContent = days;
-    })();
+  // ---------- 全局变量 ----------
+  var growthRecords = /*[[${records}]]*/ [];
+  var scoreRecords = /*[[${scoreRecords}]]*/ [];
+  var currentScoreSubject = 'chinese'; // 默认显示语文
+  var scoreChartInstance = null;
+  var growthChartInstance = null;
 
-    var records = /*[[${records}]]*/ [];
+  // ---------- 计算天数 ----------
+  (function() {
+    var birthday = new Date(2017, 1, 24);
+    var today = new Date();
+    var birthdayUTC = Date.UTC(2017, 1, 24);
+    var todayUTC = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+    var days = Math.floor((todayUTC - birthdayUTC) / (1000 * 60 * 60 * 24));
+    document.getElementById('totalDays').textContent = days;
+  })();
 
-    if (records && records.length > 0) {
-        var latest = records[0];
-        document.getElementById('latestHeight').textContent = latest.heightCm != null ? latest.heightCm : '--';
-        document.getElementById('latestWeight').textContent = latest.weightKg != null ? latest.weightKg : '--';
-
-        // 按日期升序排列，便于图表展示
-        var sorted = records.slice().sort(function(a, b) {
-            return (a.recordDate || '').localeCompare(b.recordDate || '');
-        });
-        var dates = sorted.map(function(r) { return r.recordDate || ''; });
-        var heights = sorted.map(function(r) { return r.heightCm; });
-        var weights = sorted.map(function(r) { return r.weightKg; });
-
-        var ctx = document.getElementById('growthChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: dates,
-                datasets: [{
-                    label: '身高 (cm)', data: heights,
-                    borderColor: '#FF9AB2', backgroundColor: 'rgba(255,154,178,0.1)',
-                    fill: true, tension: 0.4, pointRadius: 5, pointBackgroundColor: '#FF9AB2', yAxisID: 'y'
-                }, {
-                    label: '体重 (kg)', data: weights,
-                    borderColor: '#5DCFA0', backgroundColor: 'rgba(93,207,160,0.1)',
-                    fill: true, tension: 0.4, pointRadius: 5, pointBackgroundColor: '#5DCFA0', yAxisID: 'y1'
-                }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } } },
-                scales: {
-                    y: { position: 'left', title: { display: true, text: '身高 (cm)' }, min: 40, max: 180, grid: { color: 'rgba(200,180,220,0.15)' } },
-                    y1: { position: 'right', title: { display: true, text: '体重 (kg)' }, min: 0, max: 80, grid: { drawOnChartArea: false } },
-                    x: { grid: { display: false } }
-                }
-            }
-        });
-    } else {
-        document.getElementById('chartWrap').style.display = 'none';
-        document.getElementById('chartEmpty').style.display = 'block';
+  // ---------- 身高体重图表与卡片 ----------
+  function renderGrowthChart() {
+    if (!growthRecords || growthRecords.length === 0) {
+      document.getElementById('growthChartWrap').style.display = 'none';
+      document.getElementById('growthChartEmpty').style.display = 'block';
+      return;
     }
+    document.getElementById('growthChartWrap').style.display = 'block';
+    document.getElementById('growthChartEmpty').style.display = 'none';
 
-    window.addEventListener('scroll', function() { document.getElementById('backToTop').style.display = window.scrollY > 300 ? 'block' : 'none'; });
-    document.querySelectorAll('#navLinks .nav-link').forEach(function(l) { l.addEventListener('click', function() { document.getElementById('navLinks').classList.remove('active'); }); });
+    var latest = growthRecords[0];
+    document.getElementById('latestHeight').textContent = latest.heightCm != null ? latest.heightCm : '--';
+    document.getElementById('latestWeight').textContent = latest.weightKg != null ? latest.weightKg : '--';
 
-    // 打开和关闭弹窗函数
-    function openAddForm() {
-        document.getElementById('addOverlay').classList.add('active');
-    }
-    function closeAddForm() {
-        document.getElementById('addOverlay').classList.remove('active');
-    }
+    var sorted = growthRecords.slice().sort((a,b) => (a.recordDate||'').localeCompare(b.recordDate||''));
+    var dates = sorted.map(r => r.recordDate || '');
+    var heights = sorted.map(r => r.heightCm);
+    var weights = sorted.map(r => r.weightKg);
 
-    // ========== 手机端返回键直接跳转首页（新增） ==========
-    (function() {
-        // 如果当前已经是首页，不做处理
-        if (window.location.pathname === '/' || window.location.pathname === '') {
-            return;
+    if (growthChartInstance) growthChartInstance.destroy();
+    var ctx = document.getElementById('growthChart').getContext('2d');
+    growthChartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: dates,
+        datasets: [
+          { label: '身高 (cm)', data: heights, borderColor: '#FF9AB2', backgroundColor: 'rgba(255,154,178,0.1)', fill: true, tension: 0.4, pointRadius: 4, yAxisID: 'y' },
+          { label: '体重 (kg)', data: weights, borderColor: '#5DCFA0', backgroundColor: 'rgba(93,207,160,0.1)', fill: true, tension: 0.4, pointRadius: 4, yAxisID: 'y1' }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { usePointStyle: true } } },
+        scales: {
+          y: { position: 'left', title: { display: true, text: '身高 (cm)' }, min: 40, max: 180, grid: { color: 'rgba(200,180,220,0.15)' } },
+          y1: { position: 'right', title: { display: true, text: '体重 (kg)' }, min: 0, max: 80, grid: { drawOnChartArea: false } },
+          x: { grid: { display: false } }
         }
-        // 替换当前历史状态，使返回时不会回到当前页面
-        history.replaceState({ fromSubPage: true }, '', window.location.href);
-        // 监听返回事件
-        window.addEventListener('popstate', function(event) {
-            // 优先关闭可能打开的弹窗（添加数据弹窗或其他全屏层）
-            var overlays = document.querySelectorAll('.add-overlay.active');
-            if (overlays.length > 0) {
-                overlays.forEach(function(ov) { ov.classList.remove('active'); });
-                // 阻止默认返回行为，重新推入状态
-                history.pushState({ fromSubPage: true }, '', window.location.href);
-                return;
-            }
-            // 如果没有弹窗，直接跳转到首页
-            window.location.href = '/';
-        });
-    })();
-      // 登录跳转时不留下历史记录（解决返回时看到登录页）
-document.querySelectorAll('a[href="/login"]').forEach(function(link) {
-    link.addEventListener('click', function(e) {
-        e.preventDefault();
-        location.replace('/login');
+      }
     });
-});
-</script>
+  }
 
+  // ---------- 成绩图表 ----------
+  function getSubjectLabel(subject) {
+    if (subject === 'chinese') return '语文';
+    if (subject === 'math') return '数学';
+    return '英语';
+  }
+  function getSubjectColor(subject) {
+    if (subject === 'chinese') return '#F9A66C';
+    if (subject === 'math') return '#6CB4D9';
+    return '#A1C964';
+  }
+
+  function renderScoreChart(subject) {
+    if (!scoreRecords || scoreRecords.length === 0) {
+      document.getElementById('scoreChartWrap').style.display = 'none';
+      document.getElementById('scoreChartEmpty').style.display = 'block';
+      return;
+    }
+    document.getElementById('scoreChartWrap').style.display = 'block';
+    document.getElementById('scoreChartEmpty').style.display = 'none';
+
+    var sorted = scoreRecords.slice().sort((a,b) => (a.recordDate||'').localeCompare(b.recordDate||''));
+    var dates = sorted.map(r => r.recordDate || '');
+    var values = sorted.map(r => {
+      if (subject === 'chinese') return r.chinese;
+      if (subject === 'math') return r.math;
+      return r.english;
+    });
+
+    if (scoreChartInstance) scoreChartInstance.destroy();
+    var ctx = document.getElementById('scoreChart').getContext('2d');
+    var color = getSubjectColor(subject);
+    scoreChartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: dates,
+        datasets: [{
+          label: getSubjectLabel(subject) + ' 成绩',
+          data: values,
+          borderColor: color,
+          backgroundColor: color + '20',
+          fill: true,
+          tension: 0.3,
+          pointRadius: 5,
+          pointBackgroundColor: color,
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: false, min: 0, max: 100, grid: { color: 'rgba(200,180,220,0.15)' }, title: { display: true, text: '分数' } },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+  }
+
+  // 切换成绩科目
+  document.getElementById('scoreTabs').addEventListener('click', function(e) {
+    if (e.target.classList.contains('score-tab')) {
+      document.querySelectorAll('.score-tab').forEach(t => t.classList.remove('active'));
+      e.target.classList.add('active');
+      currentScoreSubject = e.target.dataset.subject;
+      renderScoreChart(currentScoreSubject);
+    }
+  });
+
+  // ---------- 弹窗控制 ----------
+  function openAddForm(type) {
+    if (type === 'growth') {
+      document.getElementById('growthOverlay').classList.add('active');
+    } else if (type === 'score') {
+      document.getElementById('scoreOverlay').classList.add('active');
+    }
+  }
+  function closeAddForm(type) {
+    if (type === 'growth') {
+      document.getElementById('growthOverlay').classList.remove('active');
+    } else if (type === 'score') {
+      document.getElementById('scoreOverlay').classList.remove('active');
+    }
+  }
+
+  // ---------- 初始化所有图表 ----------
+  renderGrowthChart();
+  renderScoreChart('chinese'); // 默认语文
+
+  // ---------- 返回顶部与导航 ----------
+  window.addEventListener('scroll', function() {
+    document.getElementById('backToTop').style.display = window.scrollY > 300 ? 'block' : 'none';
+  });
+  document.querySelectorAll('#navLinks .nav-link').forEach(function(l) {
+    l.addEventListener('click', function() { document.getElementById('navLinks').classList.remove('active'); });
+  });
+
+  // 手机返回键处理
+  (function() {
+    if (window.location.pathname === '/' || window.location.pathname === '') return;
+    history.replaceState({ fromSubPage: true }, '', window.location.href);
+    window.addEventListener('popstate', function(event) {
+      var overlays = document.querySelectorAll('.add-overlay.active');
+      if (overlays.length > 0) {
+        overlays.forEach(function(ov) { ov.classList.remove('active'); });
+        history.pushState({ fromSubPage: true }, '', window.location.href);
+        return;
+      }
+      window.location.href = '/';
+    });
+  })();
+  document.querySelectorAll('a[href="/login"]').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      location.replace('/login');
+    });
+  });
+</script>
 </body>
 </html>
