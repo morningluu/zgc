@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-
 @Controller
 public class HomeController {
 
@@ -167,18 +166,18 @@ public class HomeController {
         return "redirect:/messages";
     }
 
+    // ✅ 修改：删除后重定向回原页面
     @PostMapping("/delete/{id}")
-    @ResponseBody
-    public String deleteRecord(@PathVariable Long id) {
+    public String deleteRecord(@PathVariable Long id, @RequestHeader(value = "Referer", defaultValue = "/") String referer) {
         recordService.delete(id);
-        return "ok";
+        return "redirect:" + referer;
     }
 
+    // ✅ 修改：删除成绩后重定向回 growth 页面
     @PostMapping("/deleteScore/{id}")
-    @ResponseBody
     public String deleteScoreRecord(@PathVariable Long id) {
         recordService.delete(id);
-        return "ok";
+        return "redirect:/growth";
     }
 
     private String savePhoto(MultipartFile photo) throws IOException {
