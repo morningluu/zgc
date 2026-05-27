@@ -4,13 +4,20 @@
       lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>赵高钏的成长记录手册</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🌱</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: "Noto Sans SC", sans-serif; background: linear-gradient(180deg, #FFF8F5 0%, #F8F0FF 30%, #F0F8FF 60%, #FFF8F0 100%); background-attachment: fixed; color: #5D4E6D; min-height: 100vh; overflow-x: hidden; }
+        body {
+            font-family: "Noto Sans SC", sans-serif;
+            background: linear-gradient(180deg, #FFF8F5 0%, #F8F0FF 30%, #F0F8FF 60%, #FFF8F0 100%);
+            background-attachment: fixed;
+            color: #5D4E6D;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
         .toast-message {
             position: fixed;
             bottom: 30%;
@@ -29,91 +36,299 @@
             opacity: 0;
         }
         .toast-message.show { opacity: 1; }
-        .main-nav { position: sticky; top: 0; z-index: 1000; background: rgba(255,255,255,0.82); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(200,180,220,0.18); padding: 0 20px; }
-        .nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 64px; }
-        .nav-brand { display: flex; align-items: center; gap: 8px; text-decoration: none; font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.3em; font-weight: 700; background: linear-gradient(135deg, #FF9AB2, #B8A9D4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .main-nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255,255,255,0.82);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(200,180,220,0.18);
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            font-size: 1.3em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FF9AB2, #B8A9D4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
         .nav-brand .brand-emoji { font-size: 1.4em; animation: bounce 2s infinite; -webkit-text-fill-color: initial; }
         .nav-links { display: flex; gap: 4px; align-items: center; }
-        .nav-link { display: flex; align-items: center; gap: 4px; padding: 8px 14px; border-radius: 25px; text-decoration: none; color: #5D4E6D; font-size: 0.88em; font-weight: 500; transition: all 0.3s; white-space: nowrap; }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 14px;
+            border-radius: 25px;
+            text-decoration: none;
+            color: #5D4E6D;
+            font-size: 0.88em;
+            font-weight: 500;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
         .nav-link:hover { background: rgba(255,180,190,0.2); transform: translateY(-2px); }
         .nav-link.active { background: rgba(255,180,190,0.25); font-weight: 700; }
         .nav-toggle { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 8px; }
         .nav-toggle span { width: 22px; height: 2px; background: #5D4E6D; border-radius: 2px; }
 
-        .hero { text-align: center; padding: 50px 20px 30px; position: relative; }
-        .hero-badge { display: inline-block; background: linear-gradient(135deg, #FFB5C2, #FF9AB2); color: white; padding: 10px 28px; border-radius: 50px; font-weight: 700; font-size: 0.9em; box-shadow: 0 6px 24px rgba(255,154,178,0.4); margin-bottom: 20px; letter-spacing: 0.04em; }
-        .hero-title { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 2.8em; font-weight: 700; color: #E8788A; margin-bottom: 12px; line-height: 1.3; }
-        .hero-subtitle { color: #9B8DAB; font-size: 0.95em; margin-bottom: 24px; font-weight: 400; }
-        .hero-info-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-        .hero-age { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.85); padding: 12px 24px; border-radius: 20px; font-weight: 500; box-shadow: 0 4px 16px rgba(0,0,0,0.05); font-size: 0.9em; color: #6D5E7D; }
-        .hero-age .age-number { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.5em; color: #E8788A; font-weight: 700; }
+        /* 底部导航 */
+        .bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255,255,255,0.96);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(200,180,220,0.2);
+            z-index: 100;
+            padding: 8px 12px;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+        .bottom-nav .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+            color: #8B7D9B;
+            font-size: 0.7rem;
+            transition: all 0.2s;
+            padding: 6px 12px;
+            border-radius: 30px;
+        }
+        .bottom-nav .nav-item span:first-child { font-size: 1.3rem; }
+        .bottom-nav .nav-item.active { color: #E8788A; background: rgba(255,154,178,0.15); }
+        .bottom-nav .nav-item:active { transform: scale(0.96); }
 
-        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px 60px; }
-        .quick-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 40px; }
-        .quick-card { background: rgba(255,255,255,0.82); backdrop-filter: blur(10px); border-radius: 20px; padding: 24px 14px; text-align: center; text-decoration: none; color: #5D4E6D; box-shadow: 0 6px 24px rgba(180,160,200,0.1); transition: all 0.35s; }
-        .quick-card:hover { transform: translateY(-6px); box-shadow: 0 14px 36px rgba(180,160,200,0.22); }
-        .quick-card .qc-icon { font-size: 2.5em; display: block; margin-bottom: 10px; }
-        .quick-card .qc-title { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.1em; margin-bottom: 4px; color: #5D4E6D; }
-        .quick-card .qc-desc { font-size: 0.78em; color: #9B8DAB; }
+        /* Hero 区域保留 */
+        .hero {
+            text-align: center;
+            padding: 50px 20px 30px;
+            position: relative;
+        }
+        .hero-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #FFB5C2, #FF9AB2);
+            color: white;
+            padding: 10px 28px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.9em;
+            box-shadow: 0 6px 24px rgba(255,154,178,0.4);
+            margin-bottom: 20px;
+            letter-spacing: 0.04em;
+        }
+        .hero-title {
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            font-size: 2.8em;
+            font-weight: 700;
+            color: #E8788A;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+        .hero-subtitle {
+            color: #9B8DAB;
+            font-size: 0.95em;
+            margin-bottom: 24px;
+            font-weight: 400;
+        }
+        .hero-info-row {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .hero-age {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.85);
+            padding: 12px 24px;
+            border-radius: 20px;
+            font-weight: 500;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+            font-size: 0.9em;
+            color: #6D5E7D;
+        }
+        .hero-age .age-number {
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            font-size: 1.5em;
+            color: #E8788A;
+            font-weight: 700;
+        }
 
-        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
-        .section-header h2 { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.5em; color: #5D4E6D; }
-        .record-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
-        .record-card { background: rgba(255,255,255,0.82); backdrop-filter: blur(10px); border-radius: 20px; overflow: hidden; box-shadow: 0 6px 24px rgba(180,160,200,0.1); transition: all 0.35s; position: relative; }
-        .record-card:hover { transform: translateY(-4px); box-shadow: 0 14px 36px rgba(180,160,200,0.22); }
-        .record-card img { width: 100%; height: 200px; object-fit: cover; }
-        .record-card .rc-body { padding: 16px 18px; }
-        .record-card .rc-date { font-size: 0.78em; color: #B8A9D4; font-weight: 500; margin-bottom: 2px; }
-        .record-card .rc-title { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.1em; margin-bottom: 4px; color: #5D4E6D; }
-        .record-card .rc-desc { font-size: 0.85em; color: #8B7D9B; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .record-card .rc-tag { display: inline-block; font-size: 0.72em; padding: 2px 10px; border-radius: 12px; font-weight: 600; margin-bottom: 6px; }
-        .tag-gallery { background: #FFE0E8; color: #E8788A; }
-        .tag-growth { background: #E0F5EB; color: #5D8A6E; }
-        .tag-diary { background: #FFF0E0; color: #C08050; }
-        .tag-messages { background: #E8E0F5; color: #7B68A0; }
-        /* 首页不显示删除按钮，因此样式保留但不影响（按钮已被移除） */
-        .empty-state { text-align: center; padding: 50px; color: #8B7D9B; }
-        .empty-state .empty-icon { font-size: 3.5em; margin-bottom: 12px; }
-        .main-footer { text-align: center; padding: 40px 20px; background: linear-gradient(180deg, transparent, rgba(200,180,220,0.12)); }
-        .footer-text { font-family: "ZCOOL KuaiLe", sans-serif; color: #9B8DAB; font-size: 0.95em; }
+        /* 时光轴区域（替代原来的四个方块） */
+        .timeline-section {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px 20px 60px;
+        }
+        .timeline-header {
+            margin-bottom: 24px;
+            padding-left: 8px;
+            border-left: 4px solid #FF9AB2;
+        }
+        .timeline-header h2 {
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            font-size: 1.6em;
+            color: #5D4E6D;
+        }
+        .timeline-header p {
+            color: #B8A9D4;
+            font-size: 0.85em;
+            margin-top: 4px;
+        }
+        .timeline-item {
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(8px);
+            border-radius: 24px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(180,160,200,0.1);
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        .timeline-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 32px rgba(180,160,200,0.18);
+        }
+        .timeline-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .timeline-content {
+            padding: 20px;
+        }
+        .timeline-category {
+            display: inline-block;
+            font-size: 0.7em;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .cat-gallery { background: #FFE0E8; color: #E8788A; }
+        .cat-growth { background: #E0F5EB; color: #5D8A6E; }
+        .cat-diary { background: #FFF0E0; color: #C08050; }
+        .cat-messages { background: #E8E0F5; color: #7B68A0; }
+        .timeline-date {
+            font-size: 0.75em;
+            color: #B8A9D4;
+            margin-bottom: 4px;
+        }
+        .timeline-title {
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            font-size: 1.15em;
+            margin-bottom: 6px;
+            color: #5D4E6D;
+        }
+        .timeline-desc {
+            font-size: 0.85em;
+            color: #8B7D9B;
+            line-height: 1.5;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        .empty-timeline {
+            text-align: center;
+            padding: 60px 20px;
+            color: #B8A9D4;
+            background: rgba(255,255,255,0.7);
+            border-radius: 30px;
+        }
+        .empty-timeline .empty-icon {
+            font-size: 3.5em;
+            margin-bottom: 12px;
+        }
 
-        #backToTop { position: fixed; bottom: 30px; right: 30px; z-index: 999; width: 46px; height: 46px; border-radius: 50%; border: none; background: rgba(255,255,255,0.9); box-shadow: 0 4px 16px rgba(0,0,0,0.1); font-size: 1.3em; cursor: pointer; display: none; transition: all 0.3s; }
+        .main-footer {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(180deg, transparent, rgba(200,180,220,0.12));
+        }
+        .footer-text {
+            font-family: "ZCOOL KuaiLe", sans-serif;
+            color: #9B8DAB;
+            font-size: 0.95em;
+        }
+        #backToTop {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 999;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255,255,255,0.9);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            font-size: 1.3em;
+            cursor: pointer;
+            display: none;
+            transition: all 0.3s;
+        }
         #backToTop:hover { transform: scale(1.1); }
 
         @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
 
         @media (max-width: 768px) {
-            .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; background: rgba(255,255,255,0.96); flex-direction: column; padding: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.05); }
-            .nav-links.active { display: flex; }
-            .nav-toggle { display: flex; }
+            .main-nav { display: none; }
+            .bottom-nav { display: flex; }
+            body { padding-bottom: 70px; }
             .hero-title { font-size: 2em; }
-            .quick-grid { grid-template-columns: repeat(2, 1fr); }
-            .record-grid { grid-template-columns: 1fr; }
-            .hero-info-row { flex-direction: column; align-items: center; }
+            .hero-info-row { flex-direction: column; align-items: center; gap: 10px; }
+            .timeline-item { margin-bottom: 16px; }
+            .timeline-img { height: 160px; }
         }
     </style>
 </head>
 <body>
-
 <div class="toast-message" id="toastMsg">提示</div>
 
 <nav class="main-nav">
     <div class="nav-inner">
-        <a href="/" class="nav-brand"><span class="brand-emoji">🌱</span> 首页</a>
+        <a href="/" class="nav-brand"><span class="brand-emoji">🌱</span> 成长手册</a>
         <div class="nav-links" id="navLinks">
             <a href="/" class="nav-link active">🏠 首页</a>
             <a href="/gallery" class="nav-link">📷 相册</a>
             <a href="/growth" class="nav-link">📊 数据</a>
             <a href="/diary" class="nav-link">📝 日记</a>
             <a href="/messages" class="nav-link">💌 留言</a>
+            <a href="/my" class="nav-link">👤 我的</a>
             <a sec:authorize="!isAuthenticated()" href="/login" class="nav-link">🔐 登录</a>
             <a sec:authorize="isAuthenticated()" href="/logout" class="nav-link">🚪 退出</a>
         </div>
-        <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('active')">
-            <span></span><span></span><span></span>
-        </button>
+        <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('active')"><span></span><span></span><span></span></button>
     </div>
 </nav>
+
+<div class="bottom-nav">
+    <a href="/" class="nav-item active"><span>🏠</span><span>首页</span></a>
+    <a href="/gallery" class="nav-item"><span>📷</span><span>相册</span></a>
+    <a href="/growth" class="nav-item"><span>📊</span><span>数据</span></a>
+    <a href="/diary" class="nav-item"><span>📝</span><span>日记</span></a>
+    <a href="/messages" class="nav-item"><span>💌</span><span>留言</span></a>
+    <a href="/my" class="nav-item"><span>👤</span><span>我的</span></a>
+</div>
 
 <section class="hero">
     <div class="hero-badge">记录每一个珍贵瞬间</div>
@@ -125,45 +340,36 @@
     </div>
 </section>
 
-<div class="container">
-    <div class="quick-grid">
-        <a href="/gallery" class="quick-card"><span class="qc-icon">📷</span><div class="qc-title">相册图集</div><div class="qc-desc">珍藏每一张笑脸</div></a>
-        <a href="/growth" class="quick-card"><span class="qc-icon">📊</span><div class="qc-title">成长数据</div><div class="qc-desc">身高体重记录</div></a>
-        <a href="/diary" class="quick-card"><span class="qc-icon">📝</span><div class="qc-title">趣事日记</div><div class="qc-desc">点滴美好文字</div></a>
-        <a href="/messages" class="quick-card"><span class="qc-icon">💌</span><div class="qc-title">时光留言</div><div class="qc-desc">家人的温暖寄语</div></a>
+<div class="timeline-section">
+    <div class="timeline-header">
+        <h2>🌟 宝宝时光轴</h2>
+        <p>记录每一次欢笑与成长</p>
     </div>
 
-    <div class="section-header"><h2>🌟 最新成长记录</h2></div>
-
-    <div th:if="${#lists.isEmpty(records)}" class="empty-state">
+    <div th:if="${#lists.isEmpty(records)}" class="empty-timeline">
         <div class="empty-icon">📸</div>
-        <p>还没有成长记录哦</p>
-        <p style="font-size:0.9em;">登录后开始记录宝宝的每一个珍贵瞬间吧</p>
+        <p>还没有成长记录，快去添加第一条吧~</p>
+        <div style="margin-top: 16px;">
+            <a href="/gallery" class="btn-add-fab" style="position: relative; display: inline-block; bottom: 0; right: 0; margin: 0;">✨ 去上传照片</a>
+        </div>
     </div>
 
-    <div class="record-grid" id="recordsContainer">
-        <div class="record-card" th:each="record : ${records}" data-id="${record.id}">
-            <!-- 注意：首页不显示删除按钮，删除请到对应的相册/数据/日记/留言页面操作 -->
-            <img th:if="${record.photoPath != null}" th:src="@{${record.photoPath}}" alt="照片"
-                 onerror="this.style.display='none'">
-            <div class="rc-body">
-                <span class="rc-tag" th:classappend="${record.category == 'gallery' ? 'tag-gallery' : (record.category == 'growth' ? 'tag-growth' : (record.category == 'diary' ? 'tag-diary' : 'tag-messages'))}"
-                      th:text="${record.category == 'gallery' ? '📷 相册' : (record.category == 'growth' ? '📊 数据' : (record.category == 'diary' ? '📝 日记' : '💌 留言'))}">分类</span>
-                <div class="rc-date" th:text="${#temporals.format(record.recordDate, 'yyyy年MM月dd日')}">日期</div>
-                <div class="rc-title" th:text="${record.title}">标题</div>
-                <div class="rc-desc" th:text="${record.description}">描述</div>
-            </div>
+    <div th:each="record : ${records}" class="timeline-item">
+        <img th:if="${record.photoPath != null}" th:src="@{${record.photoPath}}" alt="照片" class="timeline-img" onerror="this.style.display='none'">
+        <div class="timeline-content">
+            <span class="timeline-category" th:classappend="${record.category == 'gallery' ? 'cat-gallery' : (record.category == 'growth' ? 'cat-growth' : (record.category == 'diary' ? 'cat-diary' : 'cat-messages'))}"
+                  th:text="${record.category == 'gallery' ? '📷 相册' : (record.category == 'growth' ? '📊 数据' : (record.category == 'diary' ? '📝 日记' : '💌 留言'))}">分类</span>
+            <div class="timeline-date" th:text="${#temporals.format(record.recordDate, 'yyyy年MM月dd日')}"></div>
+            <div class="timeline-title" th:text="${record.title}">标题</div>
+            <div class="timeline-desc" th:text="${record.description}">描述</div>
         </div>
     </div>
 </div>
 
 <footer class="main-footer"><p class="footer-text">用爱与温暖，记录每一个珍贵的成长瞬间</p></footer>
-
 <button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆</button>
 
-<script th:inline="javascript">
-    /*<![CDATA[*/
-    // 年龄计算
+<script>
     (function() {
         var birthday = new Date(2017, 1, 24);
         var now = new Date();
@@ -179,57 +385,21 @@
         document.getElementById('birthdayCountdown').textContent = Math.ceil((nextBirthday - now) / (1000*60*60*24));
     })();
 
-    // 滚动返回顶部
     window.addEventListener('scroll', function() { document.getElementById('backToTop').style.display = window.scrollY > 300 ? 'block' : 'none'; });
-    // 移动端菜单关闭
     document.querySelectorAll('#navLinks .nav-link').forEach(function(l) { l.addEventListener('click', function() { document.getElementById('navLinks').classList.remove('active'); }); });
 
-    // ========== 二次确认退出（手机端） ==========
-    var toastMsg = document.getElementById('toastMsg');
-    var exitTimer = null;
-    var isFirstBack = true;
-
-    function showToast(text) {
-        toastMsg.textContent = text;
-        toastMsg.classList.add('show');
-        if (exitTimer) clearTimeout(exitTimer);
-        exitTimer = setTimeout(function() { toastMsg.classList.remove('show'); }, 1500);
-    }
-
-    // 检查是否有打开的全屏覆盖层（例如相册大图、添加弹窗等），这些页面会独立处理返回，这里只处理首页本身
-    function hasOpenOverlay() {
-        // 首页通常没有大图弹窗，但可能有其他页面（比如相册的大图）在首页不存在，为了通用，检查所有可能的活动覆盖层
-        var overlays = document.querySelectorAll('.photo-viewer.active, .add-overlay.active');
-        return overlays.length > 0;
-    }
-
-    window.history.pushState({ page: "home" }, "", window.location.href);
-    window.addEventListener('popstate', function(event) {
-        // 如果存在打开的覆盖层（弹窗），关闭它们，不退出
-        if (hasOpenOverlay()) {
-            var overlays = document.querySelectorAll('.photo-viewer.active, .add-overlay.active');
-            overlays.forEach(function(ov) { ov.classList.remove('active'); });
-            // 阻止默认返回行为，重新推入状态
-            window.history.pushState({ page: "home" }, "", window.location.href);
-            return;
-        }
-
-        if (isFirstBack) {
-            showToast('再按一次返回退出');
-            isFirstBack = false;
-            // 重新推入一个状态，让下一次返回再次触发
-            window.history.pushState({ page: "home" }, "", window.location.href);
-        } else {
-            // 真正退出
-            window.history.back();
-        }
-        // 3秒后重置标志
-        setTimeout(function() {
-            isFirstBack = true;
-        }, 3000);
-    });
-    /*]]>*/
+    // 底部导航高亮
+    (function() {
+        var currentPath = window.location.pathname;
+        document.querySelectorAll('.bottom-nav .nav-item').forEach(function(item) {
+            var href = item.getAttribute('href');
+            if (href === currentPath || (currentPath === '/' && href === '/')) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+    })();
 </script>
-
 </body>
 </html>
