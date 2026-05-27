@@ -1,228 +1,711 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      lang="zh-CN">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>时光留言 - 赵高钏的成长手册</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🌱</text></svg>">
-    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: "Noto Sans SC", sans-serif; background: linear-gradient(180deg, #FFF8F5 0%, #F0F0FF 30%, #FFF8F0 100%); color: #5D4E6D; min-height: 100vh; }
-        .main-nav { position: sticky; top: 0; z-index: 1000; background: rgba(255,255,255,0.82); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(200,180,220,0.18); padding: 0 20px; }
-        .nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 64px; }
-        .nav-brand { display: flex; align-items: center; gap: 8px; text-decoration: none; font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.3em; font-weight: 700; background: linear-gradient(135deg, #FF9AB2, #B8A9D4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .nav-brand span { -webkit-text-fill-color: initial; }
-        .nav-links { display: flex; gap: 4px; align-items: center; }
-        .nav-link { display: flex; align-items: center; gap: 4px; padding: 8px 14px; border-radius: 25px; text-decoration: none; color: #5D4E6D; font-size: 0.88em; font-weight: 500; transition: all 0.3s; }
-        .nav-link:hover { background: rgba(255,180,190,0.2); }
-        .nav-link.active { background: rgba(210,200,230,0.25); font-weight: 700; }
-        .nav-toggle { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 8px; }
-        .nav-toggle span { width: 22px; height: 2px; background: #5D4E6D; border-radius: 2px; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>时光留言 - 赵高钏的成长手册</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🌱</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --pink: #FFB5C2;
+      --pink-deep: #FF9AB2;
+      --pink-light: #FFE0E8;
+      --purple: #C8B8E8;
+      --purple-deep: #B8A9D4;
+      --purple-light: #E8E0F5;
+      --blue: #B5D8F7;
+      --blue-light: #E0F0F8;
+      --green: #B5E8D5;
+      --green-light: #E0F5EB;
+      --yellow: #FFE8C0;
+      --yellow-light: #FFF8E8;
+      --text-primary: #5D4E6D;
+      --text-secondary: #8B7D9B;
+      --text-light: #9B8DAB;
+      --card-bg: rgba(255, 255, 255, 0.78);
+      --nav-bg: rgba(255, 252, 248, 0.94);
+      --shadow-sm: 0 4px 16px rgba(180, 160, 200, 0.08);
+      --shadow-md: 0 8px 28px rgba(180, 160, 200, 0.13);
+      --shadow-lg: 0 16px 44px rgba(180, 160, 200, 0.18);
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+      --transition-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-        .page-container { max-width: 750px; margin: 0 auto; padding: 30px 20px 60px; }
-        .page-header { text-align: center; margin-bottom: 24px; }
-        .page-header h1 { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 2.2em; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        .add-section { text-align: center; margin-bottom: 28px; }
-        .btn-add { display: inline-block; padding: 10px 28px; border-radius: 25px; font-weight: 600; font-size: 0.95em; text-decoration: none; cursor: pointer; border: none; font-family: inherit; transition: all 0.3s; }
-        .btn-add-login { background: linear-gradient(135deg, #FFB5C2, #FFD4B8); color: white; box-shadow: 0 4px 16px rgba(255,180,160,0.3); }
-        .btn-add-active { background: linear-gradient(135deg, #B5E8D5, #B8D8F8); color: #5D7E6D; box-shadow: 0 4px 16px rgba(180,220,200,0.3); }
-        .btn-add:hover { transform: translateY(-2px); }
+    body {
+      font-family: "Noto Sans SC", sans-serif;
+      background: linear-gradient(175deg, #FFF8F5 0%, #FEF5F8 8%, #F8F0FF 22%, #F5F0FA 35%, #F0F5FB 50%, #F5F8F5 65%, #FFFBF0 78%, #FFF8F5 100%);
+      background-attachment: fixed;
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 100px;
+      position: relative;
+    }
 
-        /* ========= 与相册完全一致的添加弹窗样式 ========= */
-        .add-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4); z-index: 300; display: none;
-            align-items: center; justify-content: center; backdrop-filter: blur(6px);
-        }
-        .add-overlay.active { display: flex; }
-        .add-card {
-            background: white; border-radius: 28px; padding: 32px 24px;
-            width: 90vw; max-width: 420px; color: #5D4E6D;
-            max-height: 90vh; overflow-y: auto;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-        .add-card h3 { font-family: "ZCOOL KuaiLe", sans-serif; text-align: center; margin-bottom: 6px; font-size: 1.4em; color: #E8788A; }
-        .add-card .form-subtitle { text-align: center; color: #B8A9D4; font-size: 0.8em; margin-bottom: 24px; }
-        .field-group { margin-bottom: 18px; }
-        .field-label { font-size: 0.85em; font-weight: 600; color: #8B7D9B; margin-bottom: 6px; }
-        .add-card input, .add-card textarea {
-            width: 100%; padding: 12px 14px; border: 1.5px solid #f0e6f6; border-radius: 20px;
-            font-family: inherit; font-size: 0.95em; outline: none; background: #FFFAFD;
-        }
-        .custom-date-wrap { position: relative; }
-        .custom-date-wrap input[type="date"] {
-            width: 100%; padding: 12px 14px; border: 1.5px solid #f0e6f6; border-radius: 20px;
-            background: #FFFAFD; cursor: pointer;
-        }
-        .custom-date-wrap .date-icon {
-            position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-            pointer-events: none; font-size: 1.2em; color: #FF9AB2;
-        }
-        .btn-submit {
-            width: 100%; padding: 14px; background: linear-gradient(135deg, #FFB5C2, #FF9AB2);
-            border: none; border-radius: 40px; color: white; font-weight: 700;
-            font-size: 1em; cursor: pointer;
-            transition: all 0.3s;
-        }
-        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,154,178,0.4); }
+    /* 顶部栏 (与首页完全一致) */
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border-bottom: 1px solid rgba(200, 180, 220, 0.1);
+      padding: 0 16px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .top-bar-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+    .top-bar-logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FFE0E8, #FFB5C2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1em;
+      box-shadow: 0 3px 12px rgba(255, 181, 194, 0.35);
+    }
+    .top-bar-appname {
+      font-family: "ZCOOL KuaiLe", sans-serif;
+      font-size: 1.05em;
+      font-weight: 700;
+      background: linear-gradient(135deg, #E8788A, #B8A9D4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .top-bar-mine {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(200, 180, 220, 0.12);
+      cursor: pointer;
+      font-size: 1.3em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s;
+    }
+    .top-bar-mine:active {
+      background: rgba(200, 180, 220, 0.25);
+    }
 
-        /* 留言卡片样式保持不变 */
-        .message-card { background: rgba(255,255,255,0.82); border-radius: 20px; padding: 24px; box-shadow: 0 4px 20px rgba(180,160,200,0.08); margin-bottom: 18px; transition: all 0.3s; border-left: 4px solid transparent; position: relative; animation: fadeInUp 0.5s ease-out both; }
-        .message-card:nth-child(odd) { border-left-color: #FFB5C2; }
-        .message-card:nth-child(even) { border-left-color: #B5E8D5; }
-        .message-card:hover { box-shadow: 0 8px 28px rgba(180,160,200,0.18); transform: translateY(-2px); }
-        .msg-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .msg-avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3em; }
-        .msg-author { font-weight: 600; }
-        .msg-date { font-size: 0.78em; color: #B8A9D4; }
-        .msg-content { color: #6D5E7D; line-height: 1.7; }
-        .msg-delete { position: absolute; top: 16px; right: 16px; background: rgba(255,180,180,0.3); color: #D48888; border: none; padding: 5px 14px; border-radius: 20px; font-size: 0.85em; cursor: pointer; text-decoration: none; font-weight: 600; transition: all 0.3s; }
-        .msg-delete:hover { background: #FF6B6B; color: white; }
+    /* 侧边栏 (与首页完全一致) */
+    .sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.35);
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s;
+    }
+    .sidebar-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .sidebar-panel {
+      position: fixed;
+      top: 0;
+      right: -320px;
+      width: 300px;
+      max-width: 82vw;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(20px);
+      z-index: 2001;
+      transition: right 0.4s;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      border-radius: var(--radius-xl) 0 0 var(--radius-xl);
+      box-shadow: -8px 0 36px rgba(0, 0, 0, 0.1);
+    }
+    .sidebar-panel.active {
+      right: 0;
+    }
+    .sidebar-close {
+      align-self: flex-end;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(200, 180, 220, 0.15);
+      cursor: pointer;
+      font-size: 1.2em;
+    }
+    .sidebar-user-info {
+      text-align: center;
+      padding: 16px 0 24px;
+    }
+    .sidebar-avatar {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FFE0E8, #FFB5C2, #E8E0F5);
+      margin: 0 auto 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2em;
+    }
+    .sidebar-username {
+      font-family: "ZCOOL KuaiLe", sans-serif;
+      font-size: 1.2em;
+    }
+    .sidebar-links {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 16px;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      color: var(--text-primary);
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+    .sidebar-link:active {
+      background: rgba(200, 180, 220, 0.18);
+    }
 
-        .main-footer { text-align: center; padding: 40px 20px; background: linear-gradient(180deg, transparent, rgba(200,180,220,0.12)); }
-        .footer-text { font-family: "ZCOOL KuaiLe", sans-serif; color: #8B7D9B; }
+    /* 底部导航 (与首页完全一致) */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: var(--nav-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-top: 1px solid rgba(200, 180, 220, 0.1);
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 6px 8px 12px;
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
+    }
+    .bottom-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: var(--text-light);
+      font-size: 0.68em;
+      gap: 3px;
+      transition: color 0.25s;
+    }
+    .bottom-nav-item span {
+      font-size: 1.5em;
+    }
+    .bottom-nav-item.active {
+      color: #E8788A;
+    }
+    .bottom-nav-add {
+      position: relative;
+      top: -22px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FFB5C2, #FF9AB2);
+      border: 4px solid rgba(255, 255, 255, 0.85);
+      box-shadow: 0 6px 22px rgba(255, 154, 178, 0.35);
+      font-size: 1.6em;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s var(--transition-bounce), box-shadow 0.3s;
+    }
+    .bottom-nav-add:active {
+      transform: scale(1.08);
+      box-shadow: 0 8px 26px rgba(255, 154, 178, 0.45);
+    }
 
-        #backToTop { position: fixed; bottom: 30px; right: 30px; z-index: 999; width: 46px; height: 46px; border-radius: 50%; border: none; background: rgba(255,255,255,0.9); box-shadow: 0 4px 16px rgba(0,0,0,0.1); font-size: 1.3em; cursor: pointer; display: none; transition: all 0.3s; }
-        #backToTop:hover { transform: scale(1.1); }
+    /* 添加浮层 (与首页一致) */
+    .add-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 3000;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s;
+    }
+    .add-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .add-sheet {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(20px);
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      width: 100%;
+      max-width: 500px;
+      padding: 28px 20px 40px;
+      transform: translateY(100%);
+      transition: transform 0.4s;
+    }
+    .add-overlay.active .add-sheet {
+      transform: translateY(0);
+    }
 
-        @keyframes fadeInUp { from{opacity:0;transform:translateY(25px)} to{opacity:1;transform:translateY(0)} }
+    /* 页面内容 */
+    .page-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 12px 18px 20px;
+    }
+    .page-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .page-header h1 {
+      font-family: "ZCOOL KuaiLe", sans-serif;
+      font-size: 2em;
+    }
+    .section-header h2 {
+      font-family: "ZCOOL KuaiLe", sans-serif;
+      font-size: 1.3em;
+      margin: 22px 0 14px;
+      color: var(--text-primary);
+    }
 
-        @media (max-width: 768px) {
-            .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; background: rgba(255,255,255,0.96); flex-direction: column; padding: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.05); }
-            .nav-links.active { display: flex; }
-            .nav-toggle { display: flex; }
-            .add-card { padding: 28px 20px; }
-        }
-    </style>
+    .add-section {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .btn-add {
+      display: inline-block;
+      padding: 10px 28px;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 0.95em;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      transition: all 0.3s;
+    }
+    .btn-add-login {
+      background: linear-gradient(135deg, #FFB5C2, #FFD4B8);
+      color: white;
+      box-shadow: 0 4px 16px rgba(255, 180, 160, 0.3);
+    }
+    .btn-add-active {
+      background: linear-gradient(135deg, #B5E8D5, #B8D8F8);
+      color: #5D7E6D;
+      box-shadow: 0 4px 16px rgba(180, 220, 200, 0.3);
+    }
+
+    /* 留言卡片 */
+    .message-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 16px;
+      transition: all 0.3s;
+      border-left: 4px solid transparent;
+      position: relative;
+    }
+    .message-card:nth-child(odd) {
+      border-left-color: #FFB5C2;
+    }
+    .message-card:nth-child(even) {
+      border-left-color: #B5E8D5;
+    }
+    .msg-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .msg-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3em;
+    }
+    .msg-author {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .msg-date {
+      font-size: 0.78em;
+      color: #B8A9D4;
+    }
+    .msg-content {
+      color: #6D5E7D;
+      line-height: 1.7;
+    }
+    .msg-delete {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(255, 180, 180, 0.25);
+      color: #D48888;
+      border: none;
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .msg-delete:hover {
+      background: #FF6B6B;
+      color: white;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #B8A9D4;
+      font-family: "ZCOOL KuaiLe", sans-serif;
+    }
+
+    /* 添加表单样式 */
+    .add-sheet-title {
+      text-align: center;
+      font-family: 'ZCOOL KuaiLe', sans-serif;
+      font-size: 1.2em;
+      color: #5D4E6D;
+      margin-bottom: 6px;
+    }
+    .form-subtitle {
+      text-align: center;
+      color: #B8A9D4;
+      font-size: 0.8em;
+      margin-bottom: 24px;
+    }
+    .field-group {
+      margin-bottom: 18px;
+    }
+    .field-label {
+      font-size: 0.85em;
+      font-weight: 600;
+      color: #8B7D9B;
+      margin-bottom: 6px;
+    }
+    .add-sheet input,
+    .add-sheet textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid #f0e6f6;
+      border-radius: 20px;
+      font-family: inherit;
+      font-size: 0.95em;
+      outline: none;
+      background: #FFFAFD;
+    }
+    .custom-date-wrap {
+      position: relative;
+    }
+    .custom-date-wrap input[type="date"] {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid #f0e6f6;
+      border-radius: 20px;
+      background: #FFFAFD;
+      cursor: pointer;
+    }
+    .custom-date-wrap .date-icon {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      font-size: 1.2em;
+      color: #FF9AB2;
+    }
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #FFB5C2, #FF9AB2);
+      border: none;
+      border-radius: 40px;
+      color: white;
+      font-weight: 700;
+      font-size: 1em;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 8px;
+    }
+    .btn-submit:active {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 154, 178, 0.4);
+    }
+    .add-sheet-cancel {
+      display: block;
+      margin: 16px auto 0;
+      padding: 10px 30px;
+      border-radius: 30px;
+      border: none;
+      background: rgba(200, 180, 220, 0.2);
+      color: #8B7D9B;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+
+    #backToTop {
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
+      z-index: 999;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      font-size: 1.2em;
+      cursor: pointer;
+      display: none;
+      transition: all 0.3s;
+    }
+  </style>
 </head>
 <body>
 
-<nav class="main-nav">
-    <div class="nav-inner">
-        <a href="/" class="nav-brand"><span>🌱</span> 留言</a>
-        <div class="nav-links" id="navLinks">
-            <a href="/" class="nav-link">🏠 首页</a>
-            <a href="/gallery" class="nav-link">📷 相册</a>
-            <a href="/growth" class="nav-link">📊 数据</a>
-            <a href="/diary" class="nav-link">📝 日记</a>
-            <a href="/messages" class="nav-link active">💌 留言</a>
-            <a sec:authorize="!isAuthenticated()" href="/login" class="nav-link">🔐 登录</a>
-            <a sec:authorize="isAuthenticated()" href="/logout" class="nav-link">🚪 退出</a>
-        </div>
-        <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('active')">
-            <span></span><span></span><span></span>
-        </button>
+<!-- 顶部栏 (与首页完全一致) -->
+<header class="top-bar">
+  <a href="/" class="top-bar-brand">
+    <div class="top-bar-logo">🌱</div>
+    <span class="top-bar-appname">成长手册</span>
+  </a>
+  <button class="top-bar-mine" onclick="toggleSidebar()" aria-label="个人中心">👤</button>
+</header>
+
+<!-- 侧边栏 (与首页完全一致) -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+<aside class="sidebar-panel" id="sidebarPanel">
+  <button class="sidebar-close" onclick="toggleSidebar()" aria-label="关闭">✕</button>
+  <div class="sidebar-user-info">
+    <div class="sidebar-avatar">🧸</div>
+    <div class="sidebar-username" sec:authorize="isAuthenticated()"><span sec:authentication="name">用户</span></div>
+    <div class="sidebar-username" sec:authorize="!isAuthenticated()">访客</div>
+  </div>
+  <div class="sidebar-links">
+    <a sec:authorize="!isAuthenticated()" href="/login" class="sidebar-link">🔐 登录账号</a>
+    <a sec:authorize="isAuthenticated()" href="/logout" class="sidebar-link">🚪 退出登录</a>
+    <a href="/gallery" class="sidebar-link">📷 相册图集</a>
+    <a href="/growth" class="sidebar-link">📊 成长数据</a>
+    <a href="/messages" class="sidebar-link">💌 家人留言</a>
+  </div>
+</aside>
+
+<!-- 页面主内容 -->
+<main class="page-container">
+  <div class="page-header">
+    <h1>💌 时光留言</h1>
+    <p style="color:#8B7D9B;">家人温暖的寄语，留给未来的你</p>
+  </div>
+
+  <div class="add-section">
+    <a sec:authorize="!isAuthenticated()" href="/login" class="btn-add btn-add-login">＋ 写下留言（需登录）</a>
+    <button sec:authorize="isAuthenticated()" class="btn-add btn-add-active" onclick="openAddForm()">＋ 写下留言</button>
+  </div>
+
+  <div class="section-header"><h2>💬 家人留言</h2></div>
+
+  <!-- 留言列表 -->
+  <div th:if="${#lists.isEmpty(records)}" class="empty-state">
+    <div style="font-size:3em;margin-bottom:12px;">💌</div>
+    <p>还没有留言，写下第一条吧</p>
+  </div>
+
+  <div class="message-card" th:each="record, iterStat : ${records}">
+    <a sec:authorize="isAuthenticated()" class="msg-delete" th:href="@{/delete/{id}(id=${record.id})}" onclick="return confirm('确定删除这条留言吗？')">🗑</a>
+    <div class="msg-header">
+      <div class="msg-avatar"
+           th:style="'background:' + (${#strings.contains(record.title, '爸爸') || #strings.contains(record.title, '爷爷') || #strings.contains(record.title, '外公') || #strings.contains(record.title, '哥哥') || #strings.contains(record.title, '弟弟') || #strings.contains(record.title, '叔叔') || #strings.contains(record.title, '舅舅') || #strings.contains(record.title, '姨父') || #strings.contains(record.title, '姑父')} ? 'linear-gradient(135deg,#B8D8F8,#A8D0EE)' : 'linear-gradient(135deg,#FFB5C2,#FFD4B8)')">
+        <span th:text="${#strings.contains(record.title, '爸爸') || #strings.contains(record.title, '爷爷') || #strings.contains(record.title, '外公') || #strings.contains(record.title, '哥哥') || #strings.contains(record.title, '弟弟') || #strings.contains(record.title, '叔叔') || #strings.contains(record.title, '舅舅') || #strings.contains(record.title, '姨父') || #strings.contains(record.title, '姑父')} ? '👨' : '👩'">💝</span>
+      </div>
+      <div>
+        <div class="msg-author" th:text="${record.title}">作者</div>
+        <div class="msg-date" th:text="${#temporals.format(record.recordDate, 'yyyy年MM月dd日')}">日期</div>
+      </div>
     </div>
+    <div class="msg-content" th:text="${record.description}">留言内容</div>
+  </div>
+</main>
+
+<!-- 底部导航 (与首页完全一致) -->
+<nav class="bottom-nav">
+  <a href="/" class="bottom-nav-item"><span>🏠</span>首页</a>
+  <a href="/gallery" class="bottom-nav-item"><span>📷</span>相册</a>
+  <button class="bottom-nav-add" onclick="openAddOverlay()" aria-label="添加记录">+</button>
+  <a href="/growth" class="bottom-nav-item"><span>📊</span>数据</a>
+  <a href="/messages" class="bottom-nav-item active"><span>💌</span>留言</a>
 </nav>
 
-<div class="page-container">
-    <div class="page-header">
-        <h1>💌 时光留言</h1>
-        <p style="color:#8B7D9B;">家人温暖的寄语，留给未来的你</p>
+<!-- 添加浮层 (与首页一致，点击+号弹出) -->
+<div class="add-overlay" id="addOverlay">
+  <div class="add-sheet">
+    <div class="add-sheet-title">✨ 添加新记录</div>
+    <div class="add-sheet-cards" style="display:flex; gap:16px; justify-content:center; margin:20px 0;">
+      <a href="/gallery?action=add" class="add-card-item" style="flex:1; display:flex; flex-direction:column; align-items:center; padding:20px 12px; border-radius:22px; background:rgba(255,240,245,0.5); text-decoration:none; color:#5D4E6D;">
+        <span style="font-size:2.5em;">📷</span>
+        <span style="font-family:'ZCOOL KuaiLe',sans-serif;">上传照片</span>
+      </a>
+      <a href="/growth?action=add" class="add-card-item" style="flex:1; display:flex; flex-direction:column; align-items:center; padding:20px 12px; border-radius:22px; background:rgba(255,240,245,0.5); text-decoration:none; color:#5D4E6D;">
+        <span style="font-size:2.5em;">📊</span>
+        <span style="font-family:'ZCOOL KuaiLe',sans-serif;">记录数据</span>
+      </a>
+      <a href="/messages?action=add" class="add-card-item" style="flex:1; display:flex; flex-direction:column; align-items:center; padding:20px 12px; border-radius:22px; background:rgba(255,240,245,0.5); text-decoration:none; color:#5D4E6D;">
+        <span style="font-size:2.5em;">💌</span>
+        <span style="font-family:'ZCOOL KuaiLe',sans-serif;">写留言</span>
+      </a>
     </div>
-
-    <div class="add-section">
-        <a sec:authorize="!isAuthenticated()" href="/login" class="btn-add btn-add-login">＋ 写下留言（需登录）</a>
-        <button sec:authorize="isAuthenticated()" class="btn-add btn-add-active" onclick="openAddForm()">＋ 写下留言</button>
-    </div>
-
-    <!-- 留言列表 -->
-    <div th:if="${#lists.isEmpty(records)}" style="text-align:center;padding:60px;color:#8B7D9B;">
-        <div style="font-size:3em;margin-bottom:12px;">💌</div>
-        <p>还没有留言，写下第一条吧</p>
-    </div>
-
-    <div class="message-card" th:each="record, iterStat : ${records}" th:style="'animation-delay:' + ${iterStat.index * 0.08} + 's'">
-        <a sec:authorize="isAuthenticated()" class="msg-delete" th:href="@{/delete/{id}(id=${record.id})}" onclick="return confirm('确定删除这条留言吗？')">🗑</a>
-        <div class="msg-header">
-            <div class="msg-avatar"
-                 th:style="'background:' + (${#strings.contains(record.title, '爸爸') || #strings.contains(record.title, '爷爷') || #strings.contains(record.title, '外公') || #strings.contains(record.title, '哥哥') || #strings.contains(record.title, '弟弟') || #strings.contains(record.title, '叔叔') || #strings.contains(record.title, '舅舅') || #strings.contains(record.title, '姨父') || #strings.contains(record.title, '姑父')} ? 'linear-gradient(135deg,#B8D8F8,#A8D0EE)' : 'linear-gradient(135deg,#FFB5C2,#FFD4B8)')">
-                <span th:text="${#strings.contains(record.title, '爸爸') || #strings.contains(record.title, '爷爷') || #strings.contains(record.title, '外公') || #strings.contains(record.title, '哥哥') || #strings.contains(record.title, '弟弟') || #strings.contains(record.title, '叔叔') || #strings.contains(record.title, '舅舅') || #strings.contains(record.title, '姨父') || #strings.contains(record.title, '姑父')} ? '👨' : '👩'">💝</span>
-            </div>
-            <div>
-                <div class="msg-author" th:text="${record.title}">作者</div>
-                <div class="msg-date" th:text="${#temporals.format(record.recordDate, 'yyyy年MM月dd日')}">日期</div>
-            </div>
-        </div>
-        <div class="msg-content" th:text="${record.description}">留言内容</div>
-    </div>
+    <button class="add-sheet-cancel" onclick="closeAddOverlay()">取消</button>
+  </div>
 </div>
 
-<footer class="main-footer"><p class="footer-text">用爱与温暖，记录每一个珍贵的成长瞬间</p></footer>
+<!-- 留言专用添加弹窗 -->
+<div class="add-overlay" id="messageAddOverlay" onclick="if(event.target===this)closeMessageForm()">
+  <div class="add-sheet">
+    <div class="add-sheet-title">💌 写下留言</div>
+    <p class="form-subtitle">留下你对宝宝的温暖寄语</p>
+    <form action="/messages/add" method="post" onsubmit="setTimeout(function(){closeMessageForm(); window.location.reload();}, 500)">
+      <div class="field-group">
+        <div class="field-label">📝 称呼 <span style="color:#E8788A;">*必填</span></div>
+        <input type="text" name="title" placeholder="如：爸爸、妈妈、爷爷..." required>
+      </div>
+      <div class="field-group">
+        <div class="field-label">💬 留言内容 <span style="color:#E8788A;">*必填</span></div>
+        <textarea name="description" rows="3" placeholder="写下你想对宝宝说的话..." required></textarea>
+      </div>
+      <div class="field-group">
+        <div class="field-label">📅 日期 <span style="color:#E8788A;">*必填</span></div>
+        <div class="custom-date-wrap">
+          <input type="date" name="recordDate" required>
+          <span class="date-icon">📆</span>
+        </div>
+      </div>
+      <button type="submit" class="btn-submit">✨ 发布留言</button>
+    </form>
+    <button class="add-sheet-cancel" onclick="closeMessageForm()">取消</button>
+  </div>
+</div>
+
 <button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆</button>
 
-<!-- 与相册风格一致的添加弹窗 -->
-<div class="add-overlay" id="addOverlay" onclick="if(event.target===this)closeAddForm()">
-    <div class="add-card">
-        <h3>💌 写下留言</h3>
-        <p class="form-subtitle">留下你对宝宝的温暖寄语</p>
-        <form action="/messages/add" method="post" onsubmit="setTimeout(function(){closeAddForm(); window.location.reload();}, 500)">
-            <div class="field-group">
-                <div class="field-label">📝 称呼 <span class="required">*必填</span></div>
-                <input type="text" name="title" placeholder="如：爸爸、妈妈、爷爷..." required>
-            </div>
-            <div class="field-group">
-                <div class="field-label">💬 留言内容 <span class="required">*必填</span></div>
-                <textarea name="description" rows="3" placeholder="写下你想对宝宝说的话..." required></textarea>
-            </div>
-            <div class="field-group">
-                <div class="field-label">📅 日期 <span class="required">*必填</span></div>
-                <div class="custom-date-wrap">
-                    <input type="date" name="recordDate" required>
-                    <span class="date-icon">📆</span>
-                </div>
-            </div>
-            <button type="submit" class="btn-submit">✨ 发布留言</button>
-        </form>
-    </div>
-</div>
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  // 侧边栏
+  function toggleSidebar() {
+    var ov = document.getElementById('sidebarOverlay'), pn = document.getElementById('sidebarPanel');
+    ov.classList.toggle('active'); pn.classList.toggle('active');
+    document.body.style.overflow = ov.classList.contains('active') ? 'hidden' : '';
+  }
 
-<script>
-    window.addEventListener('scroll',function(){document.getElementById('backToTop').style.display=window.scrollY>300?'block':'none';});
-    document.querySelectorAll('#navLinks .nav-link').forEach(function(l){l.addEventListener('click',function(){document.getElementById('navLinks').classList.remove('active');});});
+  // 通用添加浮层 (+号)
+  function openAddOverlay() {
+    document.getElementById('addOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeAddOverlay() {
+    document.getElementById('addOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('addOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeAddOverlay();
+  });
 
-    // 打开和关闭弹窗函数
-    function openAddForm() {
-        document.getElementById('addOverlay').classList.add('active');
+  // 留言专用弹窗
+  function openAddForm() {
+    document.getElementById('messageAddOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMessageForm() {
+    document.getElementById('messageAddOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  // 回到顶部
+  window.addEventListener('scroll', function() {
+    document.getElementById('backToTop').style.display = window.scrollY > 300 ? 'block' : 'none';
+  });
+
+  // 底部导航高亮
+  var path = window.location.pathname;
+  document.querySelectorAll('.bottom-nav-item').forEach(function(item) {
+    if (item.getAttribute('href') === path) item.classList.add('active');
+  });
+
+  // ========== 手机端返回键直接跳转首页 ==========
+  (function() {
+    if (window.location.pathname === '/' || window.location.pathname === '') {
+      return;
     }
-    function closeAddForm() {
-        document.getElementById('addOverlay').classList.remove('active');
-    }
+    history.replaceState({ fromSubPage: true }, '', window.location.href);
+    window.addEventListener('popstate', function(event) {
+      var overlays = document.querySelectorAll('.add-overlay.active');
+      if (overlays.length > 0) {
+        overlays.forEach(function(ov) { ov.classList.remove('active'); });
+        history.pushState({ fromSubPage: true }, '', window.location.href);
+        return;
+      }
+      window.location.href = '/';
+    });
+  })();
 
-    // ========== 手机端返回键直接跳转首页 ==========
-    (function() {
-        if (window.location.pathname === '/' || window.location.pathname === '') {
-            return;
-        }
-        history.replaceState({ fromSubPage: true }, '', window.location.href);
-        window.addEventListener('popstate', function(event) {
-            var overlays = document.querySelectorAll('.add-overlay.active');
-            if (overlays.length > 0) {
-                overlays.forEach(function(ov) { ov.classList.remove('active'); });
-                history.pushState({ fromSubPage: true }, '', window.location.href);
-                return;
-            }
-            window.location.href = '/';
-        });
-    })();
-
-    // ========== 修复登录页进入历史栈的问题（使用 replace 跳转） ==========
-    (function() {
-        // 拦截所有指向 /login 的链接，使用 location.replace 避免留下历史记录
-        document.querySelectorAll('a[href="/login"]').forEach(function(link) {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                location.replace('/login');
-            });
-        });
-        // 如果存在需要登录的按钮（比如添加照片等）但用户未登录时，可能也有跳转逻辑，但此处没有显式调用，无需额外处理
-        // 注意：相册页面的 requireLogin 函数中如果有 window.location.href = '/login'，也需要改为 location.replace
-        // 由于当前页面没有 requireLogin，忽略。
-    })();
+  // 修复登录页进入历史栈的问题
+  (function() {
+    document.querySelectorAll('a[href="/login"]').forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        location.replace('/login');
+      });
+    });
+  })();
+  /*]]>*/
 </script>
 
 </body>
