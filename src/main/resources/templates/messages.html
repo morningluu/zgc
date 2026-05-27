@@ -55,7 +55,6 @@
       position: relative;
     }
 
-    /* 顶部栏 (与首页完全一致) */
     .top-bar {
       position: sticky;
       top: 0;
@@ -113,7 +112,6 @@
       background: rgba(200, 180, 220, 0.25);
     }
 
-    /* 侧边栏 (与首页完全一致) */
     .sidebar-overlay {
       position: fixed;
       top: 0;
@@ -199,7 +197,6 @@
       background: rgba(200, 180, 220, 0.18);
     }
 
-    /* 底部导航 (与首页完全一致) */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -255,7 +252,6 @@
       box-shadow: 0 8px 26px rgba(255, 154, 178, 0.45);
     }
 
-    /* 添加浮层 (与首页一致) */
     .add-overlay {
       position: fixed;
       top: 0;
@@ -289,7 +285,6 @@
       transform: translateY(0);
     }
 
-    /* 页面内容 */
     .page-container {
       max-width: 600px;
       margin: 0 auto;
@@ -337,7 +332,6 @@
       box-shadow: 0 4px 16px rgba(180, 220, 200, 0.3);
     }
 
-    /* 留言卡片 */
     .message-card {
       background: var(--card-bg);
       backdrop-filter: blur(10px);
@@ -383,10 +377,12 @@
       color: #6D5E7D;
       line-height: 1.7;
     }
-    .msg-delete {
+    .msg-delete-form {
       position: absolute;
       top: 16px;
       right: 16px;
+    }
+    .msg-delete {
       background: rgba(255, 180, 180, 0.25);
       color: #D48888;
       border: none;
@@ -394,8 +390,8 @@
       border-radius: 20px;
       font-size: 0.85em;
       cursor: pointer;
-      text-decoration: none;
       font-weight: 600;
+      font-family: inherit;
       transition: all 0.3s;
     }
     .msg-delete:hover {
@@ -410,7 +406,6 @@
       font-family: "ZCOOL KuaiLe", sans-serif;
     }
 
-    /* 添加表单样式 */
     .add-sheet-title {
       text-align: center;
       font-family: 'ZCOOL KuaiLe', sans-serif;
@@ -491,6 +486,7 @@
       color: #8B7D9B;
       cursor: pointer;
       font-size: 0.9em;
+      font-family: inherit;
     }
 
     #backToTop {
@@ -513,7 +509,6 @@
 </head>
 <body>
 
-<!-- 顶部栏 (与首页完全一致) -->
 <header class="top-bar">
   <a href="/" class="top-bar-brand">
     <div class="top-bar-logo">🌱</div>
@@ -522,7 +517,6 @@
   <button class="top-bar-mine" onclick="toggleSidebar()" aria-label="个人中心">👤</button>
 </header>
 
-<!-- 侧边栏 (与首页完全一致) -->
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 <aside class="sidebar-panel" id="sidebarPanel">
   <button class="sidebar-close" onclick="toggleSidebar()" aria-label="关闭">✕</button>
@@ -540,7 +534,6 @@
   </div>
 </aside>
 
-<!-- 页面主内容 -->
 <main class="page-container">
   <div class="page-header">
     <h1>💌 时光留言</h1>
@@ -554,14 +547,18 @@
 
   <div class="section-header"><h2>💬 家人留言</h2></div>
 
-  <!-- 留言列表 -->
   <div th:if="${#lists.isEmpty(records)}" class="empty-state">
     <div style="font-size:3em;margin-bottom:12px;">💌</div>
     <p>还没有留言，写下第一条吧</p>
   </div>
 
+  <!-- ✅ 修改：使用表单 POST 删除 -->
   <div class="message-card" th:each="record, iterStat : ${records}">
-    <a sec:authorize="isAuthenticated()" class="msg-delete" th:href="@{/delete/{id}(id=${record.id})}" onclick="return confirm('确定删除这条留言吗？')">🗑</a>
+    <div class="msg-delete-form">
+      <form sec:authorize="isAuthenticated()" th:action="@{/delete/{id}(id=${record.id})}" method="post" onsubmit="return confirm('确定删除这条留言吗？')">
+        <button type="submit" class="msg-delete">🗑</button>
+      </form>
+    </div>
     <div class="msg-header">
       <div class="msg-avatar"
            th:style="'background:' + (${#strings.contains(record.title, '爸爸') || #strings.contains(record.title, '爷爷') || #strings.contains(record.title, '外公') || #strings.contains(record.title, '哥哥') || #strings.contains(record.title, '弟弟') || #strings.contains(record.title, '叔叔') || #strings.contains(record.title, '舅舅') || #strings.contains(record.title, '姨父') || #strings.contains(record.title, '姑父')} ? 'linear-gradient(135deg,#B8D8F8,#A8D0EE)' : 'linear-gradient(135deg,#FFB5C2,#FFD4B8)')">
@@ -576,7 +573,6 @@
   </div>
 </main>
 
-<!-- 底部导航 (与首页完全一致) -->
 <nav class="bottom-nav">
   <a href="/" class="bottom-nav-item"><span>🏠</span>首页</a>
   <a href="/gallery" class="bottom-nav-item"><span>📷</span>相册</a>
@@ -585,20 +581,19 @@
   <a href="/messages" class="bottom-nav-item active"><span>💌</span>留言</a>
 </nav>
 
-<!-- 添加浮层 (与首页一致，点击+号弹出) -->
 <div class="add-overlay" id="addOverlay">
   <div class="add-sheet">
     <div class="add-sheet-title">✨ 添加新记录</div>
-    <div class="add-sheet-cards" style="display:flex; gap:16px; justify-content:center; margin:20px 0;">
-      <a href="/gallery?action=add" class="add-card-item" style="flex:1; display:flex; flex-direction:column; align-items:center; padding:20px 12px; border-radius:22px; background:rgba(255,240,245,0.5); text-decoration:none; color:#5D4E6D;">
+    <div style="display:flex; gap:16px; justify-content:center; margin:20px 0;">
+      <a href="/gallery?action=add" style="flex:1; display:flex; flex-direction:column; align-items:center; padding:20px 12px; border-radius:22px; background:rgba(255,240,245,0.5); text-decoration:none; color:#5D4E6D;">
         <span style="font-size:2.5em;">📷</span>
         <span style="font-family:'ZCOOL KuaiLe',sans-serif;">上传照片</span>
       </a>
-      <a href="/growth?action=add" class="add-card-item" style="flex:1; display:flex; flex-direction:column; align-items:center; padding:20px 12px; border-radius:22px; background:rgba(255,240,245,0.5); text-decoration:none; color:#5D4E6D;">
+      <a href="/growth?action=add" style="flex:1; display:flex; flex-direction:column; align-items:center; padding:20px 12px; border-radius:22px; background:rgba(255,240,245,0.5); text-decoration:none; color:#5D4E6D;">
         <span style="font-size:2.5em;">📊</span>
         <span style="font-family:'ZCOOL KuaiLe',sans-serif;">记录数据</span>
       </a>
-      <a href="/messages?action=add" class="add-card-item" style="flex:1; display:flex; flex-direction:column; align-items:center; padding:20px 12px; border-radius:22px; background:rgba(255,240,245,0.5); text-decoration:none; color:#5D4E6D;">
+      <a href="/messages?action=add" style="flex:1; display:flex; flex-direction:column; align-items:center; padding:20px 12px; border-radius:22px; background:rgba(255,240,245,0.5); text-decoration:none; color:#5D4E6D;">
         <span style="font-size:2.5em;">💌</span>
         <span style="font-family:'ZCOOL KuaiLe',sans-serif;">写留言</span>
       </a>
@@ -607,12 +602,11 @@
   </div>
 </div>
 
-<!-- 留言专用添加弹窗 -->
 <div class="add-overlay" id="messageAddOverlay" onclick="if(event.target===this)closeMessageForm()">
   <div class="add-sheet">
     <div class="add-sheet-title">💌 写下留言</div>
     <p class="form-subtitle">留下你对宝宝的温暖寄语</p>
-    <form action="/messages/add" method="post" onsubmit="setTimeout(function(){closeMessageForm(); window.location.reload();}, 500)">
+    <form action="/messages/add" method="post">
       <div class="field-group">
         <div class="field-label">📝 称呼 <span style="color:#E8788A;">*必填</span></div>
         <input type="text" name="title" placeholder="如：爸爸、妈妈、爷爷..." required>
@@ -638,14 +632,12 @@
 
 <script th:inline="javascript">
   /*<![CDATA[*/
-  // 侧边栏
   function toggleSidebar() {
     var ov = document.getElementById('sidebarOverlay'), pn = document.getElementById('sidebarPanel');
     ov.classList.toggle('active'); pn.classList.toggle('active');
     document.body.style.overflow = ov.classList.contains('active') ? 'hidden' : '';
   }
 
-  // 通用添加浮层 (+号)
   function openAddOverlay() {
     document.getElementById('addOverlay').classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -658,7 +650,6 @@
     if (e.target === this) closeAddOverlay();
   });
 
-  // 留言专用弹窗
   function openAddForm() {
     document.getElementById('messageAddOverlay').classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -668,22 +659,17 @@
     document.body.style.overflow = '';
   }
 
-  // 回到顶部
   window.addEventListener('scroll', function() {
     document.getElementById('backToTop').style.display = window.scrollY > 300 ? 'block' : 'none';
   });
 
-  // 底部导航高亮
   var path = window.location.pathname;
   document.querySelectorAll('.bottom-nav-item').forEach(function(item) {
     if (item.getAttribute('href') === path) item.classList.add('active');
   });
 
-  // ========== 手机端返回键直接跳转首页 ==========
   (function() {
-    if (window.location.pathname === '/' || window.location.pathname === '') {
-      return;
-    }
+    if (window.location.pathname === '/' || window.location.pathname === '') return;
     history.replaceState({ fromSubPage: true }, '', window.location.href);
     window.addEventListener('popstate', function(event) {
       var overlays = document.querySelectorAll('.add-overlay.active');
@@ -696,17 +682,13 @@
     });
   })();
 
-  // 修复登录页进入历史栈的问题
-  (function() {
-    document.querySelectorAll('a[href="/login"]').forEach(function(link) {
-      link.addEventListener('click', function(e) {
-        e.preventDefault();
-        location.replace('/login');
-      });
+  document.querySelectorAll('a[href="/login"]').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      location.replace('/login');
     });
-  })();
+  });
   /*]]>*/
 </script>
-
 </body>
 </html>
