@@ -458,7 +458,6 @@
     var weightElem = document.getElementById('statWeight');
     if (!heightElem || !weightElem) return;
 
-    // 如果服务端已传值，Thymeleaf 会直接渲染，这里只做兜底
     var currentHeight = heightElem.textContent.trim();
     var currentWeight = weightElem.textContent.trim();
 
@@ -517,26 +516,63 @@
     if (item.getAttribute('href') === path) item.classList.add('active');
   });
 
-  // 二次返回确认
+  // ========== 修复后的返回退出逻辑（首页直接退出到桌面）==========
   (function() {
-    var confirmExit = false, isExiting = false, timer = null;
+    var confirmExit = false;
+    var isExiting = false;
+    var timer = null;
     var exitToast = document.getElementById('exitToast');
-    if (window.history && window.history.pushState) window.history.pushState('forward', null, window.location.href);
+
+    // 步骤1：用 replaceState 将首页设为栈底，清除可能存在的上一页历史
+    history.replaceState('home', '', window.location.href);
+    // 步骤2：push 一个拦截状态，使得用户第一次按返回时触发 popstate 而不真正后退
+    history.pushState('forward', '', window.location.href);
+
     function show() { if (exitToast) exitToast.classList.add('visible'); }
     function hide() { if (exitToast) exitToast.classList.remove('visible'); }
     function reset() { confirmExit = false; hide(); clearTimeout(timer); }
+
     function doExit() {
-      isExiting = true; hide();
-      if (typeof WeixinJSBridge !== 'undefined') try { WeixinJSBridge.call('closeWindow'); } catch(e) {}
-      setTimeout(function() { window.history.back(); setTimeout(function() { try { window.close(); } catch(e) {} }, 300); }, 50);
+      isExiting = true;
+      hide();
+      // 微信环境关闭
+      if (typeof WeixinJSBridge !== 'undefined') {
+        try { WeixinJSBridge.call('closeWindow'); } catch(e) {}
+      }
+      // 回退到栈底之外，从而退出浏览器/webview
+      history.go(-2);
+      // 兜底关闭
+      setTimeout(function() {
+        try { window.close(); } catch(e) {}
+      }, 400);
     }
+
     window.addEventListener('popstate', function(e) {
       if (isExiting) return;
-      if (confirmExit) { doExit(); return; }
-      confirmExit = true; show();
-      if (window.history && window.history.pushState) window.history.pushState('forward', null, window.location.href);
+
+      if (confirmExit) {
+        // 第二次返回：确认退出
+        doExit();
+        return;
+      }
+
+      // 第一次返回：显示确认提示
+      confirmExit = true;
+      show();
+
+      // 再次 push 拦截状态，防止真的退出
+      history.pushState('forward', '', window.location.href);
+
+      // 定时重置，超时后不退出
       clearTimeout(timer);
       timer = setTimeout(reset, 3500);
+    });
+
+    // 页面隐藏时重置（例如切到后台又回来）
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        reset();
+      }
     });
   })();
   /*]]>*/
