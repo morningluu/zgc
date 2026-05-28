@@ -9,6 +9,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +22,7 @@ import java.util.UUID;
 public class HomeController {
 
     private final GrowthRecordService recordService;
+    private static final String AVATAR_FILE_NAME = "baby-avatar";
 
     public HomeController(GrowthRecordService recordService) {
         this.recordService = recordService;
@@ -56,7 +60,59 @@ public class HomeController {
         model.addAttribute("records", records);
         model.addAttribute("latestHeight", latestHeight);
         model.addAttribute("latestWeight", latestWeight);
+        
+        // Check for baby avatar
+        String uploadDir = System.getProperty("user.dir") + File.separator + "uploads";
+        File dir = new File(uploadDir);
+        String avatarPath = null;
+        if (dir.exists() && dir.isDirectory()) {
+            File[] files = dir.listFiles((d, name) -> name.startsWith(AVATAR_FILE_NAME + "."));
+            if (files != null && files.length > 0) {
+                avatarPath = "/uploads/" + files[0].getName();
+            }
+        }
+        model.addAttribute("babyAvatarPath", avatarPath);
+        
         return "index";
+    }
+    
+    @PostMapping("/avatar/upload")
+    @ResponseBody
+    public Map<String, Object> uploadAvatar(@RequestParam("avatar") MultipartFile avatar) throws IOException {
+        Map<String, Object> result = new HashMap<>();
+        if (avatar.isEmpty()) {
+            result.put("success", false);
+            return result;
+        }
+        
+        String uploadDir = System.getProperty("user.dir") + File.separator + "uploads";
+        File dir = new File(uploadDir);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        
+        // Delete old avatar files
+        File[] oldFiles = dir.listFiles((d, name) -> name.startsWith(AVATAR_FILE_NAME + "."));
+        if (oldFiles != null) {
+            for (File f : oldFiles) {
+                f.delete();
+            }
+        }
+        
+        // Get file extension
+        String originalFilename = avatar.getOriginalFilename();
+        String extension = "";
+        if (originalFilename != null && originalFilename.contains(".")) {
+            extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        }
+        
+        String newFileName = AVATAR_FILE_NAME + extension;
+        File dest = new File(uploadDir + File.separator + newFileName);
+        avatar.transferTo(dest);
+        
+        result.put("success", true);
+        result.put("avatarPath", "/uploads/" + newFileName);
+        return result;
     }
 
     @GetMapping("/login")

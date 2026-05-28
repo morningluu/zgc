@@ -230,9 +230,10 @@
         <div class="polaroid-frame" id="polaroidFrame">
           <div class="washi-tape washi-tape-1"></div>
           <div class="washi-tape washi-tape-2"></div>
-          <div class="polaroid-photo" id="polaroidPhoto">
+          <div class="polaroid-photo" id="polaroidPhoto" th:class="${babyAvatarPath != null ? 'polaroid-photo has-image' : 'polaroid-photo'}">
             <span class="default-emoji">👶</span>
-            <img id="avatarImg" src="#" alt="头像">
+            <img id="avatarImg" th:if="${babyAvatarPath != null}" th:src="@{${babyAvatarPath}}" class="show" alt="头像">
+            <img id="avatarImgFallback" th:if="${babyAvatarPath == null}" src="#" alt="头像">
           </div>
           <span class="polaroid-caption">赵高钏</span>
         </div>
@@ -431,23 +432,32 @@
 
   // 头像
   (function() {
-    var avatarImg = document.getElementById('avatarImg');
     var photoContainer = document.getElementById('polaroidPhoto');
     var fileInput = document.getElementById('avatarInput');
-    var saved = localStorage.getItem('babyAvatar');
-    if (saved) { avatarImg.src = saved; avatarImg.classList.add('show'); photoContainer.classList.add('has-image'); }
     document.getElementById('polaroidFrame').addEventListener('click', function() { fileInput.click(); });
     fileInput.addEventListener('change', function(e) {
       var file = e.target.files[0];
       if (!file) return;
-      var reader = new FileReader();
-      reader.onload = function(ev) {
-        try { localStorage.setItem('babyAvatar', ev.target.result); } catch(err) { showToast('存储空间不足'); return; }
-        avatarImg.src = ev.target.result;
-        avatarImg.classList.add('show');
-        photoContainer.classList.add('has-image');
+      
+      var formData = new FormData();
+      formData.append('avatar', file);
+      
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/avatar/upload', true);
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          var result = JSON.parse(xhr.responseText);
+          if (result.success) {
+            window.location.reload();
+          }
+        } else {
+          showToast('上传失败');
+        }
       };
-      reader.readAsDataURL(file);
+      xhr.onerror = function() {
+        showToast('上传失败');
+      };
+      xhr.send(formData);
     });
   })();
 
@@ -524,9 +534,9 @@
     var exitToast = document.getElementById('exitToast');
 
     // 步骤1：用 replaceState 将首页设为栈底，清除可能存在的上一页历史
-    history.replaceState('home', '', window.location.href);
+    history.replaceState({ page: 'home' }, '', window.location.href);
     // 步骤2：push 一个拦截状态，使得用户第一次按返回时触发 popstate 而不真正后退
-    history.pushState('forward', '', window.location.href);
+    history.pushState({ page: 'forward' }, '', window.location.href);
 
     function show() { if (exitToast) exitToast.classList.add('visible'); }
     function hide() { if (exitToast) exitToast.classList.remove('visible'); }
@@ -539,16 +549,22 @@
       if (typeof WeixinJSBridge !== 'undefined') {
         try { WeixinJSBridge.call('closeWindow'); } catch(e) {}
       }
-      // 回退到栈底之外，从而退出浏览器/webview
-      history.go(-2);
-      // 兜底关闭
+      // 尝试多种方式退出
+      try {
+        history.go(-(history.length + 1));
+      } catch(e) {}
+      
+      // 兜底
       setTimeout(function() {
         try { window.close(); } catch(e) {}
-      }, 400);
+      }, 500);
     }
 
     window.addEventListener('popstate', function(e) {
       if (isExiting) return;
+      
+      // 重新 push 拦截状态，保持栈结构
+      history.pushState({ page: 'forward' }, '', window.location.href);
 
       if (confirmExit) {
         // 第二次返回：确认退出
@@ -560,12 +576,9 @@
       confirmExit = true;
       show();
 
-      // 再次 push 拦截状态，防止真的退出
-      history.pushState('forward', '', window.location.href);
-
       // 定时重置，超时后不退出
       clearTimeout(timer);
-      timer = setTimeout(reset, 3500);
+      timer = setTimeout(reset, 3000);
     });
 
     // 页面隐藏时重置（例如切到后台又回来）
