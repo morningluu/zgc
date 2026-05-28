@@ -3,6 +3,7 @@ package com.example.zgc.controller;
 import com.example.zgc.model.GrowthRecord;
 import com.example.zgc.service.GrowthRecordService;
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -10,17 +11,22 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 public class HomeController {
@@ -83,7 +89,7 @@ public class HomeController {
 
     // ==================== 头像相关接口 ====================
     /**
-     * 上传头像
+     * 上传头像（自动压缩到 300px 宽，统一 JPG 格式）
      */
     @PostMapping("/api/avatar/upload")
     @ResponseBody
@@ -95,7 +101,7 @@ public class HomeController {
             return result;
         }
 
-        // 校验文件类型（简单校验，可增强）
+        // 校验文件类型
         String contentType = avatar.getContentType();
         if (contentType == null || !contentType.startsWith("image/")) {
             result.put("success", false);
@@ -117,16 +123,51 @@ public class HomeController {
             }
         }
 
-        // 获取扩展名
-        String originalFilename = avatar.getOriginalFilename();
-        String extension = "";
-        if (originalFilename != null && originalFilename.contains(".")) {
-            extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-        }
-
-        String newFileName = AVATAR_FILE_NAME + extension;
+        // 压缩图片并保存（如果压缩失败则直接保存原图）
+        String newFileName = AVATAR_FILE_NAME + ".jpg";
         File dest = new File(uploadDir + File.separator + newFileName);
-        avatar.transferTo(dest);
+
+        try {
+            // 读取原图
+            BufferedImage originalImage = ImageIO.read(avatar.getInputStream());
+            if (originalImage == null) {
+                throw new IOException("无法解析图片文件");
+            }
+
+            // 缩放至最大宽度 300px（保持比例）
+            int maxWidth = 300;
+            int width = originalImage.getWidth();
+            int height = originalImage.getHeight();
+            if (width > maxWidth) {
+                height = (int) ((double) height * maxWidth / width);
+                width = maxWidth;
+            }
+
+            // 创建缩放后的图片
+            BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = resizedImage.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            g.drawImage(originalImage.getScaledInstance(width, height, Image.SCALE_SMOOTH), 0, 0, null);
+            g.dispose();
+
+            // 写入临时文件（避免直接覆盖可能失败）
+            File tempFile = File.createTempFile("avatar", ".jpg");
+            ImageIO.write(resizedImage, "jpg", tempFile);
+            Files.copy(tempFile.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            tempFile.delete();
+
+        } catch (Exception e) {
+            // 压缩失败时，直接保存原文件（保留原始扩展名）
+            String originalFilename = avatar.getOriginalFilename();
+            String extension = ".jpg";
+            if (originalFilename != null && originalFilename.contains(".")) {
+                extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            }
+            newFileName = AVATAR_FILE_NAME + extension;
+            dest = new File(uploadDir + File.separator + newFileName);
+            avatar.transferTo(dest);
+        }
 
         result.put("success", true);
         result.put("avatarPath", "/uploads/" + newFileName);
@@ -134,8 +175,7 @@ public class HomeController {
     }
 
     /**
-     * 获取最新头像（供前端轮询/加载）
-     * 返回图片二进制流，404时前端自动降级为本地缓存或默认头像
+     * 获取最新头像（带浏览器缓存，1天内不重复下载）
      */
     @GetMapping("/api/avatar")
     @ResponseBody
@@ -154,6 +194,7 @@ public class HomeController {
                         mimeType = "image/jpeg";
                     }
                     return ResponseEntity.ok()
+                            .cacheControl(CacheControl.maxAge(1, TimeUnit.DAYS).cachePublic())
                             .contentType(MediaType.parseMediaType(mimeType))
                             .body(resource);
                 }
@@ -176,9 +217,6 @@ public class HomeController {
         return "gallery";
     }
 
-    /**
-     * 添加相册照片（已改为重定向，避免直接显示JSON）
-     */
     @PostMapping("/gallery/add")
     public String addGallery(@RequestParam String title,
                              @RequestParam String description,
@@ -300,7 +338,6 @@ public class HomeController {
     @PostMapping("/delete/{id}")
     public String deleteRecord(@PathVariable Long id,
                                @RequestHeader(value = "Referer", defaultValue = "/") String referer) {
-        // 删除前清理物理文件
         GrowthRecord record = recordService.findById(id);
         if (record != null && record.getPhotoPath() != null) {
             String filePath = System.getProperty("user.dir") + record.getPhotoPath();
@@ -336,12 +373,10 @@ public class HomeController {
         if (!dir.exists()) {
             dir.mkdirs();
         }
-        // 清理文件名，防止路径穿越
         String originalFilename = photo.getOriginalFilename();
         if (originalFilename == null) {
             originalFilename = "photo.jpg";
         }
-        // 只保留安全的字符
         String safeName = originalFilename.replaceAll("[^a-zA-Z0-9.\\-_]", "_");
         String fileName = UUID.randomUUID() + "_" + safeName;
         File dest = new File(uploadDir + File.separator + fileName);
