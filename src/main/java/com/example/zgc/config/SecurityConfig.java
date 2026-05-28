@@ -34,6 +34,8 @@ public class SecurityConfig {
                         // 登录页
                         .requestMatchers("/login").permitAll()
                         // 其他所有请求需要登录
+                        .requestMatchers("/api/avatar/**").permitAll()  
+                        // 关键！
                         .anyRequest().authenticated()
                 )
 
