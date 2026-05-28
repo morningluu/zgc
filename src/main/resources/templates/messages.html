@@ -55,6 +55,7 @@
       position: relative;
     }
 
+    /* 顶部导航栏（相册样式） */
     .top-bar {
       position: sticky;
       top: 0;
@@ -69,31 +70,39 @@
       align-items: center;
       justify-content: space-between;
     }
-    .top-bar-brand {
+    .top-bar-left {
       display: flex;
       align-items: center;
-      gap: 8px;
-      text-decoration: none;
+      gap: 10px;
     }
-    .top-bar-logo {
-      width: 34px;
-      height: 34px;
+    .top-bar-back {
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #FFE0E8, #FFB5C2);
+      background: rgba(200, 180, 220, 0.15);
+      border: none;
+      cursor: pointer;
+      font-size: 1.2em;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.1em;
-      box-shadow: 0 3px 12px rgba(255, 181, 194, 0.35);
+      color: var(--text-primary);
+      transition: all 0.3s var(--transition-bounce);
+      text-decoration: none;
     }
-    .top-bar-appname {
+    .top-bar-back:active {
+      transform: scale(0.85);
+      background: rgba(200, 180, 220, 0.3);
+    }
+    .top-bar-title {
       font-family: "ZCOOL KuaiLe", sans-serif;
-      font-size: 1.05em;
+      font-size: 1.15em;
       font-weight: 700;
       background: linear-gradient(135deg, #E8788A, #B8A9D4);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      letter-spacing: 0.04em;
     }
     .top-bar-mine {
       width: 38px;
@@ -106,9 +115,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background 0.3s;
+      transition: all 0.3s var(--transition-bounce);
+      color: var(--text-primary);
     }
     .top-bar-mine:active {
+      transform: scale(0.88);
       background: rgba(200, 180, 220, 0.25);
     }
 
@@ -509,11 +520,12 @@
 </head>
 <body>
 
+<!-- 顶部导航栏：已改为与相册页相同的样式 -->
 <header class="top-bar">
-  <a href="/" class="top-bar-brand">
-    <div class="top-bar-logo">🌱</div>
-    <span class="top-bar-appname">成长手册</span>
-  </a>
+  <div class="top-bar-left">
+    <a href="/" class="top-bar-back" aria-label="返回首页">←</a>
+    <span class="top-bar-title">💌 时光留言</span>
+  </div>
   <button class="top-bar-mine" onclick="toggleSidebar()" aria-label="个人中心">👤</button>
 </header>
 
@@ -552,7 +564,7 @@
     <p>还没有留言，写下第一条吧</p>
   </div>
 
-  <!-- ✅ 修改：使用表单 POST 删除 -->
+  <!-- 留言列表（使用表单 POST 删除） -->
   <div class="message-card" th:each="record, iterStat : ${records}">
     <div class="msg-delete-form">
       <form sec:authorize="isAuthenticated()" th:action="@{/delete/{id}(id=${record.id})}" method="post" onsubmit="return confirm('确定删除这条留言吗？')">
