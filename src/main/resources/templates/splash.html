@@ -95,35 +95,14 @@ justify-content: center;
 }
 .sprout {
 font-size: 110px;
-animation: grow 3.5s ease-out forwards;
+animation: sway 3s ease-in-out infinite;
 transform-origin: bottom center;
 filter: drop-shadow(0 10px 25px rgba(180,160,200,0.35));
-}
-@keyframes grow {
-0% { 
-transform: scale(0) rotate(-10deg) translateY(40px); 
-opacity: 0; 
-}
-25% {
-transform: scale(0.4) rotate(-6deg) translateY(25px);
-opacity: 0.5;
-}
-50% {
-transform: scale(0.75) rotate(-3deg) translateY(10px);
-opacity: 0.8;
-}
-75% {
-transform: scale(0.95) rotate(-1deg) translateY(2px);
-opacity: 0.95;
-}
-100% { 
-transform: scale(1) rotate(0deg) translateY(0); 
-opacity: 1; 
-}
+opacity: 1;
 }
 @keyframes sway {
-0%, 100% { transform: rotate(-2deg); }
-50% { transform: rotate(2deg); }
+0%, 100% { transform: rotate(-4deg); }
+50% { transform: rotate(4deg); }
 }
 .ring {
 position: absolute;
