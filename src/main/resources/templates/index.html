@@ -651,66 +651,10 @@
         if (item.getAttribute('href') === path) item.classList.add('active');
     });
 
-    (function() {
-        var confirmExit = false;
-        var isExiting = false;
-        var timer = null;
-        var exitToast = document.getElementById('exitToast');
-
-        history.replaceState('home', '', window.location.href);
-        history.pushState('forward', '', window.location.href);
-
-        function showExitToast() { if (exitToast) exitToast.classList.add('visible'); }
-        function hideExitToast() { if (exitToast) exitToast.classList.remove('visible'); }
-        function resetExitState() { confirmExit = false; hideExitToast(); clearTimeout(timer); }
-
-        function doExit() {
-            isExiting = true;
-            hideExitToast();
-
-            if (typeof WeixinJSBridge !== 'undefined') {
-                try { WeixinJSBridge.call('closeWindow'); } catch(e) {}
-            }
-
-            history.go(-2);
-
-            setTimeout(function() {
-                try { window.close(); } catch(e) {}
-            }, 300);
-
-            setTimeout(function() {
-                if (!document.hidden) {
-                    window.location.replace('about:blank');
-                }
-            }, 800);
-        }
-
-        window.addEventListener('popstate', function(e) {
-            if (isExiting) return;
-
-            if (confirmExit) {
-                doExit();
-                return;
-            }
-
-            confirmExit = true;
-            showExitToast();
-            history.pushState('forward', '', window.location.href);
-            clearTimeout(timer);
-            timer = setTimeout(resetExitState, 3500);
-        });
-
-        document.addEventListener('visibilitychange', function() {
-            if (document.hidden) { resetExitState(); }
-        });
-
-        document.addEventListener('click', function(e) {
-            if (confirmExit && exitToast && !exitToast.contains(e.target)) {
-                resetExitState();
-            }
-        });
-    })();
+    // 原有的返回键拦截逻辑已删除，现在由 app.js 统一处理
     /*]]>*/
 </script>
+<!-- 引入公共导航与退出控制脚本 -->
+<script src="/app.js"></script>
 </body>
 </html>
