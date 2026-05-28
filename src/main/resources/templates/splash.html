@@ -95,31 +95,14 @@ justify-content: center;
 }
 .sprout {
 font-size: 110px;
-animation: grow 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards, sway 3s 2s ease-in-out infinite;
+animation: sway 3s ease-in-out infinite;
 transform-origin: bottom center;
 filter: drop-shadow(0 10px 25px rgba(180,160,200,0.35));
-}
-@keyframes grow {
-0% { 
-transform: scale(0) rotate(-20deg) translateY(40px); 
-opacity: 0; 
-}
-30% {
-transform: scale(0.5) rotate(-10deg) translateY(20px);
-opacity: 0.6;
-}
-70% {
-transform: scale(1.2) rotate(8deg) translateY(-10px);
 opacity: 1;
 }
-100% { 
-transform: scale(1) rotate(0deg) translateY(0); 
-opacity: 1; 
-}
-}
 @keyframes sway {
-0%, 100% { transform: rotate(-3deg); }
-50% { transform: rotate(3deg); }
+0%, 100% { transform: rotate(-4deg); }
+50% { transform: rotate(4deg); }
 }
 .ring {
 position: absolute;
@@ -158,12 +141,20 @@ font-size: 2.6em;
 color: var(--text-dark);
 letter-spacing: 0.1em;
 text-shadow: 0 5px 15px rgba(180,140,160,0.25);
-animation: titleFade 1.2s ease-out 0.8s forwards;
+animation: titleFade 1.8s ease-out 1.2s forwards;
 opacity: 0;
-transform: translateY(20px);
+transform: translateY(25px);
 }
 @keyframes titleFade {
-to {
+0% {
+opacity: 0;
+transform: translateY(25px);
+}
+40% {
+opacity: 0.8;
+transform: translateY(5px);
+}
+100% {
 opacity: 1;
 transform: translateY(0);
 }
@@ -171,12 +162,20 @@ transform: translateY(0);
 .subtitle {
 font-size: 1.1em;
 color: var(--text-light);
-animation: subtitleFade 1.2s ease-out 1.2s forwards;
+animation: subtitleFade 1.8s ease-out 1.8s forwards;
 opacity: 0;
-transform: translateY(15px);
+transform: translateY(20px);
 }
 @keyframes subtitleFade {
-to {
+0% {
+opacity: 0;
+transform: translateY(20px);
+}
+40% {
+opacity: 0.7;
+transform: translateY(4px);
+}
+100% {
 opacity: 1;
 transform: translateY(0);
 }
@@ -185,41 +184,43 @@ transform: translateY(0);
 display: flex;
 gap: 16px;
 margin-top: 25px;
-animation: loaderFade 0.8s ease-out 1.5s forwards;
+animation: loaderFade 1.2s ease-out 2.4s forwards;
 opacity: 0;
 }
 @keyframes loaderFade {
-to { opacity: 1; }
+0% { opacity: 0; transform: scale(0.8); }
+50% { opacity: 0.7; transform: scale(1.02); }
+100% { opacity: 1; transform: scale(1); }
 }
 .loader-dot {
 width: 18px; height: 18px; 
 border-radius: 50%;
-animation: bounce 1.6s ease-in-out infinite both;
+animation: bounce 2s ease-in-out infinite both;
 box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 .loader-dot:nth-child(1) { 
 background: var(--pastel-pink); 
-animation-delay: 0s;
+animation-delay: 2.4s;
 }
 .loader-dot:nth-child(2) { 
 background: var(--pastel-lavender); 
-animation-delay: 0.25s;
+animation-delay: 2.65s;
 }
 .loader-dot:nth-child(3) { 
 background: var(--pastel-mint); 
-animation-delay: 0.5s;
+animation-delay: 2.9s;
 }
 .loader-dot:nth-child(4) { 
 background: var(--pastel-peach); 
-animation-delay: 0.75s;
+animation-delay: 3.15s;
 }
 @keyframes bounce {
 0%, 80%, 100% { 
-transform: translateY(0) scale(0.6); 
-opacity: 0.5;
+transform: translateY(0) scale(0.7); 
+opacity: 0.4;
 }
 40% { 
-transform: translateY(-25px) scale(1.1); 
+transform: translateY(-18px) scale(1); 
 opacity: 1;
 }
 }
@@ -227,12 +228,12 @@ opacity: 1;
 font-size: 0.95em; 
 color: #9B8DAB;
 opacity: 0;
-animation: hintPulse 2s ease-in-out infinite 2s;
+animation: hintPulse 2.5s ease-in-out infinite 3s;
 margin-top: 10px;
 }
 @keyframes hintPulse {
-0%, 100% { opacity: 0.3; }
-50% { opacity: 0.8; }
+0%, 100% { opacity: 0.2; }
+50% { opacity: 0.7; }
 }
 </style>
 </head>
@@ -246,7 +247,6 @@ margin-top: 10px;
 <div class="bg-decor star"></div>
 <div class="bg-decor star"></div>
 <div class="bg-decor star"></div>
- 
 <div class="center-content">
 <div class="seed-container">
 <div class="ring"></div>
@@ -264,7 +264,6 @@ margin-top: 10px;
 </div>
 <div class="hint">正在进入...</div>
 </div>
- 
 <script>
 (function() {
 function goToHome() {
