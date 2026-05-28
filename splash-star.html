@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>星空梦想 - 点亮每一个愿望</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        :root {
+            --deep-night: #1A237E;
+            --mid-night: #283593;
+            --night-blue: #3949AB;
+            --purple-star: #7E57C2;
+            --lilac: #B39DDB;
+            --star-gold: #FFD54F;
+            --star-silver: #E0E0E0;
+            --moon-yellow: #FFF59D;
+            --text-white: #FFFFFF;
+            --text-purple: #E1BEE7;
+        }
+        
+        body {
+            font-family: "ZCOOL KuaiLe", "Noto Sans SC", sans-serif;
+            background: linear-gradient(180deg, #0D1B2A 0%, #1B263B 50%, #1A237E 100%);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .starry-sky {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        .twinkle-star {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: starTwinkle 4s ease-in-out infinite;
+            box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.8);
+        }
+        
+        .twinkle-star:nth-child(1) { top: 12%; left: 8%; animation-delay: 0s; width: 6px; height: 6px; }
+        .twinkle-star:nth-child(2) { top: 25%; left: 25%; animation-delay: -1s; }
+        .twinkle-star:nth-child(3) { top: 18%; right: 15%; animation-delay: -2s; width: 10px; height: 10px; }
+        .twinkle-star:nth-child(4) { top: 40%; left: 5%; animation-delay: -0.5s; width: 7px; height: 7px; }
+        .twinkle-star:nth-child(5) { top: 35%; right: 30%; animation-delay: -1.5s; }
+        .twinkle-star:nth-child(6) { top: 8%; right: 8%; animation-delay: -2.5s; width: 9px; height: 9px; }
+        .twinkle-star:nth-child(7) { bottom: 35%; left: 15%; animation-delay: -0.8s; }
+        .twinkle-star:nth-child(8) { bottom: 25%; right: 10%; animation-delay: -3s; width: 8px; height: 8px; }
+        .twinkle-star:nth-child(9) { top: 55%; left: 35%; animation-delay: -1.2s; }
+        .twinkle-star:nth-child(10) { bottom: 45%; right: 25%; animation-delay: -0.3s; width: 6px; height: 6px; }
+        
+        @keyframes starTwinkle {
+            0%, 100% {
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.3);
+            }
+        }
+        
+        .shooting-star {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: linear-gradient(45deg, white, transparent);
+            border-radius: 50%;
+            animation: shootAcross 5s linear infinite;
+            box-shadow: 0 0 10px 3px rgba(255, 255, 255, 0.5);
+        }
+        
+        .shooting-star:nth-child(11) { top: 10%; left: -5%; animation-delay: 0s; }
+        .shooting-star:nth-child(12) { top: 20%; left: -5%; animation-delay: -3s; }
+        
+        @keyframes shootAcross {
+            0% {
+                transform: translateX(0) translateY(0);
+                opacity: 0;
+            }
+            5% {
+                opacity: 1;
+            }
+            95% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(120vw) translateY(80vh);
+                opacity: 0;
+            }
+        }
+        
+        .main-content {
+            z-index: 10;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+        }
+        
+        .moon-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .moon-glow {
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 245, 157, 0.3) 0%, transparent 70%);
+            animation: moonGlowPulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes moonGlowPulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+            50% {
+                transform: scale(1.15);
+                opacity: 0.8;
+            }
+        }
+        
+        .moon {
+            font-size: 150px;
+            animation: moonRise 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards, moonFloat 4s 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 30px rgba(255, 245, 157, 0.6));
+        }
+        
+        @keyframes moonRise {
+            0% {
+                transform: translateY(120px) scale(0.5);
+                opacity: 0;
+            }
+            60% {
+                transform: translateY(-20px) scale(1.1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes moonFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-12px);
+            }
+        }
+        
+        .orbit-star {
+            position: absolute;
+            font-size: 28px;
+            animation: orbit 6s linear infinite;
+        }
+        
+        .orbit-star:nth-child(2) { top: 0; animation-delay: 0s; }
+        .orbit-star:nth-child(3) { top: 0; animation-delay: -2s; }
+        .orbit-star:nth-child(4) { top: 0; animation-delay: -4s; }
+        
+        @keyframes orbit {
+            0% {
+                transform: rotate(0deg) translateX(100px) rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg) translateX(100px) rotate(-360deg);
+            }
+        }
+        
+        .title-group {
+            animation: titleFadeIn 1.8s ease-out 1.5s forwards;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        
+        @keyframes titleFadeIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .main-title {
+            font-size: 3em;
+            color: var(--text-white);
+            letter-spacing: 0.2em;
+            text-shadow: 0 0 20px rgba(255, 213, 79, 0.5);
+            margin-bottom: 12px;
+        }
+        
+        .subtitle {
+            font-size: 1.15em;
+            color: var(--text-purple);
+        }
+        
+        .constellation-loader {
+            display: flex;
+            gap: 25px;
+            margin-top: 40px;
+            animation: loaderAppear 1.2s ease-out 2.2s forwards;
+            opacity: 0;
+        }
+        
+        @keyframes loaderAppear {
+            to {
+                opacity: 1;
+            }
+        }
+        
+        .constellation-star {
+            font-size: 30px;
+            animation: starPulse 2s ease-in-out infinite;
+        }
+        
+        .constellation-star:nth-child(1) { animation-delay: 0s; }
+        .constellation-star:nth-child(2) { animation-delay: 0.3s; }
+        .constellation-star:nth-child(3) { animation-delay: 0.6s; }
+        .constellation-star:nth-child(4) { animation-delay: 0.9s; }
+        .constellation-star:nth-child(5) { animation-delay: 1.2s; }
+        
+        @keyframes starPulse {
+            0%, 80%, 100% {
+                transform: scale(0.7);
+                opacity: 0.4;
+            }
+            40% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+        
+        .loading-text {
+            font-size: 1em;
+            color: #CE93D8;
+            opacity: 0;
+            animation: textGlow 2s ease-in-out infinite 3s;
+            margin-top: 25px;
+        }
+        
+        @keyframes textGlow {
+            0%, 100% {
+                opacity: 0.4;
+                text-shadow: 0 0 5px rgba(206, 147, 216, 0.5);
+            }
+            50% {
+                opacity: 0.9;
+                text-shadow: 0 0 15px rgba(206, 147, 216, 0.8);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="starry-sky">
+        <div class="twinkle-star"></div>
+        <div class="twinkle-star"></div>
+        <div class="twinkle-star"></div>
+        <div class="twinkle-star"></div>
+        <div class="twinkle-star"></div>
+        <div class="twinkle-star"></div>
+        <div class="twinkle-star"></div>
+        <div class="twinkle-star"></div>
+        <div class="twinkle-star"></div>
+        <div class="twinkle-star"></div>
+        <div class="shooting-star"></div>
+        <div class="shooting-star"></div>
+    </div>
+    
+    <div class="main-content">
+        <div class="moon-container">
+            <div class="moon-glow"></div>
+            <span class="orbit-star">⭐</span>
+            <span class="orbit-star">✨</span>
+            <span class="orbit-star">🌟</span>
+            <span class="moon">🌙</span>
+        </div>
+        
+        <div class="title-group">
+            <h1 class="main-title">星空梦想</h1>
+            <p class="subtitle">点亮每一个愿望</p>
+        </div>
+        
+        <div class="constellation-loader">
+            <span class="constellation-star">⭐</span>
+            <span class="constellation-star">✨</span>
+            <span class="constellation-star">🌟</span>
+            <span class="constellation-star">✨</span>
+            <span class="constellation-star">⭐</span>
+        </div>
+        
+        <p class="loading-text">正在许愿...</p>
+    </div>
+    
+    <script>
+        setTimeout(() => {
+            window.location.href = '/home';
+        }, 5000);
+    </script>
+</body>
+</html>
