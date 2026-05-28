@@ -19,12 +19,18 @@ public class SecurityConfig {
     }
 
     /**
-     * 忽略静态资源的安全过滤，确保未登录用户也能加载图片
+     * 完全忽略静态资源的安全检查（推荐方式）
      */
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
-                .requestMatchers("/uploads/**", "/photos/**", "/css/**", "/js/**");
+                .requestMatchers(
+                        "/uploads/**",   // 上传的所有图片、头像
+                        "/photos/**",    // 其他可能的静态目录
+                        "/css/**",
+                        "/js/**",
+                        "/api/avatar/**" // 头像接口也顺便忽略，避免未登录时加载失败
+                );
     }
 
     @Bean
@@ -36,9 +42,6 @@ public class SecurityConfig {
                         .requestMatchers("/", "/gallery", "/growth", "/diary", "/messages").permitAll()
                         .requestMatchers("/register").permitAll()
                         .requestMatchers("/login").permitAll()
-                        // 放行头像接口（未登录也可加载）
-                        .requestMatchers("/api/avatar/**").permitAll()
-                        // 其他请求需要登录
                         .anyRequest().authenticated()
                 )
 
