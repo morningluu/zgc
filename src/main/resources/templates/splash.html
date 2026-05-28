@@ -8,7 +8,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: "ZCOOL KuaiLe", "Noto Sans SC", sans-serif;
-            background: linear-gradient(150deg, #FFF5F7 0%, #FBE8F0 30%, #F2E6FF 70%, #E8F0FF 100%);
+            background: linear-gradient(180deg, #FFF0F5 0%, #FFEFF7 25%, #F0F7FF 50%, #F0FFF7 75%, #FFF9F0 100%);
             height: 100vh; width: 100vw;
             overflow: hidden;
             display: flex;
@@ -16,114 +16,312 @@
             justify-content: center;
             position: relative;
         }
+
+        /* 背景装饰 */
         .bg-decor { position: absolute; pointer-events: none; }
-        .cloud {
-            width: 120px; height: 50px;
-            background: rgba(255,255,255,0.6);
-            border-radius: 50%; filter: blur(8px);
-            animation: cloudDrift 10s ease-in-out infinite;
+
+        /* 糖果装饰 */
+        .candy {
+            position: absolute;
+            animation: candyFloat 4s ease-in-out infinite;
         }
-        .cloud:nth-child(1) { top: 8%; left: -10%; }
-        .cloud:nth-child(2) { top: 25%; right: -15%; animation-delay: -3.5s; width:150px; height:60px; }
-        .cloud:nth-child(3) { bottom: 20%; left: -20%; animation-delay: -6s; width:100px; height:45px; }
-        .cloud:nth-child(4) { bottom: 10%; right: -5%; animation-delay: -8s; width:180px; height:70px; }
-        @keyframes cloudDrift {
-            0% { transform: translateX(0); }
-            50% { transform: translateX(40px); }
-            100% { transform: translateX(0); }
+        .candy-1 {
+            top: 10%;
+            left: 8%;
+            font-size: 3em;
+            animation-delay: -0.5s;
         }
-        .star {
-            width: 24px; height: 24px; background: #FFE8C0;
-            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-            animation: twinkle 2.8s ease-in-out infinite;
+        .candy-2 {
+            top: 15%;
+            right: 10%;
+            font-size: 2.5em;
+            animation-delay: -1.5s;
         }
-        .star:nth-child(5) { top: 12%; left: 18%; }
-        .star:nth-child(6) { top: 25%; right: 15%; animation-delay: -1s; }
-        .star:nth-child(7) { bottom: 30%; left: 10%; animation-delay: -2s; width:18px; height:18px; }
-        .star:nth-child(8) { bottom: 18%; right: 20%; animation-delay: -0.5s; width:22px; height:22px; }
-        .star:nth-child(9) { top: 55%; left: 75%; animation-delay: -2.8s; }
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.4; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1.3); }
+        .candy-3 {
+            bottom: 20%;
+            left: 5%;
+            font-size: 2.8em;
+            animation-delay: -2s;
         }
+        .candy-4 {
+            bottom: 15%;
+            right: 8%;
+            font-size: 2.2em;
+            animation-delay: -1s;
+        }
+        @keyframes candyFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(10deg); }
+        }
+
+        /* 气球装饰 */
+        .balloon {
+            position: absolute;
+            width: 50px;
+            height: 65px;
+            border-radius: 50% 50% 50% 50%;
+            animation: balloonDrift 6s ease-in-out infinite;
+        }
+        .balloon::after {
+            content: '';
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 25px;
+            background: rgba(180, 160, 200, 0.4);
+        }
+        .balloon-1 {
+            background: linear-gradient(135deg, #FFB5C2, #FFC8D4);
+            top: 8%;
+            left: 25%;
+            animation-delay: -2s;
+        }
+        .balloon-2 {
+            background: linear-gradient(135deg, #C8B8E8, #D8CEF0);
+            top: 5%;
+            right: 25%;
+            animation-delay: -1s;
+        }
+        .balloon-3 {
+            background: linear-gradient(135deg, #B5E8D5, #C5EDE0);
+            bottom: 25%;
+            left: 15%;
+            animation-delay: -3s;
+        }
+        .balloon-4 {
+            background: linear-gradient(135deg, #FFE8C0, #FFF0D5);
+            bottom: 30%;
+            right: 18%;
+            animation-delay: -0.5s;
+        }
+        @keyframes balloonDrift {
+            0%, 100% { transform: translateY(0) translateX(0) rotate(-3deg); }
+            33% { transform: translateY(-20px) translateX(8px) rotate(3deg); }
+            66% { transform: translateY(-10px) translateX(-5px) rotate(-2deg); }
+        }
+
+        /* 泡泡装饰 */
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(255,255,255,0.3));
+            animation: bubbleFloat 5s ease-in-out infinite;
+        }
+        .bubble-1 {
+            width: 30px;
+            height: 30px;
+            top: 25%;
+            left: 12%;
+            animation-delay: -1s;
+        }
+        .bubble-2 {
+            width: 20px;
+            height: 20px;
+            top: 35%;
+            right: 15%;
+            animation-delay: -2.5s;
+        }
+        .bubble-3 {
+            width: 25px;
+            height: 25px;
+            bottom: 35%;
+            left: 25%;
+            animation-delay: -1.5s;
+        }
+        .bubble-4 {
+            width: 35px;
+            height: 35px;
+            bottom: 25%;
+            right: 20%;
+            animation-delay: -3s;
+        }
+        @keyframes bubbleFloat {
+            0%, 100% { transform: translateY(0) scale(1); opacity: 0.6; }
+            50% { transform: translateY(-25px) scale(1.1); opacity: 1; }
+        }
+
+        /* 主要内容区域 */
         .center-content {
             z-index: 10;
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
+            gap: 18px;
         }
-        .tree-icon {
-            font-size: 100px;
-            animation: treeGrow 1.8s ease-out forwards, treeBounce 2.2s 1.8s ease-in-out infinite;
-            transform-origin: bottom center;
-            filter: drop-shadow(0 8px 16px rgba(180,160,200,0.3));
-        }
-        @keyframes treeGrow {
-            0% { transform: scale(0) rotate(-15deg); opacity: 0; }
-            60% { transform: scale(1.25) rotate(5deg); opacity: 1; }
-            100% { transform: scale(1) rotate(0deg); opacity: 1; }
-        }
-        @keyframes treeBounce {
-            0%,100% { transform: translateY(0); }
-            50% { transform: translateY(-14px); }
-        }
-        .title {
-            font-size: 2.4em;
-            color: #5D4E6D;
-            letter-spacing: 0.08em;
-            text-shadow: 0 4px 12px rgba(180,140,160,0.2);
-        }
-        .subtitle {
-            font-size: 1em;
-            color: #B8A9D4;
-        }
-        .wave-loader {
+
+        /* 主图标容器 */
+        .icon-container {
+            position: relative;
+            width: 160px;
+            height: 160px;
             display: flex;
-            gap: 14px;
-            margin-top: 20px;
+            align-items: center;
+            justify-content: center;
         }
-        .wave-dot {
-            width: 14px; height: 14px; border-radius: 50%;
-            animation: waveJump 1.4s ease-in-out infinite both;
+
+        /* 旋转光环 */
+        .glow-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(45deg, 
+                transparent 30%, 
+                rgba(255, 181, 194, 0.5) 50%, 
+                rgba(200, 184, 232, 0.5) 60%,
+                rgba(181, 232, 213, 0.5) 75%,
+                transparent 90%);
+            animation: ringRotate 8s linear infinite;
+            filter: blur(1px);
         }
-        .wave-dot:nth-child(1) { background: #FFB5C2; animation-delay: 0s; }
-        .wave-dot:nth-child(2) { background: #C8B8E8; animation-delay: 0.2s; }
-        .wave-dot:nth-child(3) { background: #B5E8D5; animation-delay: 0.4s; }
-        @keyframes waveJump {
-            0%,80%,100% { transform: scale(0.4); opacity: 0.5; }
-            40% { transform: scale(1); opacity: 1; }
+        @keyframes ringRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
+
+        /* 主图标 */
+        .main-icon {
+            font-size: 110px;
+            position: relative;
+            z-index: 2;
+            animation: iconPulse 3s ease-in-out infinite, iconBounce 2.5s ease-in-out infinite;
+            filter: drop-shadow(0 10px 20px rgba(180, 160, 200, 0.25));
+        }
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+        @keyframes iconBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+
+        /* 标题 */
+        .title {
+            font-size: 2.5em;
+            color: #5D4E6D;
+            letter-spacing: 0.12em;
+            text-shadow: 0 5px 15px rgba(180, 140, 160, 0.25);
+            animation: titleSlideIn 1.2s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        @keyframes titleSlideIn {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 副标题 */
+        .subtitle {
+            font-size: 1.05em;
+            color: #B8A9D4;
+            animation: subtitleFadeIn 1.5s ease-out 0.3s forwards;
+            opacity: 0;
+        }
+        @keyframes subtitleFadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        /* 加载器 */
+        .loader-container {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+            align-items: center;
+        }
+
+        /* 糖果加载点 */
+        .candy-dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            animation: candyDotBounce 1.6s ease-in-out infinite;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .candy-dot:nth-child(1) {
+            background: linear-gradient(135deg, #FFB5C2, #FFC8D4);
+            animation-delay: 0s;
+        }
+        .candy-dot:nth-child(2) {
+            background: linear-gradient(135deg, #C8B8E8, #D8CEF0);
+            animation-delay: 0.2s;
+        }
+        .candy-dot:nth-child(3) {
+            background: linear-gradient(135deg, #B5E8D5, #C5EDE0);
+            animation-delay: 0.4s;
+        }
+        .candy-dot:nth-child(4) {
+            background: linear-gradient(135deg, #FFE8C0, #FFF0D5);
+            animation-delay: 0.6s;
+        }
+        @keyframes candyDotBounce {
+            0%, 80%, 100% { 
+                transform: translateY(0) scale(0.8); 
+                opacity: 0.5;
+            }
+            40% { 
+                transform: translateY(-25px) scale(1.2); 
+                opacity: 1;
+            }
+        }
+
+        /* 提示文字 */
         .hint {
-            font-size: 0.9em; color: #9B8DAB;
-            opacity: 0.7; animation: fadeHint 2s ease-in-out infinite;
+            font-size: 0.95em;
+            color: #9B8DAB;
+            opacity: 0.7;
+            animation: hintFade 2.5s ease-in-out infinite;
+            margin-top: 5px;
         }
-        @keyframes fadeHint {
-            0%,100% { opacity: 0.4; }
+        @keyframes hintFade {
+            0%, 100% { opacity: 0.4; }
             50% { opacity: 0.9; }
+        }
+
+        /* 响应式 */
+        @media (max-width: 480px) {
+            .main-icon { font-size: 90px; }
+            .icon-container { width: 130px; height: 130px; }
+            .title { font-size: 2em; }
+            .subtitle { font-size: 0.95em; }
+            .candy-dot { width: 15px; height: 15px; }
         }
     </style>
 </head>
 <body>
-    <div class="bg-decor cloud"></div>
-    <div class="bg-decor cloud"></div>
-    <div class="bg-decor cloud"></div>
-    <div class="bg-decor cloud"></div>
-    <div class="bg-decor star"></div>
-    <div class="bg-decor star"></div>
-    <div class="bg-decor star"></div>
-    <div class="bg-decor star"></div>
-    <div class="bg-decor star"></div>
+    <!-- 背景装饰 -->
+    <div class="bg-decor candy candy-1">🍬</div>
+    <div class="bg-decor candy candy-2">🍭</div>
+    <div class="bg-decor candy candy-3">🧁</div>
+    <div class="bg-decor candy candy-4">🍩</div>
+    
+    <div class="bg-decor balloon balloon-1"></div>
+    <div class="bg-decor balloon balloon-2"></div>
+    <div class="bg-decor balloon balloon-3"></div>
+    <div class="bg-decor balloon balloon-4"></div>
+    
+    <div class="bg-decor bubble bubble-1"></div>
+    <div class="bg-decor bubble bubble-2"></div>
+    <div class="bg-decor bubble bubble-3"></div>
+    <div class="bg-decor bubble bubble-4"></div>
 
+    <!-- 主要内容 -->
     <div class="center-content">
-        <span class="tree-icon">🌱</span>
+        <div class="icon-container">
+            <div class="glow-ring"></div>
+            <span class="main-icon">🌟</span>
+        </div>
         <div class="title">成长手册</div>
         <div class="subtitle">赵高钏的专属时光</div>
-        <div class="wave-loader">
-            <span class="wave-dot"></span>
-            <span class="wave-dot"></span>
-            <span class="wave-dot"></span>
+        <div class="loader-container">
+            <span class="candy-dot"></span>
+            <span class="candy-dot"></span>
+            <span class="candy-dot"></span>
+            <span class="candy-dot"></span>
         </div>
         <div class="hint">正在进入...</div>
     </div>
