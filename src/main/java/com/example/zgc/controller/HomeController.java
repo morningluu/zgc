@@ -38,9 +38,15 @@ public class HomeController {
         this.recordService = recordService;
     }
 
-    // ==================== 首页 ====================
+    // ==================== 首页（含开屏动画） ====================
     @GetMapping("/")
-    public String home(Model model) {
+    public String home(Model model, @RequestParam(value = "loaded", required = false) String loaded) {
+        // 如果没有 loaded=true 参数，则显示开屏动画页
+        if (!"true".equals(loaded)) {
+            return "splash";
+        }
+
+        // 开屏动画结束后，显示正常首页内容
         List<GrowthRecord> records = recordService.findAllByOrderByRecordDateDesc();
 
         // 计算最新的身高和体重
