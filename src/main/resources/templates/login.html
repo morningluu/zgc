@@ -109,10 +109,12 @@
             <div th:if="${param.logout}" class="msg success">已安全退出，下次再见</div>
         </form>
         <div style="margin-top: 20px; color: #666; text-align: center;">
-        还没有账号？<a href="/register" style="color: #E8788A; text-decoration: none; font-weight: bold;">立即注册</a>
-    </div>
+            还没有账号？<a href="/register" style="color: #E8788A; text-decoration: none; font-weight: bold;">立即注册</a>
+        </div>
     </div>
 </div>
 
+<!-- 引入公共导航与退出控制脚本 -->
+<script src="/app.js"></script>
 </body>
 </html>
