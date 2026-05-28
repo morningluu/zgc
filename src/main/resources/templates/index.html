@@ -6,10 +6,12 @@
     <title>赵高钏的成长记录手册</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🌱</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-    <meta name="_csrf" th:content="${_csrf?.token}">
-    <meta name="_csrf_header" th:content="${_csrf?.headerName}">
+
+    <!-- CSRF 元数据（Spring Security，若未启用CSRF则自动忽略） -->
+    <meta name="_csrf" th:content="${_csrf?.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf?.headerName}"/>
+
     <style>
-        /* ... 所有CSS样式保持不变 ... */
         :root {
             --pink: #FFB5C2;
             --pink-deep: #FF9AB2;
@@ -53,20 +55,42 @@
         }
 
         .exit-toast {
-            position: fixed; bottom: 110px; left: 50%; transform: translateX(-50%) translateY(20px);
-            background: rgba(90, 70, 100, 0.92); backdrop-filter: blur(16px); color: white;
-            padding: 12px 28px; border-radius: 40px; font-size: 0.95em; z-index: 9998;
-            pointer-events: none; white-space: nowrap; box-shadow: 0 12px 30px rgba(0,0,0,0.2);
-            transition: opacity 0.35s, transform 0.35s var(--transition-bounce); opacity: 0;
-            display: flex; flex-direction: column; align-items: center; gap: 2px;
+            position: fixed;
+            bottom: 110px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(90, 70, 100, 0.92);
+            backdrop-filter: blur(16px);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-size: 0.95em;
+            z-index: 9998;
+            pointer-events: none;
+            white-space: nowrap;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+            transition: opacity 0.35s, transform 0.35s var(--transition-bounce);
+            opacity: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
         }
         .exit-toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
         .exit-toast-sub { font-size: 0.7em; opacity: 0.8; font-weight: 400; }
 
         .top-bar {
-            position: sticky; top: 0; z-index: 1000; background: rgba(255,255,255,0.7);
-            backdrop-filter: blur(22px); border-bottom: 1px solid rgba(200,180,220,0.1);
-            padding: 0 16px; height: 56px; display: flex; align-items: center; justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(22px);
+            border-bottom: 1px solid rgba(200,180,220,0.1);
+            padding: 0 16px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
         .top-bar-brand { display: flex; align-items: center; gap: 8px; text-decoration: none; }
         .top-bar-logo { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #FFE0E8, #FFB5C2); display: flex; align-items: center; justify-content: center; font-size: 1.1em; box-shadow: 0 3px 12px rgba(255,181,194,0.35); }
@@ -165,7 +189,7 @@
         .add-overlay.active .add-sheet { transform: translateY(0); }
         .add-sheet-title { text-align: center; font-family: 'ZCOOL KuaiLe', sans-serif; font-size: 1.2em; color: #5D4E6D; margin-bottom: 20px; }
         .add-sheet-cards { display: flex; gap: 16px; justify-content: center; margin: 20px 0; }
-        .add-card-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 12px; border-radius: var(--radius-lg); background: rgba(255,240,245,0.5); border: 1px solid rgba(255,200,210,0.3); text-decoration: none; color: var(--text-primary); transition: all 0.3s var(--transition-bounce); cursor: pointer; border: none; font-family: inherit; }
+        .add-card-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 12px; border-radius: var(--radius-lg); background: rgba(255,240,245,0.5); border: 1px solid rgba(255,200,210,0.3); text-decoration: none; color: var(--text-primary); transition: all 0.3s var(--transition-bounce); cursor: pointer; font-family: inherit; }
         .add-card-item:active { transform: scale(0.9); background: rgba(255,200,210,0.4); }
         .add-card-icon { font-size: 2.5em; margin-bottom: 6px; }
         .add-card-label { font-family: "ZCOOL KuaiLe", sans-serif; font-weight: 700; font-size: 0.95em; }
@@ -190,6 +214,34 @@
         .btn-submit:active { transform: scale(0.96); }
         .add-sheet-cancel-btn { display: block; margin: 16px auto 0; padding: 10px 30px; border-radius: 30px; border: none; background: rgba(200,180,220,0.2); color: #8B7D9B; cursor: pointer; font-size: 0.9em; font-family: inherit; }
 
+        /* 头像上传中加载指示器 */
+        .avatar-uploading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            z-index: 5;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.25s;
+        }
+        .avatar-uploading-overlay.active { opacity: 1; }
+        .avatar-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid rgba(255,154,178,0.25);
+            border-top-color: #FF9AB2;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
         @media (max-width: 768px) {
             .form-row { flex-direction: column; gap: 0; }
         }
@@ -197,23 +249,33 @@
 </head>
 <body>
 
+<!-- Toast 消息 -->
 <div class="toast-message" id="toastMsg">提示</div>
+
+<!-- 退出确认 Toast -->
 <div class="exit-toast" id="exitToast">
     <span>确认退出吗？</span>
     <span class="exit-toast-sub">再次点击返回键退出</span>
 </div>
 
+<!-- 顶部导航栏 -->
 <header class="top-bar">
-    <a href="/" class="top-bar-brand"><div class="top-bar-logo">🌱</div><span class="top-bar-appname">成长手册</span></a>
+    <a href="/" class="top-bar-brand">
+        <div class="top-bar-logo">🌱</div>
+        <span class="top-bar-appname">成长手册</span>
+    </a>
     <button class="top-bar-mine" onclick="toggleSidebar()">👤</button>
 </header>
 
+<!-- 侧边栏 -->
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 <aside class="sidebar-panel" id="sidebarPanel">
     <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
     <div class="sidebar-user-info">
         <div class="sidebar-avatar">🧸</div>
-        <div class="sidebar-username" sec:authorize="isAuthenticated()"><span sec:authentication="name">用户</span></div>
+        <div class="sidebar-username" sec:authorize="isAuthenticated()">
+            <span sec:authentication="name">用户</span>
+        </div>
         <div class="sidebar-username" sec:authorize="!isAuthenticated()">访客</div>
     </div>
     <div class="sidebar-links">
@@ -225,21 +287,27 @@
     </div>
 </aside>
 
+<!-- 主内容区 -->
 <main class="container">
     <div class="card-group">
+        <!-- 日记本卡片 -->
         <div class="journal">
             <div class="journal-spine"></div>
             <div class="page-left">
-                <div class="polaroid-frame" id="polaroidFrame">
+                <div class="polaroid-frame" id="polaroidFrame" title="点击更换宝宝头像">
                     <div class="washi-tape washi-tape-1"></div>
                     <div class="washi-tape washi-tape-2"></div>
                     <div class="polaroid-photo" id="polaroidPhoto">
                         <span class="default-emoji">👶</span>
-                        <img id="avatarImg" src="#" alt="头像"
-                             th:attr="data-server-src=${babyAvatarPath != null ? babyAvatarPath : ''}">
+                        <img id="avatarImg" src="#" alt="宝宝头像" crossorigin="anonymous">
+                        <!-- 上传中的加载遮罩 -->
+                        <div class="avatar-uploading-overlay" id="avatarUploadingOverlay">
+                            <div class="avatar-spinner"></div>
+                        </div>
                     </div>
                     <span class="polaroid-caption">赵高钏</span>
                 </div>
+                <!-- 隐藏的文件选择器（头像上传用） -->
                 <input type="file" id="avatarInput" accept="image/*" style="display:none;">
             </div>
             <div class="page-right">
@@ -259,6 +327,7 @@
                 </div>
             </div>
         </div>
+        <!-- 天数卡片 -->
         <div class="bottom-tickets">
             <div class="ticket-card">
                 <span class="ticket-icon">🌍</span><span class="ticket-label">来到世上</span>
@@ -271,6 +340,7 @@
         </div>
     </div>
 
+    <!-- 最新成长记录 -->
     <div class="section-header"><h2>🌟 最新成长记录</h2></div>
     <div th:if="${#lists.isEmpty(records)}" class="empty-state">📸 还没有成长记录哦，点击下方 + 号开始记录吧～</div>
     <div class="record-grid" th:if="${!#lists.isEmpty(records)}">
@@ -298,6 +368,7 @@
     </div>
 </main>
 
+<!-- 底部导航栏 -->
 <nav class="bottom-nav">
     <a href="/" class="bottom-nav-item active"><span>🏠</span>首页</a>
     <a href="/gallery" class="bottom-nav-item"><span>📷</span>相册</a>
@@ -306,6 +377,7 @@
     <a href="/messages" class="bottom-nav-item"><span>💌</span>留言</a>
 </nav>
 
+<!-- 添加记录弹出层 -->
 <div class="add-overlay" id="addOverlay">
     <div class="add-sheet">
         <div class="add-sheet-title">✨ 添加新记录</div>
@@ -327,6 +399,7 @@
     </div>
 </div>
 
+<!-- 照片表单 -->
 <div class="form-overlay" id="photoFormOverlay" onclick="if(event.target===this)closePhotoForm()">
     <div class="form-card">
         <h3>📷 上传照片</h3>
@@ -342,6 +415,7 @@
     </div>
 </div>
 
+<!-- 成长数据表单 -->
 <div class="form-overlay" id="growthFormOverlay" onclick="if(event.target===this)closeGrowthForm()">
     <div class="form-card">
         <h3>📊 记录成长数据</h3>
@@ -360,6 +434,7 @@
     </div>
 </div>
 
+<!-- 留言表单 -->
 <div class="form-overlay" id="messageFormOverlay" onclick="if(event.target===this)closeMessageForm()">
     <div class="form-card">
         <h3>💌 写下留言</h3>
@@ -376,17 +451,15 @@
 
 <script th:inline="javascript">
     /*<![CDATA[*/
+    // ==================== 全局变量 ====================
     var isAuthenticated = /*[[${#authorization.expression('isAuthenticated()')}]]*/ false;
+    var avatarImg = document.getElementById('avatarImg');
+    var photoContainer = document.getElementById('polaroidPhoto');
+    var fileInput = document.getElementById('avatarInput');
+    var avatarUploadingOverlay = document.getElementById('avatarUploadingOverlay');
+    var polaroidFrame = document.getElementById('polaroidFrame');
 
-    function getCsrfToken() {
-        var meta = document.querySelector('meta[name="_csrf"]');
-        var headerMeta = document.querySelector('meta[name="_csrf_header"]');
-        if (meta && meta.content && headerMeta && headerMeta.content) {
-            return { token: meta.content, headerName: headerMeta.content };
-        }
-        return null;
-    }
-
+    // ==================== Toast 提示 ====================
     function showToast(msg) {
         var t = document.getElementById('toastMsg');
         t.textContent = msg;
@@ -394,6 +467,7 @@
         setTimeout(function() { t.classList.remove('show'); }, 1500);
     }
 
+    // ==================== 登录检查 ====================
     function requireAuth() {
         if (!isAuthenticated) {
             showToast('请先登录');
@@ -403,6 +477,183 @@
         return true;
     }
 
+    // ==================== CSRF Token 获取 ====================
+    function getCsrfHeaders() {
+        var headers = {};
+        var csrfToken = document.querySelector('meta[name="_csrf"]');
+        var csrfHeader = document.querySelector('meta[name="_csrf_header"]');
+        if (csrfToken && csrfHeader && csrfToken.content && csrfHeader.content) {
+            headers[csrfHeader.content] = csrfToken.content;
+        }
+        return headers;
+    }
+
+    // ==================== 头像功能 ====================
+    /**
+     * 从服务器加载头像
+     * 使用时间戳参数防止浏览器缓存，确保跨设备看到最新头像
+     */
+    function loadAvatarFromServer() {
+        var timestamp = Date.now();
+        // 后端API: GET /api/avatar 直接返回头像图片
+        var avatarUrl = '/api/avatar?t=' + timestamp;
+
+        // 先尝试加载服务端头像
+        avatarImg.src = avatarUrl;
+        avatarImg.onload = function() {
+            // 服务端头像加载成功
+            avatarImg.classList.add('show');
+            photoContainer.classList.add('has-image');
+            // 同步更新localStorage缓存
+            try {
+                localStorage.setItem('babyAvatar', avatarUrl);
+            } catch(e) { /* 忽略存储空间不足 */ }
+            // 清除onerror，避免后续触发fallback
+            avatarImg.onerror = null;
+        };
+        avatarImg.onerror = function() {
+            // 服务端头像加载失败，尝试localStorage缓存
+            var cached = localStorage.getItem('babyAvatar');
+            if (cached) {
+                avatarImg.src = cached;
+                avatarImg.classList.add('show');
+                photoContainer.classList.add('has-image');
+                avatarImg.onerror = function() {
+                    // 缓存也失败，显示默认头像
+                    resetToDefaultAvatar();
+                };
+            } else {
+                resetToDefaultAvatar();
+            }
+        };
+    }
+
+    /** 重置为默认头像（emoji） */
+    function resetToDefaultAvatar() {
+        avatarImg.src = '#';
+        avatarImg.classList.remove('show');
+        photoContainer.classList.remove('has-image');
+        avatarImg.onerror = null;
+    }
+
+    /**
+     * 点击头像的处理逻辑
+     * - 访客状态：跳转登录页面
+     * - 已登录状态：触发文件选择以更换头像
+     */
+    polaroidFrame.addEventListener('click', function(e) {
+        if (!isAuthenticated) {
+            // 访客状态 → 弹出登录页面
+            showToast('请先登录后再更换头像');
+            setTimeout(function() {
+                window.location.href = '/login';
+            }, 500);
+            return;
+        }
+        // 已登录状态 → 触发文件选择
+        fileInput.click();
+    });
+
+    /**
+     * 文件选择后的处理：预览 + 上传到服务器
+     */
+    fileInput.addEventListener('change', function(e) {
+        var file = e.target.files[0];
+        if (!file) return;
+
+        // 文件类型校验
+        if (!file.type.match(/^image\//)) {
+            showToast('请选择图片文件');
+            fileInput.value = '';
+            return;
+        }
+
+        // 文件大小校验（限制10MB）
+        if (file.size > 10 * 1024 * 1024) {
+            showToast('图片不能超过10MB，请重新选择');
+            fileInput.value = '';
+            return;
+        }
+
+        // 先本地预览
+        var reader = new FileReader();
+        reader.onload = function(ev) {
+            // 本地预览（即时反馈）
+            avatarImg.src = ev.target.result;
+            avatarImg.classList.add('show');
+            photoContainer.classList.add('has-image');
+
+            // 上传到服务器
+            uploadAvatarToServer(file);
+        };
+        reader.readAsDataURL(file);
+    });
+
+    /**
+     * 上传头像到服务器
+     * 后端需实现: POST /api/avatar/upload (接收multipart/form-data, 字段名avatar)
+     */
+    function uploadAvatarToServer(file) {
+        // 显示加载指示器
+        avatarUploadingOverlay.classList.add('active');
+
+        var formData = new FormData();
+        formData.append('avatar', file);
+
+        var headers = getCsrfHeaders();
+        // FormData上传不需要设置Content-Type，浏览器会自动设置
+
+        fetch('/api/avatar/upload', {
+            method: 'POST',
+            headers: headers,
+            body: formData
+        })
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error('上传失败 (HTTP ' + response.status + ')');
+            }
+            return response.json().catch(function() {
+                // 如果后端不返回JSON，也视为成功
+                return { success: true };
+            });
+        })
+        .then(function(data) {
+            // 上传成功
+            avatarUploadingOverlay.classList.remove('active');
+            showToast('头像更新成功！');
+
+            // 刷新头像（使用新的时间戳确保获取最新图片）
+            var newTimestamp = Date.now();
+            var newAvatarUrl = '/api/avatar?t=' + newTimestamp;
+            avatarImg.src = newAvatarUrl;
+            avatarImg.classList.add('show');
+            photoContainer.classList.add('has-image');
+            avatarImg.onerror = null;
+
+            // 更新localStorage缓存
+            try {
+                localStorage.setItem('babyAvatar', newAvatarUrl);
+            } catch(e) { /* 忽略 */ }
+
+            // 清除文件选择器的值，允许重复选择同一文件
+            fileInput.value = '';
+        })
+        .catch(function(error) {
+            // 上传失败
+            avatarUploadingOverlay.classList.remove('active');
+            console.error('头像上传失败:', error);
+            showToast('头像上传失败，请稍后重试');
+
+            // 恢复之前的状态（重新从服务器加载）
+            loadAvatarFromServer();
+            fileInput.value = '';
+        });
+    }
+
+    // 页面加载时从服务器获取头像
+    loadAvatarFromServer();
+
+    // ==================== 添加记录相关 ====================
     function handleAddClick() {
         if (!requireAuth()) return;
         openAddOverlay();
@@ -416,7 +667,9 @@
         document.getElementById('addOverlay').classList.remove('active');
         document.body.style.overflow = '';
     }
-    document.getElementById('addOverlay').addEventListener('click', function(e) { if (e.target === this) closeAddOverlay(); });
+    document.getElementById('addOverlay').addEventListener('click', function(e) {
+        if (e.target === this) closeAddOverlay();
+    });
 
     function openPhotoForm() { closeAddOverlay(); document.getElementById('photoFormOverlay').classList.add('active'); }
     function closePhotoForm() { document.getElementById('photoFormOverlay').classList.remove('active'); }
@@ -425,7 +678,7 @@
     function openMessageForm() { closeAddOverlay(); document.getElementById('messageFormOverlay').classList.add('active'); }
     function closeMessageForm() { document.getElementById('messageFormOverlay').classList.remove('active'); }
 
-    // 年龄计算
+    // ==================== 年龄计算 ====================
     (function() {
         var birthday = new Date(2017, 1, 14);
         var now = new Date();
@@ -442,124 +695,7 @@
         document.getElementById('birthdayCountdown').textContent = Math.ceil((nextBirthday - now) / (1000 * 60 * 60 * 24));
     })();
 
-    // ==================== 头像逻辑（已适配后端接口） ====================
-    (function() {
-        var avatarImg = document.getElementById('avatarImg');
-        var photoContainer = document.getElementById('polaroidPhoto');
-        var fileInput = document.getElementById('avatarInput');
-
-        function applyAvatar(src) {
-            if (!src || src === '#') return;
-            avatarImg.src = src;
-            avatarImg.classList.add('show');
-            photoContainer.classList.add('has-image');
-        }
-
-        function getCachedAvatar() {
-            try {
-                return localStorage.getItem('babyAvatar');
-            } catch(e) {
-                return null;
-            }
-        }
-
-        function cacheAvatar(src) {
-            try {
-                if (src && !src.startsWith('data:')) {
-                    localStorage.setItem('babyAvatar', src);
-                }
-            } catch(e) {}
-        }
-
-        function initAvatar() {
-            var serverSrc = avatarImg.getAttribute('data-server-src');
-            if (serverSrc && serverSrc.trim() !== '') {
-                applyAvatar(serverSrc);
-                cacheAvatar(serverSrc);
-                return;
-            }
-            var cached = getCachedAvatar();
-            if (cached) {
-                applyAvatar(cached);
-            }
-        }
-
-        /**
-         * 上传头像到后端 POST /avatar/upload
-         * 参数名：avatar (MultipartFile)
-         * 返回格式：{ success: true, avatarPath: "/uploads/baby-avatar.jpg" }
-         */
-        function uploadAvatarToServer(file) {
-            return new Promise(function(resolve, reject) {
-                var formData = new FormData();
-                formData.append('avatar', file);  // 参数名必须与后端 @RequestParam("avatar") 一致
-
-                var headers = {};
-                var csrf = getCsrfToken();
-                if (csrf) {
-                    headers[csrf.headerName] = csrf.token;
-                }
-
-                fetch('/avatar/upload', {   // 接口路径与后端 @PostMapping("/avatar/upload") 一致
-                    method: 'POST',
-                    headers: headers,
-                    body: formData,
-                })
-                .then(function(response) {
-                    if (!response.ok) {
-                        throw new Error('服务器错误：' + response.status);
-                    }
-                    return response.json();
-                })
-                .then(function(data) {
-                    if (data && data.success && data.avatarPath) {  // 返回字段为 avatarPath
-                        resolve(data.avatarPath);
-                    } else {
-                        reject(new Error(data.message || '上传失败'));
-                    }
-                })
-                .catch(function(err) {
-                    reject(err);
-                });
-            });
-        }
-
-        initAvatar();
-
-        document.getElementById('polaroidFrame').addEventListener('click', function() {
-            fileInput.click();
-        });
-
-        fileInput.addEventListener('change', function(e) {
-            var file = e.target.files[0];
-            if (!file) return;
-
-            var reader = new FileReader();
-            reader.onload = function(ev) {
-                var base64 = ev.target.result;
-                applyAvatar(base64);
-                try {
-                    localStorage.setItem('babyAvatar', base64);
-                } catch(err) {
-                    showToast('本地存储空间不足，正在上传到服务器...');
-                }
-            };
-            reader.readAsDataURL(file);
-
-            uploadAvatarToServer(file)
-                .then(function(serverPath) {
-                    applyAvatar(serverPath);
-                    cacheAvatar(serverPath);
-                    showToast('头像已同步到云端 ✅');
-                })
-                .catch(function(err) {
-                    console.warn('头像上传到服务器失败，已使用本地缓存：', err.message);
-                    showToast('头像已本地保存（云端同步失败）');
-                });
-        });
-    })();
-
-    // 身高体重兜底（略）
+    // ==================== 身高体重数据兜底 ====================
     (function() {
         var records = /*[[${records}]]*/ [];
         var heightElem = document.getElementById('statHeight');
@@ -604,7 +740,7 @@
         }
     })();
 
-    // 分类映射
+    // ==================== 分类映射 ====================
     (function() {
         var map = { 'gallery':'相册', 'growth':'成长数据', 'messages':'留言', 'score':'学业成绩' };
         document.querySelectorAll('.record-category').forEach(function(el) {
@@ -613,102 +749,118 @@
         });
     })();
 
+    // ==================== 侧边栏 ====================
     function toggleSidebar() {
-        var ov = document.getElementById('sidebarOverlay'), pn = document.getElementById('sidebarPanel');
-        ov.classList.toggle('active'); pn.classList.toggle('active');
+        var ov = document.getElementById('sidebarOverlay');
+        var pn = document.getElementById('sidebarPanel');
+        ov.classList.toggle('active');
+        pn.classList.toggle('active');
         document.body.style.overflow = ov.classList.contains('active') ? 'hidden' : '';
     }
 
+    // ==================== 底部导航高亮 ====================
     var path = window.location.pathname;
     document.querySelectorAll('.bottom-nav-item').forEach(function(item) {
         if (item.getAttribute('href') === path) item.classList.add('active');
     });
 
-    // ==================== 返回退出逻辑 ====================
+    // ==================== 手机端返回退出逻辑（二次确认） ====================
     (function() {
         var confirmExit = false;
         var isExiting = false;
         var timer = null;
         var exitToast = document.getElementById('exitToast');
 
-        function showExitToast() { if (exitToast) exitToast.classList.add('visible'); }
-        function hideExitToast() { if (exitToast) exitToast.classList.remove('visible'); }
+        // 步骤1：用 replaceState 将当前页设为栈底，清除可能存在的上一页历史
+        history.replaceState('home', '', window.location.href);
+        // 步骤2：push 一个拦截状态，使得用户第一次按返回时触发 popstate 而不真正后退
+        history.pushState('forward', '', window.location.href);
+
+        function showExitToast() {
+            if (exitToast) exitToast.classList.add('visible');
+        }
+        function hideExitToast() {
+            if (exitToast) exitToast.classList.remove('visible');
+        }
         function resetExitState() {
             confirmExit = false;
             hideExitToast();
             clearTimeout(timer);
         }
 
+        /** 执行真正的退出操作 */
         function doExit() {
-            if (isExiting) return;
             isExiting = true;
             hideExitToast();
 
+            // 方法1：微信JSBridge（微信内置浏览器）
             if (typeof WeixinJSBridge !== 'undefined') {
-                try { WeixinJSBridge.call('closeWindow'); } catch(e) {}
+                try {
+                    WeixinJSBridge.call('closeWindow');
+                } catch(e) {
+                    console.log('WeixinJSBridge关闭失败:', e);
+                }
             }
-            if (typeof wx !== 'undefined' && typeof wx.closeWindow === 'function') {
-                try { wx.closeWindow(); } catch(e) {}
-            }
-            try { window.close(); } catch(e) {}
+
+            // 方法2：尝试回退到历史栈之外（适用于大多数移动浏览器）
+            // history.go(-2) 会尝试回到栈底之前，在移动WebView中通常会关闭页面
+            history.go(-2);
+
+            // 方法3：兜底 - 尝试使用 window.close()
+            // 某些浏览器允许关闭通过链接打开的标签页
             setTimeout(function() {
-                try { var steps = Math.min(history.length, 10); window.history.go(-steps); } catch(e) {}
-            }, 150);
+                try {
+                    window.close();
+                } catch(e) {
+                    // 静默失败
+                }
+            }, 300);
+
+            // 方法4：最终兜底 - 如果以上方法都无效，导航到空白页
+            // 这样用户至少不会卡在页面上
             setTimeout(function() {
-                try { window.location.href = 'about:blank'; } catch(e) {}
-            }, 600);
-            setTimeout(function() {
-                isExiting = false;
-                resetExitState();
-            }, 10000);
+                if (!document.hidden) {
+                    // 页面仍然可见，说明以上方法均未生效
+                    // 尝试使用location替换为空白页
+                    window.location.replace('about:blank');
+                }
+            }, 800);
         }
-
-        function closeAnyOpenPanel() {
-            var sidebarOv = document.getElementById('sidebarOverlay');
-            var addOv = document.getElementById('addOverlay');
-            var photoFormOv = document.getElementById('photoFormOverlay');
-            var growthFormOv = document.getElementById('growthFormOverlay');
-            var messageFormOv = document.getElementById('messageFormOverlay');
-
-            if (sidebarOv && sidebarOv.classList.contains('active')) { toggleSidebar(); return true; }
-            if (messageFormOv && messageFormOv.classList.contains('active')) { closeMessageForm(); return true; }
-            if (growthFormOv && growthFormOv.classList.contains('active')) { closeGrowthForm(); return true; }
-            if (photoFormOv && photoFormOv.classList.contains('active')) { closePhotoForm(); return true; }
-            if (addOv && addOv.classList.contains('active')) { closeAddOverlay(); return true; }
-            return false;
-        }
-
-        history.replaceState('home', '', window.location.href);
-        history.pushState('forward', '', window.location.href);
 
         window.addEventListener('popstate', function(e) {
             if (isExiting) return;
 
-            if (closeAnyOpenPanel()) {
-                history.pushState('forward', '', window.location.href);
-                resetExitState();
-                return;
-            }
-
             if (confirmExit) {
+                // 第二次返回：确认退出
                 doExit();
                 return;
             }
 
+            // 第一次返回：显示确认提示
             confirmExit = true;
             showExitToast();
+
+            // 再次 push 拦截状态，防止真的退出
             history.pushState('forward', '', window.location.href);
+
+            // 定时重置（3.5秒后自动取消退出确认）
             clearTimeout(timer);
             timer = setTimeout(resetExitState, 3500);
         });
 
+        // 页面隐藏时重置退出状态（例如切到后台再回来）
         document.addEventListener('visibilitychange', function() {
-            if (document.hidden) resetExitState();
+            if (document.hidden) {
+                resetExitState();
+            }
         });
 
-        document.addEventListener('touchstart', function(e) {
-            if (exitToast && !exitToast.contains(e.target)) resetExitState();
-        }, { passive: true });
+        // 用户点击页面其他区域时也重置退出状态（提供更好的体验）
+        document.addEventListener('click', function(e) {
+            if (confirmExit && exitToast && !exitToast.contains(e.target)) {
+                resetExitState();
+            }
+        });
     })();
     /*]]>*/
 </script>
