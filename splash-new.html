@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>成长记录 - 开启美好时光</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        :root {
+            --candy-pink: #FFB5C2;
+            --candy-purple: #D4B5FF;
+            --candy-blue: #B5E0FF;
+            --candy-green: #B5FFD4;
+            --candy-yellow: #FFE8B5;
+            --candy-orange: #FFD4B5;
+            --text-primary: #6B5B7D;
+            --text-secondary: #A89AB8;
+        }
+        
+        body {
+            font-family: "ZCOOL KuaiLe", "Noto Sans SC", sans-serif;
+            background: linear-gradient(145deg, #FFF8FB 0%, #F8F8FF 50%, #F0FFF8 100%);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .decoration-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            animation: floatUp 8s ease-in-out infinite;
+            opacity: 0.3;
+        }
+        
+        .floating-shape:nth-child(1) {
+            top: 12%;
+            left: 8%;
+            width: 90px;
+            height: 90px;
+            background: var(--candy-pink);
+            animation-delay: 0s;
+        }
+        
+        .floating-shape:nth-child(2) {
+            top: 25%;
+            right: 12%;
+            width: 70px;
+            height: 70px;
+            background: var(--candy-purple);
+            animation-delay: -2s;
+        }
+        
+        .floating-shape:nth-child(3) {
+            bottom: 30%;
+            left: 10%;
+            width: 110px;
+            height: 110px;
+            background: var(--candy-blue);
+            animation-delay: -4s;
+        }
+        
+        .floating-shape:nth-child(4) {
+            bottom: 20%;
+            right: 8%;
+            width: 80px;
+            height: 80px;
+            background: var(--candy-green);
+            animation-delay: -6s;
+        }
+        
+        .floating-shape:nth-child(5) {
+            top: 45%;
+            left: 3%;
+            width: 50px;
+            height: 50px;
+            background: var(--candy-yellow);
+            animation-delay: -1s;
+        }
+        
+        .floating-shape:nth-child(6) {
+            top: 60%;
+            right: 5%;
+            width: 60px;
+            height: 60px;
+            background: var(--candy-orange);
+            animation-delay: -3s;
+        }
+        
+        @keyframes floatUp {
+            0%, 100% {
+                transform: translateY(0) scale(1) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-30px) scale(1.1) rotate(10deg);
+            }
+        }
+        
+        .sparkle {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            animation: sparkle 3s ease-in-out infinite;
+        }
+        
+        .sparkle::before,
+        .sparkle::after {
+            content: '';
+            position: absolute;
+            background: var(--candy-yellow);
+            border-radius: 2px;
+        }
+        
+        .sparkle::before {
+            width: 100%;
+            height: 20%;
+            top: 40%;
+            left: 0;
+        }
+        
+        .sparkle::after {
+            width: 20%;
+            height: 100%;
+            left: 40%;
+            top: 0;
+        }
+        
+        .sparkle:nth-child(7) { top: 18%; left: 25%; animation-delay: 0s; }
+        .sparkle:nth-child(8) { top: 35%; right: 22%; animation-delay: -1s; }
+        .sparkle:nth-child(9) { bottom: 40%; left: 20%; animation-delay: -2s; background: var(--candy-pink); }
+        .sparkle:nth-child(10) { bottom: 28%; right: 25%; animation-delay: -0.5s; background: var(--candy-blue); }
+        .sparkle:nth-child(11) { top: 55%; left: 75%; animation-delay: -1.5s; background: var(--candy-purple); }
+        
+        @keyframes sparkle {
+            0%, 100% {
+                opacity: 0;
+                transform: scale(0) rotate(0deg);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1) rotate(45deg);
+            }
+        }
+        
+        .main-content {
+            z-index: 10;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+        }
+        
+        .mascot-container {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .glow-ring {
+            position: absolute;
+            border-radius: 50%;
+            animation: ringGlow 2.5s ease-in-out infinite;
+        }
+        
+        .glow-ring:nth-child(1) {
+            width: 100%;
+            height: 100%;
+            border: 4px solid var(--candy-pink);
+            opacity: 0.6;
+            animation-delay: 0s;
+        }
+        
+        .glow-ring:nth-child(2) {
+            width: 120%;
+            height: 120%;
+            border: 4px solid var(--candy-purple);
+            opacity: 0.5;
+            animation-delay: -0.4s;
+        }
+        
+        .glow-ring:nth-child(3) {
+            width: 140%;
+            height: 140%;
+            border: 4px solid var(--candy-blue);
+            opacity: 0.4;
+            animation-delay: -0.8s;
+        }
+        
+        @keyframes ringGlow {
+            0%, 100% {
+                transform: scale(0.8) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1) rotate(180deg);
+                opacity: 0.6;
+            }
+        }
+        
+        .sunflower {
+            font-size: 120px;
+            animation: bloom 2.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards, gentleBounce 3s 2.2s ease-in-out infinite;
+            transform-origin: center bottom;
+            filter: drop-shadow(0 12px 30px rgba(200, 180, 220, 0.4));
+        }
+        
+        @keyframes bloom {
+            0% {
+                transform: scale(0) rotate(-30deg) translateY(50px);
+                opacity: 0;
+            }
+            35% {
+                transform: scale(0.6) rotate(-15deg) translateY(25px);
+                opacity: 0.7;
+            }
+            70% {
+                transform: scale(1.3) rotate(10deg) translateY(-15px);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1) rotate(0deg) translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes gentleBounce {
+            0%, 100% {
+                transform: rotate(-4deg);
+            }
+            50% {
+                transform: rotate(4deg);
+            }
+        }
+        
+        .title-group {
+            animation: fadeInUp 1.4s ease-out 1s forwards;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .main-title {
+            font-size: 3em;
+            color: var(--text-primary);
+            letter-spacing: 0.15em;
+            text-shadow: 0 6px 20px rgba(180, 140, 160, 0.3);
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            font-size: 1.15em;
+            color: var(--text-secondary);
+        }
+        
+        .loader-wrapper {
+            display: flex;
+            gap: 18px;
+            margin-top: 30px;
+            animation: fadeIn 0.9s ease-out 1.6s forwards;
+            opacity: 0;
+        }
+        
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+        
+        .loader-ball {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            animation: jump 1.8s ease-in-out infinite both;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .loader-ball:nth-child(1) {
+            background: var(--candy-pink);
+            animation-delay: 0s;
+        }
+        
+        .loader-ball:nth-child(2) {
+            background: var(--candy-yellow);
+            animation-delay: 0.2s;
+        }
+        
+        .loader-ball:nth-child(3) {
+            background: var(--candy-green);
+            animation-delay: 0.4s;
+        }
+        
+        .loader-ball:nth-child(4) {
+            background: var(--candy-blue);
+            animation-delay: 0.6s;
+        }
+        
+        .loader-ball:nth-child(5) {
+            background: var(--candy-purple);
+            animation-delay: 0.8s;
+        }
+        
+        @keyframes jump {
+            0%, 80%, 100% {
+                transform: translateY(0) scale(0.7);
+                opacity: 0.4;
+            }
+            40% {
+                transform: translateY(-30px) scale(1.2);
+                opacity: 1;
+            }
+        }
+        
+        .loading-text {
+            font-size: 1em;
+            color: #A090B0;
+            opacity: 0;
+            animation: pulse 2s ease-in-out infinite 2.2s;
+            margin-top: 15px;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 0.9;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="decoration-container">
+        <div class="floating-shape"></div>
+        <div class="floating-shape"></div>
+        <div class="floating-shape"></div>
+        <div class="floating-shape"></div>
+        <div class="floating-shape"></div>
+        <div class="floating-shape"></div>
+        <div class="sparkle"></div>
+        <div class="sparkle"></div>
+        <div class="sparkle"></div>
+        <div class="sparkle"></div>
+        <div class="sparkle"></div>
+    </div>
+    
+    <div class="main-content">
+        <div class="mascot-container">
+            <div class="glow-ring"></div>
+            <div class="glow-ring"></div>
+            <div class="glow-ring"></div>
+            <span class="sunflower">🌻</span>
+        </div>
+        
+        <div class="title-group">
+            <h1 class="main-title">成长记录</h1>
+            <p class="subtitle">珍藏每一个美好瞬间</p>
+        </div>
+        
+        <div class="loader-wrapper">
+            <span class="loader-ball"></span>
+            <span class="loader-ball"></span>
+            <span class="loader-ball"></span>
+            <span class="loader-ball"></span>
+            <span class="loader-ball"></span>
+        </div>
+        
+        <p class="loading-text">正在加载...</p>
+    </div>
+    
+    <script>
+        setTimeout(() => {
+            window.location.href = '/home';
+        }, 4000);
+    </script>
+</body>
+</html>
