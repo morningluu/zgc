@@ -85,7 +85,7 @@ public class HomeController {
     /**
      * 上传头像
      */
-    @PostMapping("/avatar/upload")
+    @PostMapping("/api/avatar/upload")
     @ResponseBody
     public Map<String, Object> uploadAvatar(@RequestParam("avatar") MultipartFile avatar) throws IOException {
         Map<String, Object> result = new HashMap<>();
