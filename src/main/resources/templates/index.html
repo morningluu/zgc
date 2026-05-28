@@ -1,590 +1,716 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>赵高钏的成长记录手册</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🌱</text></svg>">
-<link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-:root {
---pink: #FFB5C2;
---pink-deep: #FF9AB2;
---pink-light: #FFE0E8;
---purple: #C8B8E8;
---purple-deep: #B8A9D4;
---purple-light: #E8E0F5;
---blue: #B5D8F7;
---blue-light: #E0F0F8;
---green: #B5E8D5;
---green-light: #E0F5EB;
---yellow: #FFE8C0;
---yellow-light: #FFF8E8;
---text-primary: #5D4E6D;
---text-secondary: #8B7D9B;
---text-light: #9B8DAB;
---card-bg: rgba(255, 255, 255, 0.78);
---nav-bg: rgba(255, 252, 248, 0.94);
---shadow-sm: 0 4px 16px rgba(180, 160, 200, 0.08);
---shadow-md: 0 8px 28px rgba(180, 160, 200, 0.13);
---shadow-lg: 0 16px 44px rgba(180, 160, 200, 0.18);
---radius-xl: 28px;
---radius-lg: 22px;
---radius-md: 16px;
---radius-sm: 12px;
---transition-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
---transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-}
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-font-family: "Noto Sans SC", sans-serif;
-background: linear-gradient(175deg, #FFF8F5 0%, #FEF5F8 8%, #F8F0FF 22%, #F5F0FA 35%, #F0F5FB 50%, #F5F8F5 65%, #FFFBF0 78%, #FFF8F5 100%);
-background-attachment: fixed;
-color: var(--text-primary);
-min-height: 100vh;
-overflow-x: hidden;
--webkit-tap-highlight-color: transparent;
--webkit-font-smoothing: antialiased;
-padding-bottom: 100px;
-position: relative;
-}
- 
-.exit-toast {
-position: fixed; bottom: 110px; left: 50%; transform: translateX(-50%) translateY(20px);
-background: rgba(90, 70, 100, 0.92); backdrop-filter: blur(16px); color: white;
-padding: 12px 28px; border-radius: 40px; font-size: 0.95em; z-index: 9998;
-pointer-events: none; white-space: nowrap; box-shadow: 0 12px 30px rgba(0,0,0,0.2);
-transition: opacity 0.35s, transform 0.35s var(--transition-bounce); opacity: 0;
-display: flex; flex-direction: column; align-items: center; gap: 2px;
-}
-.exit-toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
-.exit-toast-sub { font-size: 0.7em; opacity: 0.8; font-weight: 400; }
- 
-.top-bar {
-position: sticky; top: 0; z-index: 1000; background: rgba(255,255,255,0.7);
-backdrop-filter: blur(22px); border-bottom: 1px solid rgba(200,180,220,0.1);
-padding: 0 16px; height: 56px; display: flex; align-items: center; justify-content: space-between;
-}
-.top-bar-brand { display: flex; align-items: center; gap: 8px; text-decoration: none; }
-.top-bar-logo { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #FFE0E8, #FFB5C2); display: flex; align-items: center; justify-content: center; font-size: 1.1em; box-shadow: 0 3px 12px rgba(255,181,194,0.35); }
-.top-bar-appname { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.05em; font-weight: 700; background: linear-gradient(135deg, #E8788A, #B8A9D4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-.top-bar-mine { width: 38px; height: 38px; border-radius: 50%; border: none; background: rgba(200,180,220,0.12); cursor: pointer; font-size: 1.3em; display: flex; align-items: center; justify-content: center; transition: background 0.3s; }
-.top-bar-mine:active { background: rgba(200,180,220,0.25); }
- 
-.sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.35); z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.35s; }
-.sidebar-overlay.active { opacity: 1; pointer-events: auto; }
-.sidebar-panel { position: fixed; top: 0; right: -320px; width: 300px; max-width: 82vw; height: 100%; background: rgba(255,255,255,0.96); backdrop-filter: blur(20px); z-index: 2001; transition: right 0.4s; padding: 24px 20px; display: flex; flex-direction: column; border-radius: var(--radius-xl) 0 0 var(--radius-xl); box-shadow: -8px 0 36px rgba(0,0,0,0.1); }
-.sidebar-panel.active { right: 0; }
-.sidebar-close { align-self: flex-end; width: 36px; height: 36px; border-radius: 50%; border: none; background: rgba(200,180,220,0.15); cursor: pointer; font-size: 1.2em; }
-.sidebar-user-info { text-align: center; padding: 16px 0 24px; }
-.sidebar-avatar { width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, #FFE0E8, #FFB5C2, #E8E0F5); margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; font-size: 2.2em; }
-.sidebar-username { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.2em; }
-.sidebar-links { display: flex; flex-direction: column; gap: 6px; }
-.sidebar-link { display: flex; align-items: center; gap: 10px; padding: 13px 16px; border-radius: var(--radius-md); text-decoration: none; color: var(--text-primary); font-weight: 500; transition: all 0.3s; }
- 
-.toast-message { position: fixed; bottom: 28%; left: 50%; transform: translateX(-50%); background: rgba(80,60,90,0.82); color: white; padding: 10px 22px; border-radius: 40px; font-size: 0.9rem; z-index: 10000; pointer-events: none; backdrop-filter: blur(10px); transition: opacity 0.3s; opacity: 0; }
-.toast-message.show { opacity: 1; }
- 
-.container { max-width: 600px; margin: 0 auto; padding: 12px 18px 20px; position: relative; z-index: 1; }
- 
-.card-group { display: flex; flex-direction: column; align-items: center; gap: 16px; margin-bottom: 20px; }
-.journal { position: relative; width: 100%; background: #FFF9F2; border-radius: 24px 24px 18px 18px; box-shadow: 0 10px 32px rgba(160,130,110,0.2), inset 0 1px 0 rgba(255,255,255,0.9); display: flex; overflow: hidden; }
-.journal-spine { position: absolute; left: 50%; transform: translateX(-50%); top: 14px; bottom: 14px; width: 1px; background: repeating-linear-gradient(to bottom, rgba(180,150,130,0.4) 0px, rgba(180,150,130,0.4) 5px, transparent 5px, transparent 11px); z-index: 2; pointer-events: none; }
-.journal-spine::before, .journal-spine::after { content: ''; position: absolute; left: 50%; transform: translateX(-50%); width: 10px; height: 10px; border-radius: 50%; background: #D4B896; box-shadow: 0 0 0 3px rgba(210,180,150,0.35); }
-.journal-spine::before { top: -4px; }
-.journal-spine::after { bottom: -4px; }
-.page-left { flex: 1 1 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 14px 20px 20px; z-index: 1; }
-.polaroid-frame { width: 100%; aspect-ratio: 3/4; background: #FFFEF9; border-radius: 8px; padding: 9px 9px 30px 9px; box-shadow: 3px 5px 18px rgba(140,110,80,0.2); position: relative; cursor: pointer; transform: rotate(-1.2deg); animation: polaroidSway 7s ease-in-out infinite; }
-@keyframes polaroidSway { 0%,100%{transform:rotate(-1.2deg)} 30%{transform:rotate(-2deg)} 60%{transform:rotate(-0.3deg)} 85%{transform:rotate(-1.5deg)} }
-.polaroid-photo { width: 100%; aspect-ratio: 1/1; background: linear-gradient(160deg, #FFF5F5, #FFE8EC, #FDF0F8, #FFF8F5); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 4.5em; overflow: hidden; position: relative; }
-.polaroid-photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; display: none; }
-.polaroid-photo img.show { display: block; }
-.polaroid-photo .default-emoji { position: absolute; transition: opacity 0.3s; }
-.polaroid-photo.has-image .default-emoji { opacity: 0; }
-.polaroid-caption { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.05em; color: #8B6E5E; font-weight: 700; letter-spacing: 0.06em; }
-.washi-tape { position: absolute; z-index: 3; pointer-events: none; }
-.washi-tape-1 { top: -8px; left: 16%; width: 52px; height: 18px; background: rgba(255,181,194,0.75); border-radius: 3px; transform: rotate(-9deg); }
-.washi-tape-2 { top: -5px; right: 20%; width: 42px; height: 15px; background: rgba(200,184,232,0.7); border-radius: 2px; transform: rotate(6deg); }
-.page-right { flex: 1 1 50%; display: flex; flex-direction: column; gap: 10px; padding: 20px 20px 20px 10px; justify-content: center; z-index: 1; }
-.info-slip { background: #FFFEF7; border-radius: 4px 18px 18px 4px; padding: 11px 14px; box-shadow: 1px 3px 9px rgba(180,150,130,0.14); font-size: 0.9em; color: #5D4E6D; display: flex; align-items: center; gap: 8px; transition: all 0.25s; border-left: 3px solid transparent; }
-.info-slip:active { transform: translateX(4px); border-left-color: #FFD4C0; }
-.info-slip .slip-icon { font-size: 1.2em; }
-.info-slip .slip-label { font-size: 0.78em; color: #9B8DAB; }
-.info-slip .slip-value { font-family: "ZCOOL KuaiLe", sans-serif; font-weight: 700; font-size: 1em; margin-left: auto; }
-.info-slip.birthday .slip-value { color: #C08050; }
-.info-slip.age .slip-value { color: #E8788A; }
-.info-slip.height .slip-value { color: #5D8A6E; }
-.info-slip.weight .slip-value { color: #5D8A6E; }
- 
-.bottom-tickets { display: flex; gap: 14px; width: 100%; padding: 0 4px; }
-.ticket-card { flex: 1; background: #FFFEF9; border-radius: 16px; padding: 16px 10px 14px; text-align: center; box-shadow: 0 7px 20px rgba(160,130,100,0.16); transition: all 0.3s; display: flex; flex-direction: column; align-items: center; gap: 5px; border: 1px solid rgba(220,200,180,0.25); }
-.ticket-icon { font-size: 1.6em; }
-.ticket-label { font-size: 0.8em; color: #8B7D9B; }
-.ticket-value-row { display: flex; align-items: baseline; gap: 4px; font-family: "ZCOOL KuaiLe", sans-serif; font-weight: 700; color: #C08050; }
-.ticket-value-row .ticket-number { font-size: 1.6em; }
-.ticket-value-row .ticket-unit { font-size: 0.85em; color: #B8A9D4; }
-.ticket-card.countdown .ticket-value-row { color: #E8788A; }
- 
-.section-header h2 { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.3em; margin: 22px 0 14px; color: var(--text-primary); }
-.empty-state { text-align: center; padding: 30px 20px; color: #B8A9D4; font-family: "ZCOOL KuaiLe", sans-serif; }
- 
-.record-grid { display: flex; flex-direction: column; gap: 14px; }
-.record-card { background: var(--card-bg); backdrop-filter: blur(10px); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); transition: box-shadow 0.3s var(--transition-smooth), transform 0.3s var(--transition-smooth); }
-.record-card:active { box-shadow: var(--shadow-md); transform: translateY(-2px); }
-.record-photo { display: block; width: 100%; height: 220px; object-fit: cover; background: #faf8f6; border-bottom: 1px solid rgba(200,180,220,0.08); }
-.record-info { padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
-.record-meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
-.record-category { display: inline-flex; align-items: center; gap: 5px; font-size: 0.82em; font-weight: 600; color: #fff; background: linear-gradient(135deg, #C8B8E8, #B8A9D4); padding: 4px 12px; border-radius: 20px; letter-spacing: 0.04em; }
-.record-category.cat-growth { background: linear-gradient(135deg, #B5E8D5, #7ECBA1); }
-.record-category.cat-score { background: linear-gradient(135deg, #B5D8F7, #7EB8E0); }
-.record-category.cat-gallery { background: linear-gradient(135deg, #FFB5C2, #FF8FA0); }
-.record-category.cat-messages { background: linear-gradient(135deg, #FFD4A8, #FFB878); }
-.record-date { font-size: 0.8em; color: #9B8DAB; white-space: nowrap; }
-.record-title { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.05em; font-weight: 700; color: #5D4E6D; }
-.record-desc { font-size: 0.85em; color: #8B7D9B; line-height: 1.5; }
-.record-data-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
-.data-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 0.78em; font-weight: 600; padding: 3px 10px; border-radius: 14px; background: rgba(255,255,255,0.6); border: 1px solid rgba(200,180,220,0.3); }
-.data-tag.height-tag { color: #5D8A6E; border-color: rgba(93,138,110,0.3); }
-.data-tag.weight-tag { color: #8B6E5E; border-color: rgba(139,110,94,0.3); }
-.data-tag.score-tag { color: #5D7E8A; border-color: rgba(93,126,138,0.3); }
- 
-.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000; background: var(--nav-bg); backdrop-filter: blur(24px); border-top: 1px solid rgba(200,180,220,0.1); border-radius: var(--radius-xl) var(--radius-xl) 0 0; display: flex; align-items: center; justify-content: space-around; padding: 6px 8px 12px; padding-bottom: max(12px, env(safe-area-inset-bottom)); }
-.bottom-nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--text-light); font-size: 0.68em; gap: 3px; transition: color 0.25s; }
-.bottom-nav-item span { font-size: 1.5em; }
-.bottom-nav-item.active { color: #E8788A; }
-.bottom-nav-add { position: relative; top: -22px; width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #FFB5C2, #FF9AB2); border: 4px solid rgba(255,255,255,0.85); box-shadow: 0 6px 22px rgba(255,154,178,0.35); font-size: 1.6em; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.3s var(--transition-bounce), box-shadow 0.3s; animation: addBtnBreathe 2.5s ease-in-out infinite; }
-@keyframes addBtnBreathe { 0%,100%{box-shadow:0 8px 26px rgba(255,154,178,0.45)} 50%{box-shadow:0 14px 36px rgba(255,154,178,0.65)} }
-.bottom-nav-add:active { transform: scale(0.78) rotate(45deg); }
- 
-.add-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 3000; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.35s; }
-.add-overlay.active { opacity: 1; pointer-events: auto; }
-.add-sheet { background: rgba(255,255,255,0.96); backdrop-filter: blur(20px); border-radius: var(--radius-xl) var(--radius-xl) 0 0; width: 100%; max-width: 500px; padding: 28px 20px 40px; transform: translateY(100%); transition: transform 0.4s; }
-.add-overlay.active .add-sheet { transform: translateY(0); }
-.add-sheet-title { text-align: center; font-family: 'ZCOOL KuaiLe', sans-serif; font-size: 1.2em; color: #5D4E6D; margin-bottom: 20px; }
-.add-sheet-cards { display: flex; gap: 16px; justify-content: center; margin: 20px 0; }
-.add-card-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 12px; border-radius: var(--radius-lg); background: rgba(255,240,245,0.5); border: 1px solid rgba(255,200,210,0.3); text-decoration: none; color: var(--text-primary); transition: all 0.3s var(--transition-bounce); cursor: pointer; border: none; font-family: inherit; }
-.add-card-item:active { transform: scale(0.9); background: rgba(255,200,210,0.4); }
-.add-card-icon { font-size: 2.5em; margin-bottom: 6px; }
-.add-card-label { font-family: "ZCOOL KuaiLe", sans-serif; font-weight: 700; font-size: 0.95em; }
-.add-sheet-cancel { display: block; margin: 0 auto; padding: 10px 30px; border-radius: 30px; border: none; background: rgba(200,180,220,0.2); color: #8B7D9B; cursor: pointer; font-size: 0.9em; font-family: inherit; }
- 
-.form-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 5000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.35s; }
-.form-overlay.active { opacity: 1; pointer-events: auto; }
-.form-card { background: white; border-radius: var(--radius-xl); padding: 28px 22px; width: 90vw; max-width: 420px; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
-.form-card h3 { font-family: "ZCOOL KuaiLe", sans-serif; text-align: center; margin-bottom: 6px; font-size: 1.3em; color: #E8788A; }
-.form-subtitle { text-align: center; color: #B8A9D4; font-size: 0.8em; margin-bottom: 20px; }
-.field-group { margin-bottom: 16px; }
-.field-label { font-size: 0.85em; font-weight: 600; color: #8B7D9B; margin-bottom: 6px; }
-.form-card input, .form-card textarea { width: 100%; padding: 12px 14px; border: 1.5px solid #f0e6f6; border-radius: 20px; font-family: inherit; font-size: 0.95em; background: #FFFAFD; outline: none; }
-.form-row { display: flex; gap: 12px; }
-.form-row .field-group { flex: 1; }
-.custom-date-wrap { position: relative; }
-.custom-date-wrap input[type="date"] { width: 100%; padding: 12px 14px; border: 1.5px solid #f0e6f6; border-radius: 20px; background: #FFFAFD; cursor: pointer; }
-.custom-date-wrap .date-icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; font-size: 1.2em; color: #FF9AB2; }
-.file-upload-box { padding: 20px; border: 2px dashed #FFD4E0; border-radius: 20px; text-align: center; background: #FFF5F8; cursor: pointer; position: relative; }
-.file-upload-box input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-.btn-submit { width: 100%; padding: 14px; background: linear-gradient(135deg, #FFB5C2, #FF9AB2); border: none; border-radius: 40px; color: white; font-weight: 700; font-size: 1em; cursor: pointer; transition: all 0.3s; margin-top: 8px; font-family: inherit; }
-.btn-submit:active { transform: scale(0.96); }
-.add-sheet-cancel-btn { display: block; margin: 16px auto 0; padding: 10px 30px; border-radius: 30px; border: none; background: rgba(200,180,220,0.2); color: #8B7D9B; cursor: pointer; font-size: 0.9em; font-family: inherit; }
- 
-@media (max-width: 768px) {
-.form-row { flex-direction: column; gap: 0; }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>赵高钏的成长记录手册</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🌱</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <meta name="_csrf" th:content="${_csrf?.token}">
+    <meta name="_csrf_header" th:content="${_csrf?.headerName}">
+    <style>
+        /* ... 所有CSS样式保持不变 ... */
+        :root {
+            --pink: #FFB5C2;
+            --pink-deep: #FF9AB2;
+            --pink-light: #FFE0E8;
+            --purple: #C8B8E8;
+            --purple-deep: #B8A9D4;
+            --purple-light: #E8E0F5;
+            --blue: #B5D8F7;
+            --blue-light: #E0F0F8;
+            --green: #B5E8D5;
+            --green-light: #E0F5EB;
+            --yellow: #FFE8C0;
+            --yellow-light: #FFF8E8;
+            --text-primary: #5D4E6D;
+            --text-secondary: #8B7D9B;
+            --text-light: #9B8DAB;
+            --card-bg: rgba(255, 255, 255, 0.78);
+            --nav-bg: rgba(255, 252, 248, 0.94);
+            --shadow-sm: 0 4px 16px rgba(180, 160, 200, 0.08);
+            --shadow-md: 0 8px 28px rgba(180, 160, 200, 0.13);
+            --shadow-lg: 0 16px 44px rgba(180, 160, 200, 0.18);
+            --radius-xl: 28px;
+            --radius-lg: 22px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
+            --transition-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "Noto Sans SC", sans-serif;
+            background: linear-gradient(175deg, #FFF8F5 0%, #FEF5F8 8%, #F8F0FF 22%, #F5F0FA 35%, #F0F5FB 50%, #F5F8F5 65%, #FFFBF0 78%, #FFF8F5 100%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+            padding-bottom: 100px;
+            position: relative;
+        }
+
+        .exit-toast {
+            position: fixed; bottom: 110px; left: 50%; transform: translateX(-50%) translateY(20px);
+            background: rgba(90, 70, 100, 0.92); backdrop-filter: blur(16px); color: white;
+            padding: 12px 28px; border-radius: 40px; font-size: 0.95em; z-index: 9998;
+            pointer-events: none; white-space: nowrap; box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+            transition: opacity 0.35s, transform 0.35s var(--transition-bounce); opacity: 0;
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+        }
+        .exit-toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .exit-toast-sub { font-size: 0.7em; opacity: 0.8; font-weight: 400; }
+
+        .top-bar {
+            position: sticky; top: 0; z-index: 1000; background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(22px); border-bottom: 1px solid rgba(200,180,220,0.1);
+            padding: 0 16px; height: 56px; display: flex; align-items: center; justify-content: space-between;
+        }
+        .top-bar-brand { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+        .top-bar-logo { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #FFE0E8, #FFB5C2); display: flex; align-items: center; justify-content: center; font-size: 1.1em; box-shadow: 0 3px 12px rgba(255,181,194,0.35); }
+        .top-bar-appname { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.05em; font-weight: 700; background: linear-gradient(135deg, #E8788A, #B8A9D4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .top-bar-mine { width: 38px; height: 38px; border-radius: 50%; border: none; background: rgba(200,180,220,0.12); cursor: pointer; font-size: 1.3em; display: flex; align-items: center; justify-content: center; transition: background 0.3s; }
+        .top-bar-mine:active { background: rgba(200,180,220,0.25); }
+
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.35); z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.35s; }
+        .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
+        .sidebar-panel { position: fixed; top: 0; right: -320px; width: 300px; max-width: 82vw; height: 100%; background: rgba(255,255,255,0.96); backdrop-filter: blur(20px); z-index: 2001; transition: right 0.4s; padding: 24px 20px; display: flex; flex-direction: column; border-radius: var(--radius-xl) 0 0 var(--radius-xl); box-shadow: -8px 0 36px rgba(0,0,0,0.1); }
+        .sidebar-panel.active { right: 0; }
+        .sidebar-close { align-self: flex-end; width: 36px; height: 36px; border-radius: 50%; border: none; background: rgba(200,180,220,0.15); cursor: pointer; font-size: 1.2em; }
+        .sidebar-user-info { text-align: center; padding: 16px 0 24px; }
+        .sidebar-avatar { width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, #FFE0E8, #FFB5C2, #E8E0F5); margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; font-size: 2.2em; }
+        .sidebar-username { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.2em; }
+        .sidebar-links { display: flex; flex-direction: column; gap: 6px; }
+        .sidebar-link { display: flex; align-items: center; gap: 10px; padding: 13px 16px; border-radius: var(--radius-md); text-decoration: none; color: var(--text-primary); font-weight: 500; transition: all 0.3s; }
+
+        .toast-message { position: fixed; bottom: 28%; left: 50%; transform: translateX(-50%); background: rgba(80,60,90,0.82); color: white; padding: 10px 22px; border-radius: 40px; font-size: 0.9rem; z-index: 10000; pointer-events: none; backdrop-filter: blur(10px); transition: opacity 0.3s; opacity: 0; }
+        .toast-message.show { opacity: 1; }
+
+        .container { max-width: 600px; margin: 0 auto; padding: 12px 18px 20px; position: relative; z-index: 1; }
+
+        .card-group { display: flex; flex-direction: column; align-items: center; gap: 16px; margin-bottom: 20px; }
+        .journal { position: relative; width: 100%; background: #FFF9F2; border-radius: 24px 24px 18px 18px; box-shadow: 0 10px 32px rgba(160,130,110,0.2), inset 0 1px 0 rgba(255,255,255,0.9); display: flex; overflow: hidden; }
+        .journal-spine { position: absolute; left: 50%; transform: translateX(-50%); top: 14px; bottom: 14px; width: 1px; background: repeating-linear-gradient(to bottom, rgba(180,150,130,0.4) 0px, rgba(180,150,130,0.4) 5px, transparent 5px, transparent 11px); z-index: 2; pointer-events: none; }
+        .journal-spine::before, .journal-spine::after { content: ''; position: absolute; left: 50%; transform: translateX(-50%); width: 10px; height: 10px; border-radius: 50%; background: #D4B896; box-shadow: 0 0 0 3px rgba(210,180,150,0.35); }
+        .journal-spine::before { top: -4px; }
+        .journal-spine::after { bottom: -4px; }
+        .page-left { flex: 1 1 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 14px 20px 20px; z-index: 1; }
+        .polaroid-frame { width: 100%; aspect-ratio: 3/4; background: #FFFEF9; border-radius: 8px; padding: 9px 9px 30px 9px; box-shadow: 3px 5px 18px rgba(140,110,80,0.2); position: relative; cursor: pointer; transform: rotate(-1.2deg); animation: polaroidSway 7s ease-in-out infinite; }
+        @keyframes polaroidSway { 0%,100%{transform:rotate(-1.2deg)} 30%{transform:rotate(-2deg)} 60%{transform:rotate(-0.3deg)} 85%{transform:rotate(-1.5deg)} }
+        .polaroid-photo { width: 100%; aspect-ratio: 1/1; background: linear-gradient(160deg, #FFF5F5, #FFE8EC, #FDF0F8, #FFF8F5); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 4.5em; overflow: hidden; position: relative; }
+        .polaroid-photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; display: none; }
+        .polaroid-photo img.show { display: block; }
+        .polaroid-photo .default-emoji { position: absolute; transition: opacity 0.3s; }
+        .polaroid-photo.has-image .default-emoji { opacity: 0; }
+        .polaroid-caption { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.05em; color: #8B6E5E; font-weight: 700; letter-spacing: 0.06em; }
+        .washi-tape { position: absolute; z-index: 3; pointer-events: none; }
+        .washi-tape-1 { top: -8px; left: 16%; width: 52px; height: 18px; background: rgba(255,181,194,0.75); border-radius: 3px; transform: rotate(-9deg); }
+        .washi-tape-2 { top: -5px; right: 20%; width: 42px; height: 15px; background: rgba(200,184,232,0.7); border-radius: 2px; transform: rotate(6deg); }
+        .page-right { flex: 1 1 50%; display: flex; flex-direction: column; gap: 10px; padding: 20px 20px 20px 10px; justify-content: center; z-index: 1; }
+        .info-slip { background: #FFFEF7; border-radius: 4px 18px 18px 4px; padding: 11px 14px; box-shadow: 1px 3px 9px rgba(180,150,130,0.14); font-size: 0.9em; color: #5D4E6D; display: flex; align-items: center; gap: 8px; transition: all 0.25s; border-left: 3px solid transparent; }
+        .info-slip:active { transform: translateX(4px); border-left-color: #FFD4C0; }
+        .info-slip .slip-icon { font-size: 1.2em; }
+        .info-slip .slip-label { font-size: 0.78em; color: #9B8DAB; }
+        .info-slip .slip-value { font-family: "ZCOOL KuaiLe", sans-serif; font-weight: 700; font-size: 1em; margin-left: auto; }
+        .info-slip.birthday .slip-value { color: #C08050; }
+        .info-slip.age .slip-value { color: #E8788A; }
+        .info-slip.height .slip-value { color: #5D8A6E; }
+        .info-slip.weight .slip-value { color: #5D8A6E; }
+
+        .bottom-tickets { display: flex; gap: 14px; width: 100%; padding: 0 4px; }
+        .ticket-card { flex: 1; background: #FFFEF9; border-radius: 16px; padding: 16px 10px 14px; text-align: center; box-shadow: 0 7px 20px rgba(160,130,100,0.16); transition: all 0.3s; display: flex; flex-direction: column; align-items: center; gap: 5px; border: 1px solid rgba(220,200,180,0.25); }
+        .ticket-icon { font-size: 1.6em; }
+        .ticket-label { font-size: 0.8em; color: #8B7D9B; }
+        .ticket-value-row { display: flex; align-items: baseline; gap: 4px; font-family: "ZCOOL KuaiLe", sans-serif; font-weight: 700; color: #C08050; }
+        .ticket-value-row .ticket-number { font-size: 1.6em; }
+        .ticket-value-row .ticket-unit { font-size: 0.85em; color: #B8A9D4; }
+        .ticket-card.countdown .ticket-value-row { color: #E8788A; }
+
+        .section-header h2 { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.3em; margin: 22px 0 14px; color: var(--text-primary); }
+        .empty-state { text-align: center; padding: 30px 20px; color: #B8A9D4; font-family: "ZCOOL KuaiLe", sans-serif; }
+
+        .record-grid { display: flex; flex-direction: column; gap: 14px; }
+        .record-card { background: var(--card-bg); backdrop-filter: blur(10px); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); transition: box-shadow 0.3s var(--transition-smooth), transform 0.3s var(--transition-smooth); }
+        .record-card:active { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+        .record-photo { display: block; width: 100%; height: 220px; object-fit: cover; background: #faf8f6; border-bottom: 1px solid rgba(200,180,220,0.08); }
+        .record-info { padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
+        .record-meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+        .record-category { display: inline-flex; align-items: center; gap: 5px; font-size: 0.82em; font-weight: 600; color: #fff; background: linear-gradient(135deg, #C8B8E8, #B8A9D4); padding: 4px 12px; border-radius: 20px; letter-spacing: 0.04em; }
+        .record-category.cat-growth { background: linear-gradient(135deg, #B5E8D5, #7ECBA1); }
+        .record-category.cat-score { background: linear-gradient(135deg, #B5D8F7, #7EB8E0); }
+        .record-category.cat-gallery { background: linear-gradient(135deg, #FFB5C2, #FF8FA0); }
+        .record-category.cat-messages { background: linear-gradient(135deg, #FFD4A8, #FFB878); }
+        .record-date { font-size: 0.8em; color: #9B8DAB; white-space: nowrap; }
+        .record-title { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.05em; font-weight: 700; color: #5D4E6D; }
+        .record-desc { font-size: 0.85em; color: #8B7D9B; line-height: 1.5; }
+        .record-data-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+        .data-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 0.78em; font-weight: 600; padding: 3px 10px; border-radius: 14px; background: rgba(255,255,255,0.6); border: 1px solid rgba(200,180,220,0.3); }
+        .data-tag.height-tag { color: #5D8A6E; border-color: rgba(93,138,110,0.3); }
+        .data-tag.weight-tag { color: #8B6E5E; border-color: rgba(139,110,94,0.3); }
+        .data-tag.score-tag { color: #5D7E8A; border-color: rgba(93,126,138,0.3); }
+
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000; background: var(--nav-bg); backdrop-filter: blur(24px); border-top: 1px solid rgba(200,180,220,0.1); border-radius: var(--radius-xl) var(--radius-xl) 0 0; display: flex; align-items: center; justify-content: space-around; padding: 6px 8px 12px; padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+        .bottom-nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--text-light); font-size: 0.68em; gap: 3px; transition: color 0.25s; }
+        .bottom-nav-item span { font-size: 1.5em; }
+        .bottom-nav-item.active { color: #E8788A; }
+        .bottom-nav-add { position: relative; top: -22px; width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #FFB5C2, #FF9AB2); border: 4px solid rgba(255,255,255,0.85); box-shadow: 0 6px 22px rgba(255,154,178,0.35); font-size: 1.6em; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.3s var(--transition-bounce), box-shadow 0.3s; animation: addBtnBreathe 2.5s ease-in-out infinite; }
+        @keyframes addBtnBreathe { 0%,100%{box-shadow:0 8px 26px rgba(255,154,178,0.45)} 50%{box-shadow:0 14px 36px rgba(255,154,178,0.65)} }
+        .bottom-nav-add:active { transform: scale(0.78) rotate(45deg); }
+
+        .add-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 3000; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.35s; }
+        .add-overlay.active { opacity: 1; pointer-events: auto; }
+        .add-sheet { background: rgba(255,255,255,0.96); backdrop-filter: blur(20px); border-radius: var(--radius-xl) var(--radius-xl) 0 0; width: 100%; max-width: 500px; padding: 28px 20px 40px; transform: translateY(100%); transition: transform 0.4s; }
+        .add-overlay.active .add-sheet { transform: translateY(0); }
+        .add-sheet-title { text-align: center; font-family: 'ZCOOL KuaiLe', sans-serif; font-size: 1.2em; color: #5D4E6D; margin-bottom: 20px; }
+        .add-sheet-cards { display: flex; gap: 16px; justify-content: center; margin: 20px 0; }
+        .add-card-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 12px; border-radius: var(--radius-lg); background: rgba(255,240,245,0.5); border: 1px solid rgba(255,200,210,0.3); text-decoration: none; color: var(--text-primary); transition: all 0.3s var(--transition-bounce); cursor: pointer; border: none; font-family: inherit; }
+        .add-card-item:active { transform: scale(0.9); background: rgba(255,200,210,0.4); }
+        .add-card-icon { font-size: 2.5em; margin-bottom: 6px; }
+        .add-card-label { font-family: "ZCOOL KuaiLe", sans-serif; font-weight: 700; font-size: 0.95em; }
+        .add-sheet-cancel { display: block; margin: 0 auto; padding: 10px 30px; border-radius: 30px; border: none; background: rgba(200,180,220,0.2); color: #8B7D9B; cursor: pointer; font-size: 0.9em; font-family: inherit; }
+
+        .form-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 5000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.35s; }
+        .form-overlay.active { opacity: 1; pointer-events: auto; }
+        .form-card { background: white; border-radius: var(--radius-xl); padding: 28px 22px; width: 90vw; max-width: 420px; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .form-card h3 { font-family: "ZCOOL KuaiLe", sans-serif; text-align: center; margin-bottom: 6px; font-size: 1.3em; color: #E8788A; }
+        .form-subtitle { text-align: center; color: #B8A9D4; font-size: 0.8em; margin-bottom: 20px; }
+        .field-group { margin-bottom: 16px; }
+        .field-label { font-size: 0.85em; font-weight: 600; color: #8B7D9B; margin-bottom: 6px; }
+        .form-card input, .form-card textarea { width: 100%; padding: 12px 14px; border: 1.5px solid #f0e6f6; border-radius: 20px; font-family: inherit; font-size: 0.95em; background: #FFFAFD; outline: none; }
+        .form-row { display: flex; gap: 12px; }
+        .form-row .field-group { flex: 1; }
+        .custom-date-wrap { position: relative; }
+        .custom-date-wrap input[type="date"] { width: 100%; padding: 12px 14px; border: 1.5px solid #f0e6f6; border-radius: 20px; background: #FFFAFD; cursor: pointer; }
+        .custom-date-wrap .date-icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; font-size: 1.2em; color: #FF9AB2; }
+        .file-upload-box { padding: 20px; border: 2px dashed #FFD4E0; border-radius: 20px; text-align: center; background: #FFF5F8; cursor: pointer; position: relative; }
+        .file-upload-box input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+        .btn-submit { width: 100%; padding: 14px; background: linear-gradient(135deg, #FFB5C2, #FF9AB2); border: none; border-radius: 40px; color: white; font-weight: 700; font-size: 1em; cursor: pointer; transition: all 0.3s; margin-top: 8px; font-family: inherit; }
+        .btn-submit:active { transform: scale(0.96); }
+        .add-sheet-cancel-btn { display: block; margin: 16px auto 0; padding: 10px 30px; border-radius: 30px; border: none; background: rgba(200,180,220,0.2); color: #8B7D9B; cursor: pointer; font-size: 0.9em; font-family: inherit; }
+
+        @media (max-width: 768px) {
+            .form-row { flex-direction: column; gap: 0; }
+        }
+    </style>
 </head>
 <body>
- 
+
 <div class="toast-message" id="toastMsg">提示</div>
 <div class="exit-toast" id="exitToast">
-<span>确认退出吗？</span>
-<span class="exit-toast-sub">再次点击返回键退出</span>
+    <span>确认退出吗？</span>
+    <span class="exit-toast-sub">再次点击返回键退出</span>
 </div>
- 
+
 <header class="top-bar">
-<a href="/" class="top-bar-brand"><div class="top-bar-logo">🌱</div><span class="top-bar-appname">成长手册</span></a>
-<button class="top-bar-mine" onclick="toggleSidebar()">👤</button>
+    <a href="/" class="top-bar-brand"><div class="top-bar-logo">🌱</div><span class="top-bar-appname">成长手册</span></a>
+    <button class="top-bar-mine" onclick="toggleSidebar()">👤</button>
 </header>
- 
+
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 <aside class="sidebar-panel" id="sidebarPanel">
-<button class="sidebar-close" onclick="toggleSidebar()">✕</button>
-<div class="sidebar-user-info">
-<div class="sidebar-avatar">🧸</div>
-<div class="sidebar-username" sec:authorize="isAuthenticated()"><span sec:authentication="name">用户</span></div>
-<div class="sidebar-username" sec:authorize="!isAuthenticated()">访客</div>
-</div>
-<div class="sidebar-links">
-<a sec:authorize="!isAuthenticated()" href="/login" class="sidebar-link">🔐 登录账号</a>
-<a sec:authorize="isAuthenticated()" href="/logout" class="sidebar-link">🚪 退出登录</a>
-<a href="/gallery" class="sidebar-link">📷 相册图集</a>
-<a href="/growth" class="sidebar-link">📊 成长数据</a>
-<a href="/messages" class="sidebar-link">💌 家人留言</a>
-</div>
+    <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+    <div class="sidebar-user-info">
+        <div class="sidebar-avatar">🧸</div>
+        <div class="sidebar-username" sec:authorize="isAuthenticated()"><span sec:authentication="name">用户</span></div>
+        <div class="sidebar-username" sec:authorize="!isAuthenticated()">访客</div>
+    </div>
+    <div class="sidebar-links">
+        <a sec:authorize="!isAuthenticated()" href="/login" class="sidebar-link">🔐 登录账号</a>
+        <a sec:authorize="isAuthenticated()" href="/logout" class="sidebar-link">🚪 退出登录</a>
+        <a href="/gallery" class="sidebar-link">📷 相册图集</a>
+        <a href="/growth" class="sidebar-link">📊 成长数据</a>
+        <a href="/messages" class="sidebar-link">💌 家人留言</a>
+    </div>
 </aside>
- 
+
 <main class="container">
-<div class="card-group">
-<div class="journal">
-<div class="journal-spine"></div>
-<div class="page-left">
-<div class="polaroid-frame" id="polaroidFrame">
-<div class="washi-tape washi-tape-1"></div>
-<div class="washi-tape washi-tape-2"></div>
-<div class="polaroid-photo" id="polaroidPhoto" th:class="${babyAvatarPath != null ? 'polaroid-photo has-image' : 'polaroid-photo'}">
-<span class="default-emoji">👶</span>
-<img id="avatarImg" th:if="${babyAvatarPath != null}" th:src="@{${babyAvatarPath}}" class="show" alt="头像">
-<img id="avatarImgFallback" th:if="${babyAvatarPath == null}" src="#" alt="头像">
-</div>
-<span class="polaroid-caption">赵高钏</span>
-</div>
-<input type="file" id="avatarInput" accept="image/*" style="display:none;">
-</div>
-<div class="page-right">
-<div class="info-slip birthday">
-<span class="slip-icon">🎂</span><span class="slip-label">出生</span><span class="slip-value">2017年2月14日</span>
-</div>
-<div class="info-slip age">
-<span class="slip-icon">🎈</span><span class="slip-label">年龄</span><span class="slip-value" id="ageNumber">--</span>
-</div>
-<div class="info-slip height">
-<span class="slip-icon">📏</span><span class="slip-label">身高</span>
-<span class="slip-value" id="statHeight" th:text="${latestHeight != null ? latestHeight + ' cm' : '待记录'}">待记录</span>
-</div>
-<div class="info-slip weight">
-<span class="slip-icon">⚖️</span><span class="slip-label">体重</span>
-<span class="slip-value" id="statWeight" th:text="${latestWeight != null ? latestWeight + ' kg' : '待记录'}">待记录</span>
-</div>
-</div>
-</div>
-<div class="bottom-tickets">
-<div class="ticket-card">
-<span class="ticket-icon">🌍</span><span class="ticket-label">来到世上</span>
-<div class="ticket-value-row"><span class="ticket-number" id="totalDays">--</span><span class="ticket-unit">天</span></div>
-</div>
-<div class="ticket-card countdown">
-<span class="ticket-icon">🎂</span><span class="ticket-label">生日倒计时</span>
-<div class="ticket-value-row"><span class="ticket-number" id="birthdayCountdown">--</span><span class="ticket-unit">天</span></div>
-</div>
-</div>
-</div>
- 
-<div class="section-header"><h2>🌟 最新成长记录</h2></div>
-<div th:if="${#lists.isEmpty(records)}" class="empty-state">📸 还没有成长记录哦，点击下方 + 号开始记录吧～</div>
-<div class="record-grid" th:if="${!#lists.isEmpty(records)}">
-<div class="record-card" th:each="record : ${records}">
-<img class="record-photo" th:if="${record.photoPath != null}" th:src="@{${record.photoPath}}" alt="成长照片" loading="lazy" onerror="this.style.display='none'">
-<div class="record-info">
-<div class="record-meta">
-<span class="record-category" th:classappend="${record.category == 'growth'} ? 'cat-growth' : (${record.category == 'score'} ? 'cat-score' : (${record.category == 'gallery'} ? 'cat-gallery' : (${record.category == 'messages'} ? 'cat-messages' : '')))" th:text="${record.category}">分类</span>
-<span class="record-date" th:text="${#temporals.format(record.recordDate, 'yyyy年MM月dd日')}">日期</span>
-</div>
-<div class="record-title" th:text="${record.title}">标题</div>
-<div class="record-desc" th:text="${record.description}">描述内容</div>
-<div class="record-data-tags">
-<span class="data-tag height-tag" th:if="${record.heightCm != null}">📏 身高 <span th:text="${record.heightCm}">--</span> cm</span>
-<span class="data-tag weight-tag" th:if="${record.weightKg != null}">⚖️ 体重 <span th:text="${record.weightKg}">--</span> kg</span>
-<span class="data-tag score-tag" th:if="${record.chinese != null || record.math != null || record.english != null}">
-📚
-<span th:if="${record.chinese != null}">语文<span th:text="${record.chinese}">--</span> </span>
-<span th:if="${record.math != null}">数学<span th:text="${record.math}">--</span> </span>
-<span th:if="${record.english != null}">英语<span th:text="${record.english}">--</span></span>
-</span>
-</div>
-</div>
-</div>
-</div>
+    <div class="card-group">
+        <div class="journal">
+            <div class="journal-spine"></div>
+            <div class="page-left">
+                <div class="polaroid-frame" id="polaroidFrame">
+                    <div class="washi-tape washi-tape-1"></div>
+                    <div class="washi-tape washi-tape-2"></div>
+                    <div class="polaroid-photo" id="polaroidPhoto">
+                        <span class="default-emoji">👶</span>
+                        <img id="avatarImg" src="#" alt="头像"
+                             th:attr="data-server-src=${babyAvatarPath != null ? babyAvatarPath : ''}">
+                    </div>
+                    <span class="polaroid-caption">赵高钏</span>
+                </div>
+                <input type="file" id="avatarInput" accept="image/*" style="display:none;">
+            </div>
+            <div class="page-right">
+                <div class="info-slip birthday">
+                    <span class="slip-icon">🎂</span><span class="slip-label">出生</span><span class="slip-value">2017年2月14日</span>
+                </div>
+                <div class="info-slip age">
+                    <span class="slip-icon">🎈</span><span class="slip-label">年龄</span><span class="slip-value" id="ageNumber">--</span>
+                </div>
+                <div class="info-slip height">
+                    <span class="slip-icon">📏</span><span class="slip-label">身高</span>
+                    <span class="slip-value" id="statHeight" th:text="${latestHeight != null ? latestHeight + ' cm' : '待记录'}">待记录</span>
+                </div>
+                <div class="info-slip weight">
+                    <span class="slip-icon">⚖️</span><span class="slip-label">体重</span>
+                    <span class="slip-value" id="statWeight" th:text="${latestWeight != null ? latestWeight + ' kg' : '待记录'}">待记录</span>
+                </div>
+            </div>
+        </div>
+        <div class="bottom-tickets">
+            <div class="ticket-card">
+                <span class="ticket-icon">🌍</span><span class="ticket-label">来到世上</span>
+                <div class="ticket-value-row"><span class="ticket-number" id="totalDays">--</span><span class="ticket-unit">天</span></div>
+            </div>
+            <div class="ticket-card countdown">
+                <span class="ticket-icon">🎂</span><span class="ticket-label">生日倒计时</span>
+                <div class="ticket-value-row"><span class="ticket-number" id="birthdayCountdown">--</span><span class="ticket-unit">天</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-header"><h2>🌟 最新成长记录</h2></div>
+    <div th:if="${#lists.isEmpty(records)}" class="empty-state">📸 还没有成长记录哦，点击下方 + 号开始记录吧～</div>
+    <div class="record-grid" th:if="${!#lists.isEmpty(records)}">
+        <div class="record-card" th:each="record : ${records}">
+            <img class="record-photo" th:if="${record.photoPath != null}" th:src="@{${record.photoPath}}" alt="成长照片" loading="lazy" onerror="this.style.display='none'">
+            <div class="record-info">
+                <div class="record-meta">
+                    <span class="record-category" th:classappend="${record.category == 'growth'} ? 'cat-growth' : (${record.category == 'score'} ? 'cat-score' : (${record.category == 'gallery'} ? 'cat-gallery' : (${record.category == 'messages'} ? 'cat-messages' : '')))" th:text="${record.category}">分类</span>
+                    <span class="record-date" th:text="${#temporals.format(record.recordDate, 'yyyy年MM月dd日')}">日期</span>
+                </div>
+                <div class="record-title" th:text="${record.title}">标题</div>
+                <div class="record-desc" th:text="${record.description}">描述内容</div>
+                <div class="record-data-tags">
+                    <span class="data-tag height-tag" th:if="${record.heightCm != null}">📏 身高 <span th:text="${record.heightCm}">--</span> cm</span>
+                    <span class="data-tag weight-tag" th:if="${record.weightKg != null}">⚖️ 体重 <span th:text="${record.weightKg}">--</span> kg</span>
+                    <span class="data-tag score-tag" th:if="${record.chinese != null || record.math != null || record.english != null}">
+                        📚
+                        <span th:if="${record.chinese != null}">语文<span th:text="${record.chinese}">--</span> </span>
+                        <span th:if="${record.math != null}">数学<span th:text="${record.math}">--</span> </span>
+                        <span th:if="${record.english != null}">英语<span th:text="${record.english}">--</span></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
- 
+
 <nav class="bottom-nav">
-<a href="/" class="bottom-nav-item active"><span>🏠</span>首页</a>
-<a href="/gallery" class="bottom-nav-item"><span>📷</span>相册</a>
-<button class="bottom-nav-add" onclick="handleAddClick()">+</button>
-<a href="/growth" class="bottom-nav-item"><span>📊</span>数据</a>
-<a href="/messages" class="bottom-nav-item"><span>💌</span>留言</a>
+    <a href="/" class="bottom-nav-item active"><span>🏠</span>首页</a>
+    <a href="/gallery" class="bottom-nav-item"><span>📷</span>相册</a>
+    <button class="bottom-nav-add" onclick="handleAddClick()">+</button>
+    <a href="/growth" class="bottom-nav-item"><span>📊</span>数据</a>
+    <a href="/messages" class="bottom-nav-item"><span>💌</span>留言</a>
 </nav>
- 
+
 <div class="add-overlay" id="addOverlay">
-<div class="add-sheet">
-<div class="add-sheet-title">✨ 添加新记录</div>
-<div class="add-sheet-cards">
-<button class="add-card-item" onclick="openPhotoForm()">
-<span class="add-card-icon">📷</span>
-<span class="add-card-label">上传照片</span>
-</button>
-<button class="add-card-item" onclick="openGrowthForm()">
-<span class="add-card-icon">📊</span>
-<span class="add-card-label">记录数据</span>
-</button>
-<button class="add-card-item" onclick="openMessageForm()">
-<span class="add-card-icon">💌</span>
-<span class="add-card-label">写留言</span>
-</button>
+    <div class="add-sheet">
+        <div class="add-sheet-title">✨ 添加新记录</div>
+        <div class="add-sheet-cards">
+            <button class="add-card-item" onclick="openPhotoForm()">
+                <span class="add-card-icon">📷</span>
+                <span class="add-card-label">上传照片</span>
+            </button>
+            <button class="add-card-item" onclick="openGrowthForm()">
+                <span class="add-card-icon">📊</span>
+                <span class="add-card-label">记录数据</span>
+            </button>
+            <button class="add-card-item" onclick="openMessageForm()">
+                <span class="add-card-icon">💌</span>
+                <span class="add-card-label">写留言</span>
+            </button>
+        </div>
+        <button class="add-sheet-cancel" onclick="closeAddOverlay()">取消</button>
+    </div>
 </div>
-<button class="add-sheet-cancel" onclick="closeAddOverlay()">取消</button>
-</div>
-</div>
- 
+
 <div class="form-overlay" id="photoFormOverlay" onclick="if(event.target===this)closePhotoForm()">
-<div class="form-card">
-<h3>📷 上传照片</h3>
-<p class="form-subtitle">记录宝宝精彩瞬间</p>
-<form th:action="@{/gallery/add}" method="post" enctype="multipart/form-data">
-<div class="field-group"><div class="field-label">📝 照片标题</div><input type="text" name="title" placeholder="如：宝宝第一次走路"></div>
-<div class="field-group"><div class="field-label">💬 描述</div><textarea name="description" rows="2" placeholder="记录下这一刻..."></textarea></div>
-<div class="field-group"><div class="field-label">📅 日期 <span style="color:#E8788A;">*必填</span></div><div class="custom-date-wrap"><input type="date" name="recordDate" required><span class="date-icon">📆</span></div></div>
-<div class="field-group"><div class="field-label">🖼️ 选择照片 <span style="color:#E8788A;">*必填</span></div><div class="file-upload-box"><input type="file" name="photo" accept="image/*" required>📷 点击选择照片</div></div>
-<button type="submit" class="btn-submit">✨ 上传照片</button>
-</form>
-<button class="add-sheet-cancel-btn" onclick="closePhotoForm()">取消</button>
+    <div class="form-card">
+        <h3>📷 上传照片</h3>
+        <p class="form-subtitle">记录宝宝精彩瞬间</p>
+        <form th:action="@{/gallery/add}" method="post" enctype="multipart/form-data">
+            <div class="field-group"><div class="field-label">📝 照片标题</div><input type="text" name="title" placeholder="如：宝宝第一次走路"></div>
+            <div class="field-group"><div class="field-label">💬 描述</div><textarea name="description" rows="2" placeholder="记录下这一刻..."></textarea></div>
+            <div class="field-group"><div class="field-label">📅 日期 <span style="color:#E8788A;">*必填</span></div><div class="custom-date-wrap"><input type="date" name="recordDate" required><span class="date-icon">📆</span></div></div>
+            <div class="field-group"><div class="field-label">🖼️ 选择照片 <span style="color:#E8788A;">*必填</span></div><div class="file-upload-box"><input type="file" name="photo" accept="image/*" required>📷 点击选择照片</div></div>
+            <button type="submit" class="btn-submit">✨ 上传照片</button>
+        </form>
+        <button class="add-sheet-cancel-btn" onclick="closePhotoForm()">取消</button>
+    </div>
 </div>
-</div>
- 
+
 <div class="form-overlay" id="growthFormOverlay" onclick="if(event.target===this)closeGrowthForm()">
-<div class="form-card">
-<h3>📊 记录成长数据</h3>
-<p class="form-subtitle">记录身高体重或学业成绩</p>
-<form th:action="@{/growth/add}" method="post">
-<div class="field-group"><div class="field-label">📅 日期 <span style="color:#E8788A;">*必填</span></div><div class="custom-date-wrap"><input type="date" name="recordDate" required><span class="date-icon">📆</span></div></div>
-<div class="form-row">
-<div class="field-group"><div class="field-label">📏 身高 (cm)</div><input type="number" name="heightCm" step="0.1" placeholder="如：85.5"></div>
-<div class="field-group"><div class="field-label">⚖️ 体重 (kg)</div><input type="number" name="weightKg" step="0.1" placeholder="如：12.5"></div>
+    <div class="form-card">
+        <h3>📊 记录成长数据</h3>
+        <p class="form-subtitle">记录身高体重或学业成绩</p>
+        <form th:action="@{/growth/add}" method="post">
+            <div class="field-group"><div class="field-label">📅 日期 <span style="color:#E8788A;">*必填</span></div><div class="custom-date-wrap"><input type="date" name="recordDate" required><span class="date-icon">📆</span></div></div>
+            <div class="form-row">
+                <div class="field-group"><div class="field-label">📏 身高 (cm)</div><input type="number" name="heightCm" step="0.1" placeholder="如：85.5"></div>
+                <div class="field-group"><div class="field-label">⚖️ 体重 (kg)</div><input type="number" name="weightKg" step="0.1" placeholder="如：12.5"></div>
+            </div>
+            <div class="field-group"><div class="field-label">📝 备注</div><input type="text" name="title" placeholder="如：3月体检"></div>
+            <div class="field-group"><div class="field-label">👤 记录人 <span style="color:#E8788A;">*必填</span></div><input type="text" name="recordedBy" placeholder="妈妈" required></div>
+            <button type="submit" class="btn-submit">✨ 保存数据</button>
+        </form>
+        <button class="add-sheet-cancel-btn" onclick="closeGrowthForm()">取消</button>
+    </div>
 </div>
-<div class="field-group"><div class="field-label">📝 备注</div><input type="text" name="title" placeholder="如：3月体检"></div>
-<div class="field-group"><div class="field-label">👤 记录人 <span style="color:#E8788A;">*必填</span></div><input type="text" name="recordedBy" placeholder="妈妈" required></div>
-<button type="submit" class="btn-submit">✨ 保存数据</button>
-</form>
-<button class="add-sheet-cancel-btn" onclick="closeGrowthForm()">取消</button>
-</div>
-</div>
- 
+
 <div class="form-overlay" id="messageFormOverlay" onclick="if(event.target===this)closeMessageForm()">
-<div class="form-card">
-<h3>💌 写下留言</h3>
-<p class="form-subtitle">留下对宝宝的温暖寄语</p>
-<form th:action="@{/messages/add}" method="post">
-<div class="field-group"><div class="field-label">📝 称呼 <span style="color:#E8788A;">*必填</span></div><input type="text" name="title" placeholder="如：爸爸、妈妈..." required></div>
-<div class="field-group"><div class="field-label">💬 留言内容 <span style="color:#E8788A;">*必填</span></div><textarea name="description" rows="3" placeholder="写下你想对宝宝说的话..." required></textarea></div>
-<div class="field-group"><div class="field-label">📅 日期 <span style="color:#E8788A;">*必填</span></div><div class="custom-date-wrap"><input type="date" name="recordDate" required><span class="date-icon">📆</span></div></div>
-<button type="submit" class="btn-submit">✨ 发布留言</button>
-</form>
-<button class="add-sheet-cancel-btn" onclick="closeMessageForm()">取消</button>
+    <div class="form-card">
+        <h3>💌 写下留言</h3>
+        <p class="form-subtitle">留下对宝宝的温暖寄语</p>
+        <form th:action="@{/messages/add}" method="post">
+            <div class="field-group"><div class="field-label">📝 称呼 <span style="color:#E8788A;">*必填</span></div><input type="text" name="title" placeholder="如：爸爸、妈妈..." required></div>
+            <div class="field-group"><div class="field-label">💬 留言内容 <span style="color:#E8788A;">*必填</span></div><textarea name="description" rows="3" placeholder="写下你想对宝宝说的话..." required></textarea></div>
+            <div class="field-group"><div class="field-label">📅 日期 <span style="color:#E8788A;">*必填</span></div><div class="custom-date-wrap"><input type="date" name="recordDate" required><span class="date-icon">📆</span></div></div>
+            <button type="submit" class="btn-submit">✨ 发布留言</button>
+        </form>
+        <button class="add-sheet-cancel-btn" onclick="closeMessageForm()">取消</button>
+    </div>
 </div>
-</div>
- 
+
 <script th:inline="javascript">
-/*<![CDATA[*/
-var isAuthenticated = /*[[${#authorization.expression('isAuthenticated()')}]]*/ false;
- 
-function showToast(msg) {
-var t = document.getElementById('toastMsg');
-t.textContent = msg;
-t.classList.add('show');
-setTimeout(function() { t.classList.remove('show'); }, 1500);
-}
- 
-function requireAuth() {
-if (!isAuthenticated) {
-showToast('请先登录');
-setTimeout(function() { window.location.href = '/login'; }, 600);
-return false;
-}
-return true;
-}
- 
-function handleAddClick() {
-if (!requireAuth()) return;
-openAddOverlay();
-}
- 
-function openAddOverlay() {
-document.getElementById('addOverlay').classList.add('active');
-document.body.style.overflow = 'hidden';
-}
-function closeAddOverlay() {
-document.getElementById('addOverlay').classList.remove('active');
-document.body.style.overflow = '';
-}
-document.getElementById('addOverlay').addEventListener('click', function(e) { if (e.target === this) closeAddOverlay(); });
- 
-function openPhotoForm() { closeAddOverlay(); document.getElementById('photoFormOverlay').classList.add('active'); }
-function closePhotoForm() { document.getElementById('photoFormOverlay').classList.remove('active'); }
-function openGrowthForm() { closeAddOverlay(); document.getElementById('growthFormOverlay').classList.add('active'); }
-function closeGrowthForm() { document.getElementById('growthFormOverlay').classList.remove('active'); }
-function openMessageForm() { closeAddOverlay(); document.getElementById('messageFormOverlay').classList.add('active'); }
-function closeMessageForm() { document.getElementById('messageFormOverlay').classList.remove('active'); }
- 
-// 年龄计算
-(function() {
-var birthday = new Date(2017, 1, 14);
-var now = new Date();
-var y = now.getFullYear() - birthday.getFullYear();
-var m = now.getMonth() - birthday.getMonth();
-var d = now.getDate() - birthday.getDate();
-if (d < 0) { m--; d += new Date(now.getFullYear(), now.getMonth(), 0).getDate(); }
-if (m < 0) { y--; m += 12; }
-document.getElementById('ageNumber').textContent = y + '岁' + m + '个月';
-var totalDays = Math.floor((now - birthday) / (1000 * 60 * 60 * 24));
-document.getElementById('totalDays').textContent = totalDays;
-var nextBirthday = new Date(now.getFullYear(), 1, 14);
-if (now > nextBirthday) nextBirthday.setFullYear(nextBirthday.getFullYear() + 1);
-document.getElementById('birthdayCountdown').textContent = Math.ceil((nextBirthday - now) / (1000 * 60 * 60 * 24));
-})();
- 
-// 头像
-(function() {
-var photoContainer = document.getElementById('polaroidPhoto');
-var fileInput = document.getElementById('avatarInput');
-document.getElementById('polaroidFrame').addEventListener('click', function() { fileInput.click(); });
-fileInput.addEventListener('change', function(e) {
-var file = e.target.files[0];
-if (!file) return;
-var formData = new FormData();
-formData.append('avatar', file);
-var xhr = new XMLHttpRequest();
-xhr.open('POST', '/avatar/upload', true);
-xhr.onload = function() {
-if (xhr.status === 200) {
-var result = JSON.parse(xhr.responseText);
-if (result.success) {
-window.location.reload();
-}
-} else {
-showToast('上传失败');
-}
-};
-xhr.onerror = function() {
-showToast('上传失败');
-};
-xhr.send(formData);
-});
-})();
- 
-// ✅ 从服务端数据更新身高体重（优先服务端传值，兜底从 records 查找最新）
-(function() {
-var records = /*[[${records}]]*/ [];
-var heightElem = document.getElementById('statHeight');
-var weightElem = document.getElementById('statWeight');
-if (!heightElem || !weightElem) return;
- 
-var currentHeight = heightElem.textContent.trim();
-var currentWeight = weightElem.textContent.trim();
- 
-if (currentHeight === '待记录' || currentHeight === '') {
-var latestH = null, latestHDate = null;
-for (var i = 0; i < records.length; i++) {
-var r = records[i];
-if (r.heightCm != null) {
-if (!latestH) {
-latestH = r.heightCm;
-latestHDate = r.recordDate;
-} else if (r.recordDate && latestHDate && r.recordDate > latestHDate) {
-latestH = r.heightCm;
-latestHDate = r.recordDate;
-}
-}
-}
-if (latestH != null) heightElem.textContent = latestH + ' cm';
-}
- 
-if (currentWeight === '待记录' || currentWeight === '') {
-var latestW = null, latestWDate = null;
-for (var j = 0; j < records.length; j++) {
-var r2 = records[j];
-if (r2.weightKg != null) {
-if (!latestW) {
-latestW = r2.weightKg;
-latestWDate = r2.recordDate;
-} else if (r2.recordDate && latestWDate && r2.recordDate > latestWDate) {
-latestW = r2.weightKg;
-latestWDate = r2.recordDate;
-}
-}
-}
-if (latestW != null) weightElem.textContent = latestW + ' kg';
-}
-})();
- 
-// 分类映射
-(function() {
-var map = { 'gallery':'相册', 'growth':'成长数据', 'messages':'留言', 'score':'学业成绩' };
-document.querySelectorAll('.record-category').forEach(function(el) {
-var raw = el.textContent.trim();
-if (map[raw]) el.textContent = map[raw];
-});
-})();
- 
-function toggleSidebar() {
-var ov = document.getElementById('sidebarOverlay'), pn = document.getElementById('sidebarPanel');
-ov.classList.toggle('active'); pn.classList.toggle('active');
-document.body.style.overflow = ov.classList.contains('active') ? 'hidden' : '';
-}
- 
-var path = window.location.pathname;
-document.querySelectorAll('.bottom-nav-item').forEach(function(item) {
-if (item.getAttribute('href') === path) item.classList.add('active');
-});
- 
-// ========== 修复后的返回退出逻辑（首页直接退出到桌面）==========
-(function() {
-var confirmExit = false;
-var isExiting = false;
-var timer = null;
-var exitToast = document.getElementById('exitToast');
- 
-// 步骤1：用 replaceState 将首页设为栈底，清除可能存在的上一页历史
-history.replaceState({ page: 'home' }, '', window.location.href);
-// 步骤2：push 一个拦截状态，使得用户第一次按返回时触发 popstate 而不真正后退
-history.pushState({ page: 'forward' }, '', window.location.href);
- 
-function show() { if (exitToast) exitToast.classList.add('visible'); }
-function hide() { if (exitToast) exitToast.classList.remove('visible'); }
-function reset() { confirmExit = false; hide(); clearTimeout(timer); }
- 
-function doExit() {
-isExiting = true;
-hide();
-// 微信环境关闭
-if (typeof WeixinJSBridge !== 'undefined') {
-try { WeixinJSBridge.call('closeWindow'); } catch(e) {}
-}
-// 尝试多种方式退出
-try {
-history.go(-(history.length + 1));
-} catch(e) {}
-// 兜底
-setTimeout(function() {
-try { window.close(); } catch(e) {}
-}, 500);
-}
- 
-window.addEventListener('popstate', function(e) {
-if (isExiting) return;
-// 重新 push 拦截状态，保持栈结构
-history.pushState({ page: 'forward' }, '', window.location.href);
- 
-if (confirmExit) {
-// 第二次返回：确认退出
-doExit();
-return;
-}
- 
-// 第一次返回：显示确认提示
-confirmExit = true;
-show();
- 
-// 定时重置，超时后不退出
-clearTimeout(timer);
-timer = setTimeout(reset, 3000);
-});
- 
-// 页面隐藏时重置（例如切到后台又回来）
-document.addEventListener('visibilitychange', function() {
-if (document.hidden) {
-reset();
-}
-});
-})();
-/*]]>*/
+    /*<![CDATA[*/
+    var isAuthenticated = /*[[${#authorization.expression('isAuthenticated()')}]]*/ false;
+
+    function getCsrfToken() {
+        var meta = document.querySelector('meta[name="_csrf"]');
+        var headerMeta = document.querySelector('meta[name="_csrf_header"]');
+        if (meta && meta.content && headerMeta && headerMeta.content) {
+            return { token: meta.content, headerName: headerMeta.content };
+        }
+        return null;
+    }
+
+    function showToast(msg) {
+        var t = document.getElementById('toastMsg');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(function() { t.classList.remove('show'); }, 1500);
+    }
+
+    function requireAuth() {
+        if (!isAuthenticated) {
+            showToast('请先登录');
+            setTimeout(function() { window.location.href = '/login'; }, 600);
+            return false;
+        }
+        return true;
+    }
+
+    function handleAddClick() {
+        if (!requireAuth()) return;
+        openAddOverlay();
+    }
+
+    function openAddOverlay() {
+        document.getElementById('addOverlay').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeAddOverlay() {
+        document.getElementById('addOverlay').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    document.getElementById('addOverlay').addEventListener('click', function(e) { if (e.target === this) closeAddOverlay(); });
+
+    function openPhotoForm() { closeAddOverlay(); document.getElementById('photoFormOverlay').classList.add('active'); }
+    function closePhotoForm() { document.getElementById('photoFormOverlay').classList.remove('active'); }
+    function openGrowthForm() { closeAddOverlay(); document.getElementById('growthFormOverlay').classList.add('active'); }
+    function closeGrowthForm() { document.getElementById('growthFormOverlay').classList.remove('active'); }
+    function openMessageForm() { closeAddOverlay(); document.getElementById('messageFormOverlay').classList.add('active'); }
+    function closeMessageForm() { document.getElementById('messageFormOverlay').classList.remove('active'); }
+
+    // 年龄计算
+    (function() {
+        var birthday = new Date(2017, 1, 14);
+        var now = new Date();
+        var y = now.getFullYear() - birthday.getFullYear();
+        var m = now.getMonth() - birthday.getMonth();
+        var d = now.getDate() - birthday.getDate();
+        if (d < 0) { m--; d += new Date(now.getFullYear(), now.getMonth(), 0).getDate(); }
+        if (m < 0) { y--; m += 12; }
+        document.getElementById('ageNumber').textContent = y + '岁' + m + '个月';
+        var totalDays = Math.floor((now - birthday) / (1000 * 60 * 60 * 24));
+        document.getElementById('totalDays').textContent = totalDays;
+        var nextBirthday = new Date(now.getFullYear(), 1, 14);
+        if (now > nextBirthday) nextBirthday.setFullYear(nextBirthday.getFullYear() + 1);
+        document.getElementById('birthdayCountdown').textContent = Math.ceil((nextBirthday - now) / (1000 * 60 * 60 * 24));
+    })();
+
+    // ==================== 头像逻辑（已适配后端接口） ====================
+    (function() {
+        var avatarImg = document.getElementById('avatarImg');
+        var photoContainer = document.getElementById('polaroidPhoto');
+        var fileInput = document.getElementById('avatarInput');
+
+        function applyAvatar(src) {
+            if (!src || src === '#') return;
+            avatarImg.src = src;
+            avatarImg.classList.add('show');
+            photoContainer.classList.add('has-image');
+        }
+
+        function getCachedAvatar() {
+            try {
+                return localStorage.getItem('babyAvatar');
+            } catch(e) {
+                return null;
+            }
+        }
+
+        function cacheAvatar(src) {
+            try {
+                if (src && !src.startsWith('data:')) {
+                    localStorage.setItem('babyAvatar', src);
+                }
+            } catch(e) {}
+        }
+
+        function initAvatar() {
+            var serverSrc = avatarImg.getAttribute('data-server-src');
+            if (serverSrc && serverSrc.trim() !== '') {
+                applyAvatar(serverSrc);
+                cacheAvatar(serverSrc);
+                return;
+            }
+            var cached = getCachedAvatar();
+            if (cached) {
+                applyAvatar(cached);
+            }
+        }
+
+        /**
+         * 上传头像到后端 POST /avatar/upload
+         * 参数名：avatar (MultipartFile)
+         * 返回格式：{ success: true, avatarPath: "/uploads/baby-avatar.jpg" }
+         */
+        function uploadAvatarToServer(file) {
+            return new Promise(function(resolve, reject) {
+                var formData = new FormData();
+                formData.append('avatar', file);  // 参数名必须与后端 @RequestParam("avatar") 一致
+
+                var headers = {};
+                var csrf = getCsrfToken();
+                if (csrf) {
+                    headers[csrf.headerName] = csrf.token;
+                }
+
+                fetch('/avatar/upload', {   // 接口路径与后端 @PostMapping("/avatar/upload") 一致
+                    method: 'POST',
+                    headers: headers,
+                    body: formData,
+                })
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw new Error('服务器错误：' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(function(data) {
+                    if (data && data.success && data.avatarPath) {  // 返回字段为 avatarPath
+                        resolve(data.avatarPath);
+                    } else {
+                        reject(new Error(data.message || '上传失败'));
+                    }
+                })
+                .catch(function(err) {
+                    reject(err);
+                });
+            });
+        }
+
+        initAvatar();
+
+        document.getElementById('polaroidFrame').addEventListener('click', function() {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', function(e) {
+            var file = e.target.files[0];
+            if (!file) return;
+
+            var reader = new FileReader();
+            reader.onload = function(ev) {
+                var base64 = ev.target.result;
+                applyAvatar(base64);
+                try {
+                    localStorage.setItem('babyAvatar', base64);
+                } catch(err) {
+                    showToast('本地存储空间不足，正在上传到服务器...');
+                }
+            };
+            reader.readAsDataURL(file);
+
+            uploadAvatarToServer(file)
+                .then(function(serverPath) {
+                    applyAvatar(serverPath);
+                    cacheAvatar(serverPath);
+                    showToast('头像已同步到云端 ✅');
+                })
+                .catch(function(err) {
+                    console.warn('头像上传到服务器失败，已使用本地缓存：', err.message);
+                    showToast('头像已本地保存（云端同步失败）');
+                });
+        });
+    })();
+
+    // 身高体重兜底（略）
+    (function() {
+        var records = /*[[${records}]]*/ [];
+        var heightElem = document.getElementById('statHeight');
+        var weightElem = document.getElementById('statWeight');
+        if (!heightElem || !weightElem) return;
+
+        var currentHeight = heightElem.textContent.trim();
+        var currentWeight = weightElem.textContent.trim();
+
+        if (currentHeight === '待记录' || currentHeight === '') {
+            var latestH = null, latestHDate = null;
+            for (var i = 0; i < records.length; i++) {
+                var r = records[i];
+                if (r.heightCm != null) {
+                    if (!latestH) {
+                        latestH = r.heightCm;
+                        latestHDate = r.recordDate;
+                    } else if (r.recordDate && latestHDate && r.recordDate > latestHDate) {
+                        latestH = r.heightCm;
+                        latestHDate = r.recordDate;
+                    }
+                }
+            }
+            if (latestH != null) heightElem.textContent = latestH + ' cm';
+        }
+
+        if (currentWeight === '待记录' || currentWeight === '') {
+            var latestW = null, latestWDate = null;
+            for (var j = 0; j < records.length; j++) {
+                var r2 = records[j];
+                if (r2.weightKg != null) {
+                    if (!latestW) {
+                        latestW = r2.weightKg;
+                        latestWDate = r2.recordDate;
+                    } else if (r2.recordDate && latestWDate && r2.recordDate > latestWDate) {
+                        latestW = r2.weightKg;
+                        latestWDate = r2.recordDate;
+                    }
+                }
+            }
+            if (latestW != null) weightElem.textContent = latestW + ' kg';
+        }
+    })();
+
+    // 分类映射
+    (function() {
+        var map = { 'gallery':'相册', 'growth':'成长数据', 'messages':'留言', 'score':'学业成绩' };
+        document.querySelectorAll('.record-category').forEach(function(el) {
+            var raw = el.textContent.trim();
+            if (map[raw]) el.textContent = map[raw];
+        });
+    })();
+
+    function toggleSidebar() {
+        var ov = document.getElementById('sidebarOverlay'), pn = document.getElementById('sidebarPanel');
+        ov.classList.toggle('active'); pn.classList.toggle('active');
+        document.body.style.overflow = ov.classList.contains('active') ? 'hidden' : '';
+    }
+
+    var path = window.location.pathname;
+    document.querySelectorAll('.bottom-nav-item').forEach(function(item) {
+        if (item.getAttribute('href') === path) item.classList.add('active');
+    });
+
+    // ==================== 返回退出逻辑 ====================
+    (function() {
+        var confirmExit = false;
+        var isExiting = false;
+        var timer = null;
+        var exitToast = document.getElementById('exitToast');
+
+        function showExitToast() { if (exitToast) exitToast.classList.add('visible'); }
+        function hideExitToast() { if (exitToast) exitToast.classList.remove('visible'); }
+        function resetExitState() {
+            confirmExit = false;
+            hideExitToast();
+            clearTimeout(timer);
+        }
+
+        function doExit() {
+            if (isExiting) return;
+            isExiting = true;
+            hideExitToast();
+
+            if (typeof WeixinJSBridge !== 'undefined') {
+                try { WeixinJSBridge.call('closeWindow'); } catch(e) {}
+            }
+            if (typeof wx !== 'undefined' && typeof wx.closeWindow === 'function') {
+                try { wx.closeWindow(); } catch(e) {}
+            }
+            try { window.close(); } catch(e) {}
+            setTimeout(function() {
+                try { var steps = Math.min(history.length, 10); window.history.go(-steps); } catch(e) {}
+            }, 150);
+            setTimeout(function() {
+                try { window.location.href = 'about:blank'; } catch(e) {}
+            }, 600);
+            setTimeout(function() {
+                isExiting = false;
+                resetExitState();
+            }, 10000);
+        }
+
+        function closeAnyOpenPanel() {
+            var sidebarOv = document.getElementById('sidebarOverlay');
+            var addOv = document.getElementById('addOverlay');
+            var photoFormOv = document.getElementById('photoFormOverlay');
+            var growthFormOv = document.getElementById('growthFormOverlay');
+            var messageFormOv = document.getElementById('messageFormOverlay');
+
+            if (sidebarOv && sidebarOv.classList.contains('active')) { toggleSidebar(); return true; }
+            if (messageFormOv && messageFormOv.classList.contains('active')) { closeMessageForm(); return true; }
+            if (growthFormOv && growthFormOv.classList.contains('active')) { closeGrowthForm(); return true; }
+            if (photoFormOv && photoFormOv.classList.contains('active')) { closePhotoForm(); return true; }
+            if (addOv && addOv.classList.contains('active')) { closeAddOverlay(); return true; }
+            return false;
+        }
+
+        history.replaceState('home', '', window.location.href);
+        history.pushState('forward', '', window.location.href);
+
+        window.addEventListener('popstate', function(e) {
+            if (isExiting) return;
+
+            if (closeAnyOpenPanel()) {
+                history.pushState('forward', '', window.location.href);
+                resetExitState();
+                return;
+            }
+
+            if (confirmExit) {
+                doExit();
+                return;
+            }
+
+            confirmExit = true;
+            showExitToast();
+            history.pushState('forward', '', window.location.href);
+            clearTimeout(timer);
+            timer = setTimeout(resetExitState, 3500);
+        });
+
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) resetExitState();
+        });
+
+        document.addEventListener('touchstart', function(e) {
+            if (exitToast && !exitToast.contains(e.target)) resetExitState();
+        }, { passive: true });
+    })();
+    /*]]>*/
 </script>
 </body>
 </html>
