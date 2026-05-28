@@ -73,6 +73,10 @@ if (exitBtn) {
     history.back(); // 触发返回键确认流程
   });
 }
+// 表单提交时不拦截退出
+document.addEventListener('submit', function(e) {
+  window._internalNav = true;
+});
 
 // 7. beforeunload 二次确认（关闭标签页或刷新时）
 window.addEventListener('beforeunload', function(e) {
