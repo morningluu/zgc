@@ -427,7 +427,7 @@ if (deleteBtn) {
 
     window.addEventListener('scroll',()=>{document.getElementById('backToTop').style.display=window.scrollY>400?'flex':'none';});
 
-    // ========== ✅ 修改位置1：返回首页逻辑（优先关闭弹窗/大图，否则回首页）==========
+    // ========== ✅ 修改后的返回逻辑：优先关闭弹窗/大图，否则由 app.js 接管退出确认 ==========
     (function() {
         if (window.location.pathname === '/' || window.location.pathname === '') return;
         history.replaceState({ subPage: true }, '', window.location.href);
@@ -448,8 +448,8 @@ if (deleteBtn) {
                 return;
             }
 
-            // 3. 都没有 → 返回首页
-            window.location.replace('/');
+            // 3. 没有打开的弹窗/查看器 → 由 app.js 处理退出确认
+            // 这里什么都不做，app.js 会接管 popstate 并弹出确认对话框
         });
     })();
 
@@ -458,5 +458,7 @@ if (deleteBtn) {
     resetAutoPlay();
     /*]]>*/
 </script>
+<!-- 引入公共导航与退出控制脚本 -->
+<script src="/app.js"></script>
 </body>
 </html>
