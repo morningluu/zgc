@@ -657,8 +657,8 @@
         var timer = null;
         var exitToast = document.getElementById('exitToast');
 
-        history.replaceState('home', '', window.location.href);
-        history.pushState('forward', '', window.location.href);
+        // 简化历史栈管理，只保留一个状态
+        history.replaceState(null, '', window.location.href);
 
         function showExitToast() { if (exitToast) exitToast.classList.add('visible'); }
         function hideExitToast() { if (exitToast) exitToast.classList.remove('visible'); }
@@ -672,21 +672,24 @@
                 try { WeixinJSBridge.call('closeWindow'); } catch(e) {}
             }
 
-            history.go(-2);
-
+            // 尝试直接关闭或跳转
             setTimeout(function() {
                 try { window.close(); } catch(e) {}
-            }, 300);
+            }, 100);
 
             setTimeout(function() {
                 if (!document.hidden) {
+                    // 如果无法关闭，尝试清空历史栈后跳转
                     window.location.replace('about:blank');
                 }
-            }, 800);
+            }, 500);
         }
 
         window.addEventListener('popstate', function(e) {
             if (isExiting) return;
+            
+            // 每次返回都重新设置状态，保持在当前页面
+            history.replaceState(null, '', window.location.href);
 
             if (confirmExit) {
                 doExit();
@@ -695,9 +698,8 @@
 
             confirmExit = true;
             showExitToast();
-            history.pushState('forward', '', window.location.href);
             clearTimeout(timer);
-            timer = setTimeout(resetExitState, 3500);
+            timer = setTimeout(resetExitState, 3000);
         });
 
         document.addEventListener('visibilitychange', function() {
