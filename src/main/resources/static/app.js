@@ -1,4 +1,30 @@
-// ========== app.js：注册 Service Worker + 返回键退出确认 ==========
+// ========== app.js：开屏动画控制 + Service Worker + 返回键退出 ==========
+
+// 0. 开屏动画控制（在最前面执行）
+(function() {
+  // 当前页面是否是开屏动画页
+  var path = window.location.pathname;
+  var isSplashPage = (path === '/splash.html' || path === '/splash');
+
+  // 如果不是开屏动画页，检查是否需要播放动画
+  if (!isSplashPage) {
+    // sessionStorage 中没有标记，说明是新会话，需要播放动画
+    if (!sessionStorage.getItem('splashPlayed')) {
+      // 保存当前要去的目标页面路径
+      var targetPath = window.location.pathname + window.location.search;
+      if (targetPath === '/' || targetPath === '') {
+        targetPath = '/?standalone=true';
+      }
+      sessionStorage.setItem('splashTarget', targetPath);
+      // 标记动画已播放，防止无限循环
+      sessionStorage.setItem('splashPlayed', 'true');
+      // 跳转到开屏动画页
+      window.location.replace('/splash.html');
+      return; // 停止执行后续所有代码
+    }
+    // 已经看过动画，继续正常加载页面
+  }
+})();
 
 // 1. 注册 Service Worker（页面加载完成后注册）
 if ('serviceWorker' in navigator) {
