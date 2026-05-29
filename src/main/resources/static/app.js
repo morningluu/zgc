@@ -8,8 +8,7 @@
   // 如果是开屏动画页本身，直接放行
   if (isSplashPage) return;
 
-  // ===== 关键改动：检测是否是内部导航 =====
-  // 如果是通过 navigateTo 跳转过来的（内部导航），绝不播放动画
+  // ===== 如果是通过 navigateTo 跳转过来的（内部导航），绝不播放动画 =====
   if (window.__internalNav) {
     window.__internalNav = false;
     return;
@@ -19,10 +18,31 @@
   var isHomePage = (path === '/' || path === '');
   if (!isHomePage) return;
 
-  // 检查是否需要播放动画
+  // 检查是否需要播放动画（sessionStorage 在每次浏览器新会话时清空）
   if (!sessionStorage.getItem('splashPlayed')) {
     sessionStorage.setItem('splashPlayed', 'true');
-    sessionStorage.setItem('splashTarget', '/?standalone=true');
+
+    // 构建目标 URL：保留原始查询参数，追加 standalone 标记
+    var targetUrl = '/';
+    var currentSearch = window.location.search;
+
+    // 检测是否是 PWA standalone 模式
+    var isStandalone = window.matchMedia('(display-mode: standalone)').matches
+      || window.navigator.standalone
+      || window.location.search.includes('standalone=true');
+
+    if (currentSearch) {
+      // 已有查询参数，追加 standalone
+      if (!currentSearch.includes('standalone=')) {
+        targetUrl = currentSearch + '&standalone=true';
+      } else {
+        targetUrl = currentSearch;
+      }
+    } else {
+      targetUrl = '/?standalone=true';
+    }
+
+    sessionStorage.setItem('splashTarget', targetUrl);
     window.location.replace('/splash.html');
   }
 })();
