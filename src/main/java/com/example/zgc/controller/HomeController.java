@@ -100,6 +100,12 @@ public class HomeController {
         return "index";
     }
 
+    // ==================== 过渡页（PWA 启动或浏览器首次访问时显示） ====================
+    @GetMapping("/splash.html")
+    public String splash() {
+        return "splash";
+    }
+
     // ==================== 头像相关接口 ====================
     /**
      * 上传头像（自动压缩到 300px 宽，统一 JPG 格式）
