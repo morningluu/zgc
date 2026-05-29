@@ -1,20 +1,40 @@
 {
   "name": "赵高钏的成长记录手册",
   "short_name": "成长手册",
+  "id": "/splash.html",
   "start_url": "/splash.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
+  "description": "记录赵高钏成长的每一个珍贵瞬间",
   "icons": [
     {
       "src": "/xiao.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "/da.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     }
-  ]
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "display_override": ["standalone", "window-controls-overlay"],
+  "protocol_handlers": []
 }
