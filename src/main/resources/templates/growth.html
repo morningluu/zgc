@@ -248,6 +248,9 @@
       border: none; border-radius: 40px; color: white; font-weight: 700;
       font-size: 1em; cursor: pointer; transition: all 0.3s; margin-top: 8px;
     }
+    .btn-submit:disabled {
+      opacity: 0.7; cursor: not-allowed;
+    }
     .add-sheet-cancel {
       display: block; margin: 16px auto 0; padding: 10px 30px; border-radius: 30px;
       border: none; background: rgba(200,180,220,0.2); color: #8B7D9B;
@@ -271,7 +274,7 @@
 </head>
 <body>
 
-<!-- 顶部导航栏：修改为与相册页相同的样式 -->
+<!-- 顶部导航栏 -->
 <header class="top-bar">
   <div class="top-bar-left">
     <a href="/" class="top-bar-back" aria-label="返回首页">←</a>
@@ -298,7 +301,6 @@
 </aside>
 
 <main class="page-container">
-  <!-- 以下内容保持不变 -->
   <div class="page-header">
     <h1>📊 成长数据</h1>
     <p style="color:#8B7D9B;">记录身高体重 · 学业进步，每一步都算数</p>
@@ -444,7 +446,7 @@
   <div class="add-sheet">
     <div class="add-sheet-title">📊 添加成长数据</div>
     <p class="form-subtitle">记录宝宝身高体重</p>
-    <form th:action="@{/growth/add}" method="post">
+    <form th:action="@{/growth/add}" method="post" id="growthForm">
       <div class="field-group">
         <div class="field-label">📅 测量日期 <span style="color:#E8788A;">*必填</span></div>
         <div class="custom-date-wrap">
@@ -470,7 +472,7 @@
         <div class="field-label">👤 记录人 <span style="color:#E8788A;">*必填</span></div>
         <input type="text" name="recordedBy" placeholder="妈妈" required>
       </div>
-      <button type="submit" class="btn-submit">✨ 保存数据</button>
+      <button type="button" class="btn-submit" id="growthSubmitBtn" onclick="submitGrowthForm()">✨ 保存数据</button>
     </form>
     <button class="add-sheet-cancel" onclick="closeGrowthForm()">取消</button>
   </div>
@@ -481,7 +483,7 @@
   <div class="add-sheet">
     <div class="add-sheet-title">📚 添加成绩</div>
     <p class="form-subtitle">记录语文·数学·英语成绩</p>
-    <form th:action="@{/growth/addScore}" method="post">
+    <form th:action="@{/growth/addScore}" method="post" id="scoreForm">
       <div class="field-group">
         <div class="field-label">📅 考试/记录日期 <span style="color:#E8788A;">*必填</span></div>
         <div class="custom-date-wrap">
@@ -511,7 +513,7 @@
         <div class="field-label">👤 记录人 <span style="color:#E8788A;">*必填</span></div>
         <input type="text" name="recordedBy" placeholder="爸爸" required>
       </div>
-      <button type="submit" class="btn-submit">✨ 保存成绩</button>
+      <button type="button" class="btn-submit" id="scoreSubmitBtn" onclick="submitScoreForm()">✨ 保存成绩</button>
     </form>
     <button class="add-sheet-cancel" onclick="closeScoreForm()">取消</button>
   </div>
@@ -527,6 +529,10 @@
   var scoreChartInstance = null;
   var growthChartInstance = null;
   var isAuthenticated = /*[[${#authorization.expression('isAuthenticated()')}]]*/ false;
+
+  // 防重复提交标志
+  var isSubmittingScore = false;
+  var isSubmittingGrowth = false;
 
   function showToast(msg) {
     var t = document.getElementById('toastMsg');
@@ -573,6 +579,12 @@
     document.body.style.overflow = 'hidden';
   }
   function closeGrowthForm() {
+    isSubmittingGrowth = false;
+    var btn = document.getElementById('growthSubmitBtn');
+    if (btn) {
+      btn.textContent = '✨ 保存数据';
+      btn.disabled = false;
+    }
     document.getElementById('growthOverlay').classList.remove('active');
     document.body.style.overflow = '';
   }
@@ -585,12 +597,59 @@
     document.body.style.overflow = 'hidden';
   }
   function closeScoreForm() {
+    isSubmittingScore = false;
+    var btn = document.getElementById('scoreSubmitBtn');
+    if (btn) {
+      btn.textContent = '✨ 保存成绩';
+      btn.disabled = false;
+    }
     document.getElementById('scoreOverlay').classList.remove('active');
     document.body.style.overflow = '';
   }
   document.getElementById('scoreOverlay').addEventListener('click', function(e) {
     if (e.target === this) closeScoreForm();
   });
+
+  // 防重复提交函数
+  function submitScoreForm() {
+    if (isSubmittingScore) return; // 防止重复提交
+    
+    var form = document.getElementById('scoreForm');
+    var btn = document.getElementById('scoreSubmitBtn');
+    
+    // 简单的日期必填验证
+    var dateInput = form.querySelector('input[name="recordDate"]');
+    if (!dateInput.value) {
+      alert('请选择考试/记录日期');
+      return;
+    }
+    
+    isSubmittingScore = true;
+    btn.textContent = '⏳ 保存中...';
+    btn.disabled = true;
+    
+    form.submit();
+  }
+
+  function submitGrowthForm() {
+    if (isSubmittingGrowth) return; // 防止重复提交
+    
+    var form = document.getElementById('growthForm');
+    var btn = document.getElementById('growthSubmitBtn');
+    
+    // 简单的日期必填验证
+    var dateInput = form.querySelector('input[name="recordDate"]');
+    if (!dateInput.value) {
+      alert('请选择测量日期');
+      return;
+    }
+    
+    isSubmittingGrowth = true;
+    btn.textContent = '⏳ 保存中...';
+    btn.disabled = true;
+    
+    form.submit();
+  }
 
   function renderGrowthChart() {
     if (!growthRecords || growthRecords.length === 0) {
@@ -733,7 +792,6 @@
     });
   })();
 
-  /* 已移除原有的登录链接手动拦截，交给 app.js 统一处理 */
   /*]]>*/
 </script>
 <!-- 引入公共导航与退出控制脚本 -->
