@@ -53,6 +53,7 @@
       -webkit-font-smoothing: antialiased;
       padding-bottom: 100px;
       position: relative;
+      touch-action: manipulation;
     }
 
     /* ========== 顶部导航栏 ========== */
@@ -182,11 +183,23 @@
       background: var(--card-bg); backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px); border-radius: var(--radius-lg);
       padding: 24px; box-shadow: var(--shadow-sm); margin-bottom: 24px;
+      position: relative;
     }
     .chart-card h3 { font-family: "ZCOOL KuaiLe", sans-serif; margin-bottom: 16px; text-align: center; }
-    .chart-wrap { position: relative; width: 100%; height: 350px; }
+    .chart-wrap { 
+      position: relative; 
+      width: 100%; 
+      height: 350px; 
+      touch-action: pan-x pinch-zoom;
+      overflow: hidden;
+    }
     .chart-hint {
       text-align: center; font-size: 0.75em; color: #B8A9D4; margin-top: 8px;
+      display: flex; align-items: center; justify-content: center; gap: 4px;
+    }
+    .chart-hint::before {
+      content: '👆';
+      font-size: 0.9em;
     }
     .chart-controls {
       display: flex; gap: 8px; justify-content: center; margin-top: 12px; flex-wrap: wrap;
@@ -198,6 +211,37 @@
     }
     .chart-control-btn:active { background: #FFE5EC; border-color: #FF9AB2; }
     .chart-empty { text-align: center; padding: 60px 20px; color: #B8A9D4; font-size: 0.95em; }
+
+    /* 数据详情弹窗 */
+    .data-detail-popup {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.3); z-index: 4000; display: flex;
+      align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.25s;
+    }
+    .data-detail-popup.active { opacity: 1; pointer-events: auto; }
+    .data-detail-card {
+      background: white; border-radius: var(--radius-lg);
+      padding: 24px; max-width: 320px; width: 85%;
+      box-shadow: var(--shadow-lg); text-align: center;
+    }
+    .data-detail-card .detail-date {
+      font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.1em;
+      color: #5D4E6D; margin-bottom: 16px;
+    }
+    .data-detail-card .detail-items {
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .data-detail-card .detail-item {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 10px 16px; background: #FFFAFD; border-radius: var(--radius-sm);
+      font-size: 1em;
+    }
+    .data-detail-card .detail-close {
+      margin-top: 16px; padding: 10px 32px; border-radius: 25px;
+      border: none; background: linear-gradient(135deg, #FFB5C2, #FF9AB2);
+      color: white; font-weight: 600; cursor: pointer; font-family: inherit;
+    }
 
     .data-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
     .data-card {
@@ -283,11 +327,11 @@
       .data-card { padding: 12px 6px; }
       .data-card .dc-value { font-size: 1.3em; }
       .form-row { flex-direction: column; gap: 0; }
-      .chart-wrap { height: 280px; }
+      .chart-wrap { height: 300px; }
     }
 
     @media (max-width: 480px) {
-      .chart-wrap { height: 240px; }
+      .chart-wrap { height: 260px; }
       .chart-card { padding: 16px 12px; }
     }
   </style>
@@ -349,11 +393,9 @@
   <div class="chart-card">
     <h3>📈 身高体重变化趋势</h3>
     <div class="chart-wrap" id="growthChartWrap"><canvas id="growthChart"></canvas></div>
-    <div class="chart-hint">💡 提示：左右滑动查看更多日期</div>
+    <div class="chart-hint"></div>
     <div class="chart-controls" id="growthChartControls" style="display:none;">
-      <button class="chart-control-btn" onclick="scrollGrowthChart(-8)">⬅ 上一页</button>
-      <button class="chart-control-btn" onclick="resetGrowthZoom()">🔄 显示最新</button>
-      <button class="chart-control-btn" onclick="scrollGrowthChart(8)">下一页 ➡</button>
+      <button class="chart-control-btn" onclick="resetGrowthZoom()">🔄 重置视图</button>
     </div>
     <div class="chart-empty" id="growthChartEmpty" style="display:none;">📊 添加身体数据后这里会显示折线图</div>
   </div>
@@ -404,11 +446,9 @@
         </div>
       </div>
       <div class="chart-wrap" id="scoreChartWrap" style="margin-top: 16px;"><canvas id="scoreChart"></canvas></div>
-      <div class="chart-hint">💡 提示：左右滑动查看更多日期</div>
+      <div class="chart-hint"></div>
       <div class="chart-controls" id="scoreChartControls" style="display:none;">
-        <button class="chart-control-btn" onclick="scrollScoreChart(-8)">⬅ 上一页</button>
-        <button class="chart-control-btn" onclick="resetScoreZoom()">🔄 显示最新</button>
-        <button class="chart-control-btn" onclick="scrollScoreChart(8)">下一页 ➡</button>
+        <button class="chart-control-btn" onclick="resetScoreZoom()">🔄 重置视图</button>
       </div>
       <div class="chart-empty" id="scoreChartEmpty" style="display:none;">✨ 添加成绩后这里会显示折线图</div>
     </div>
@@ -501,7 +541,7 @@
         <input type="text" name="title" placeholder="如：3月体检">
       </div>
       <div class="field-group">
-        <div class="field-label">👤 记录人 <span style="color:#E8788A;">*必填</span></div>
+        <div class="field-label">👤 记录人 <span style="color:#E8788A;"></span></div>
         <input type="text" name="recordedBy" placeholder="妈妈" required>
       </div>
       <button type="button" class="btn-submit" id="growthSubmitBtn" onclick="submitGrowthForm()">✨ 保存数据</button>
@@ -542,12 +582,21 @@
         <input type="text" name="title" placeholder="如：期中考试">
       </div>
       <div class="field-group">
-        <div class="field-label">👤 记录人 <span style="color:#E8788A;">*必填</span></div>
+        <div class="field-label">👤 记录人 <span style="color:#E8788A;"></span></div>
         <input type="text" name="recordedBy" placeholder="爸爸" required>
       </div>
       <button type="button" class="btn-submit" id="scoreSubmitBtn" onclick="submitScoreForm()">✨ 保存成绩</button>
     </form>
     <button class="add-sheet-cancel" onclick="closeScoreForm()">取消</button>
+  </div>
+</div>
+
+<!-- 数据详情弹窗 -->
+<div class="data-detail-popup" id="dataDetailPopup">
+  <div class="data-detail-card">
+    <div class="detail-date" id="detailDate"></div>
+    <div class="detail-items" id="detailItems"></div>
+    <button class="detail-close" onclick="closeDataDetail()">知道了</button>
   </div>
 </div>
 
@@ -565,17 +614,6 @@
   // 防重复提交标志
   var isSubmittingScore = false;
   var isSubmittingGrowth = false;
-  
-  // 图表可视数据点数量
-  var VISIBLE_POINTS = 8;
-  
-  // 当前滚动位置（0 表示最新数据）
-  var growthScrollOffset = 0;
-  var scoreScrollOffset = 0;
-  
-  // 排序后的数据缓存
-  var sortedGrowthData = null;
-  var sortedScoreData = null;
 
   function showToast(msg) {
     var t = document.getElementById('toastMsg');
@@ -702,66 +740,29 @@
     return dateStr;
   }
 
-  // 获取可视数据切片
-  function getVisibleSlice(sortedData, offset) {
-    var total = sortedData.length;
-    if (total <= VISIBLE_POINTS) {
-      return sortedData;
-    }
-    
-    // offset=0 表示显示最新的 VISIBLE_POINTS 条数据
-    // offset 为正表示向旧数据滚动
-    var endIndex = total - offset;
-    var startIndex = Math.max(0, endIndex - VISIBLE_POINTS);
-    
-    if (startIndex < 0) {
-      startIndex = 0;
-      endIndex = Math.min(total, VISIBLE_POINTS);
-    }
-    
-    return sortedData.slice(startIndex, endIndex);
+  // 完整日期显示
+  function formatFullDate(dateStr) {
+    if (!dateStr) return '';
+    return dateStr;
   }
 
-  // 滚动身高体重图表
-  function scrollGrowthChart(direction) {
-    if (!sortedGrowthData || sortedGrowthData.length <= VISIBLE_POINTS) return;
-    
-    growthScrollOffset += direction;
-    
-    // 边界检查
-    if (growthScrollOffset < 0) growthScrollOffset = 0;
-    if (growthScrollOffset > sortedGrowthData.length - VISIBLE_POINTS) {
-      growthScrollOffset = sortedGrowthData.length - VISIBLE_POINTS;
-    }
-    
-    renderGrowthChartWithOffset();
+  // 数据详情弹窗
+  function showDataDetail(date, detailItems) {
+    document.getElementById('detailDate').textContent = '📅 ' + date;
+    var itemsHtml = '';
+    detailItems.forEach(function(item) {
+      itemsHtml += '<div class="detail-item">' + item.icon + ' ' + item.label + '：<strong>' + item.value + ' ' + item.unit + '</strong></div>';
+    });
+    document.getElementById('detailItems').innerHTML = itemsHtml;
+    document.getElementById('dataDetailPopup').classList.add('active');
   }
 
-  // 滚动成绩图表
-  function scrollScoreChart(direction) {
-    if (!sortedScoreData || sortedScoreData.length <= VISIBLE_POINTS) return;
-    
-    scoreScrollOffset += direction;
-    
-    if (scoreScrollOffset < 0) scoreScrollOffset = 0;
-    if (scoreScrollOffset > sortedScoreData.length - VISIBLE_POINTS) {
-      scoreScrollOffset = sortedScoreData.length - VISIBLE_POINTS;
-    }
-    
-    renderScoreChartWithOffset();
+  function closeDataDetail() {
+    document.getElementById('dataDetailPopup').classList.remove('active');
   }
-
-  // 重置身高图表到最新
-  function resetGrowthZoom() {
-    growthScrollOffset = 0;
-    renderGrowthChartWithOffset();
-  }
-
-  // 重置成绩图表到最新
-  function resetScoreZoom() {
-    scoreScrollOffset = 0;
-    renderScoreChartWithOffset();
-  }
+  document.getElementById('dataDetailPopup').addEventListener('click', function(e) {
+    if (e.target === this) closeDataDetail();
+  });
 
   function renderGrowthChart() {
     if (!growthRecords || growthRecords.length === 0) {
@@ -770,35 +771,31 @@
       document.getElementById('growthChartControls').style.display = 'none';
       return;
     }
-    
-    // 缓存排序后的数据
-    sortedGrowthData = growthRecords.slice().sort(function(a, b) {
-      return (a.recordDate || '').localeCompare(b.recordDate || '');
-    });
-    
-    // 更新最新数据卡片
+    document.getElementById('growthChartWrap').style.display = 'block';
+    document.getElementById('growthChartEmpty').style.display = 'none';
+    document.getElementById('growthChartControls').style.display = 'flex';
+
     var latest = growthRecords[0];
     document.getElementById('latestHeight').textContent = latest.heightCm != null ? latest.heightCm : '--';
     document.getElementById('latestWeight').textContent = latest.weightKg != null ? latest.weightKg : '--';
-    
-    growthScrollOffset = 0;
-    renderGrowthChartWithOffset();
-  }
 
-  function renderGrowthChartWithOffset() {
-    document.getElementById('growthChartWrap').style.display = 'block';
-    document.getElementById('growthChartEmpty').style.display = 'none';
-    document.getElementById('growthChartControls').style.display = sortedGrowthData.length > VISIBLE_POINTS ? 'flex' : 'none';
-
-    var visibleData = getVisibleSlice(sortedGrowthData, growthScrollOffset);
+    // 按日期升序排列（旧的在前，新的在后）
+    var sorted = growthRecords.slice().sort(function(a, b) {
+      return (a.recordDate || '').localeCompare(b.recordDate || '');
+    });
     
-    var dates = visibleData.map(function(r) { return r.recordDate || ''; });
-    var heights = visibleData.map(function(r) { return r.heightCm; });
-    var weights = visibleData.map(function(r) { return r.weightKg; });
+    var dates = sorted.map(function(r) { return r.recordDate || ''; });
+    var heights = sorted.map(function(r) { return r.heightCm; });
+    var weights = sorted.map(function(r) { return r.weightKg; });
 
     if (growthChartInstance) growthChartInstance.destroy();
     var ctx = document.getElementById('growthChart').getContext('2d');
-    
+
+    // 注册 zoom 插件
+    if (typeof ChartZoom !== 'undefined') {
+      Chart.register(ChartZoom);
+    }
+
     growthChartInstance = new Chart(ctx, {
       type: 'line',
       data: {
@@ -812,7 +809,8 @@
             fill: true, 
             tension: 0.4, 
             pointRadius: 5,
-            pointHoverRadius: 7,
+            pointHoverRadius: 8,
+            pointBackgroundColor: '#FF9AB2',
             borderWidth: 2.5,
             yAxisID: 'y' 
           },
@@ -824,7 +822,8 @@
             fill: true, 
             tension: 0.4, 
             pointRadius: 5,
-            pointHoverRadius: 7,
+            pointHoverRadius: 8,
+            pointBackgroundColor: '#5DCFA0',
             borderWidth: 2.5,
             yAxisID: 'y1' 
           }
@@ -834,8 +833,26 @@
         responsive: true, 
         maintainAspectRatio: false,
         interaction: {
-          mode: 'index',
-          intersect: false,
+          mode: 'nearest',
+          intersect: true,
+        },
+        // 点击事件
+        onClick: function(event, elements) {
+          if (elements.length > 0) {
+            var index = elements[0].index;
+            var date = dates[index];
+            var heightVal = heights[index];
+            var weightVal = weights[index];
+            
+            var detailItems = [];
+            if (heightVal != null) {
+              detailItems.push({ icon: '📏', label: '身高', value: heightVal, unit: 'cm' });
+            }
+            if (weightVal != null) {
+              detailItems.push({ icon: '⚖️', label: '体重', value: weightVal, unit: 'kg' });
+            }
+            showDataDetail(formatFullDate(date), detailItems);
+          }
         },
         plugins: { 
           legend: { 
@@ -854,6 +871,7 @@
             borderWidth: 1,
             padding: 12,
             cornerRadius: 12,
+            displayColors: true,
             callbacks: {
               title: function(items) {
                 return '📅 ' + items[0].label;
@@ -865,6 +883,29 @@
                   return '⚖️ 体重: ' + context.parsed.y + ' kg';
                 }
               }
+            }
+          },
+          zoom: {
+            pan: {
+              enabled: true,
+              mode: 'x',
+              modifierKey: null,
+              scaleMode: 'x'
+            },
+            zoom: {
+              wheel: {
+                enabled: false
+              },
+              pinch: {
+                enabled: true
+              },
+              mode: 'x',
+              drag: {
+                enabled: false
+              }
+            },
+            limits: {
+              x: { min: 'original', max: 'original' }
             }
           }
         },
@@ -919,6 +960,10 @@
               maxRotation: 45,
               minRotation: 0,
               font: { size: 11 },
+              maxTicksLimit: function() {
+                // 数据少时全显示，数据多时限8个
+                return dates.length <= 8 ? dates.length : 8;
+              },
               callback: function(value, index, values) {
                 return formatDate(this.getLabelForValue(value));
               }
@@ -927,6 +972,23 @@
         }
       }
     });
+
+    // 初始显示最新数据（滚动到最右边）
+    if (sorted.length > 8) {
+      setTimeout(function() {
+        if (growthChartInstance) {
+          growthChartInstance.pan({
+            x: -(sorted.length - 8) * (growthChartInstance.width / 8)
+          });
+        }
+      }, 300);
+    }
+  }
+
+  function resetGrowthZoom() {
+    if (growthChartInstance) {
+      growthChartInstance.resetZoom();
+    }
   }
 
   function renderScoreChart(subject) {
@@ -936,47 +998,43 @@
       document.getElementById('scoreChartControls').style.display = 'none';
       return;
     }
-    
-    // 缓存排序后的数据
-    sortedScoreData = scoreRecords.slice().sort(function(a, b) {
+    document.getElementById('scoreChartWrap').style.display = 'block';
+    document.getElementById('scoreChartEmpty').style.display = 'none';
+    document.getElementById('scoreChartControls').style.display = 'flex';
+
+    // 按日期升序排列
+    var sorted = scoreRecords.slice().sort(function(a, b) {
       return (a.recordDate || '').localeCompare(b.recordDate || '');
     });
     
-    scoreScrollOffset = 0;
-    renderScoreChartWithOffset();
-  }
-
-  function renderScoreChartWithOffset() {
-    document.getElementById('scoreChartWrap').style.display = 'block';
-    document.getElementById('scoreChartEmpty').style.display = 'none';
-    document.getElementById('scoreChartControls').style.display = sortedScoreData.length > VISIBLE_POINTS ? 'flex' : 'none';
-
-    var visibleData = getVisibleSlice(sortedScoreData, scoreScrollOffset);
-    
-    var dates = visibleData.map(function(r) { return r.recordDate || ''; });
-    var values = visibleData.map(function(r) {
-      if (currentScoreSubject === 'chinese') return r.chinese;
-      if (currentScoreSubject === 'math') return r.math;
+    var dates = sorted.map(function(r) { return r.recordDate || ''; });
+    var values = sorted.map(function(r) {
+      if (subject === 'chinese') return r.chinese;
+      if (subject === 'math') return r.math;
       return r.english;
     });
 
     if (scoreChartInstance) scoreChartInstance.destroy();
     var ctx = document.getElementById('scoreChart').getContext('2d');
-    var color = getSubjectColor(currentScoreSubject);
-    
+    var color = getSubjectColor(subject);
+
+    if (typeof ChartZoom !== 'undefined') {
+      Chart.register(ChartZoom);
+    }
+
     scoreChartInstance = new Chart(ctx, {
       type: 'line',
       data: {
         labels: dates,
         datasets: [{
-          label: getSubjectLabel(currentScoreSubject) + ' 成绩',
+          label: getSubjectLabel(subject) + ' 成绩',
           data: values,
           borderColor: color,
           backgroundColor: color + '15',
           fill: true,
           tension: 0.3,
           pointRadius: 6,
-          pointHoverRadius: 8,
+          pointHoverRadius: 9,
           pointBackgroundColor: color,
           borderWidth: 2.5
         }]
@@ -985,8 +1043,20 @@
         responsive: true,
         maintainAspectRatio: false,
         interaction: {
-          mode: 'index',
-          intersect: false,
+          mode: 'nearest',
+          intersect: true,
+        },
+        onClick: function(event, elements) {
+          if (elements.length > 0) {
+            var index = elements[0].index;
+            var date = dates[index];
+            var value = values[index];
+            var detailItems = [];
+            if (value != null) {
+              detailItems.push({ icon: '📝', label: getSubjectLabel(subject), value: value, unit: '分' });
+            }
+            showDataDetail(formatFullDate(date), detailItems);
+          }
         },
         plugins: { 
           legend: { display: false },
@@ -998,13 +1068,37 @@
             borderWidth: 1,
             padding: 12,
             cornerRadius: 12,
+            displayColors: true,
             callbacks: {
               title: function(items) {
                 return '📅 ' + items[0].label;
               },
               label: function(context) {
-                return '📝 ' + getSubjectLabel(currentScoreSubject) + ': ' + context.parsed.y + ' 分';
+                return '📝 ' + getSubjectLabel(subject) + ': ' + context.parsed.y + ' 分';
               }
+            }
+          },
+          zoom: {
+            pan: {
+              enabled: true,
+              mode: 'x',
+              modifierKey: null,
+              scaleMode: 'x'
+            },
+            zoom: {
+              wheel: {
+                enabled: false
+              },
+              pinch: {
+                enabled: true
+              },
+              mode: 'x',
+              drag: {
+                enabled: false
+              }
+            },
+            limits: {
+              x: { min: 'original', max: 'original' }
             }
           }
         },
@@ -1038,6 +1132,9 @@
               maxRotation: 45,
               minRotation: 0,
               font: { size: 11 },
+              maxTicksLimit: function() {
+                return dates.length <= 8 ? dates.length : 8;
+              },
               callback: function(value, index, values) {
                 return formatDate(this.getLabelForValue(value));
               }
@@ -1046,6 +1143,23 @@
         }
       }
     });
+
+    // 初始显示最新数据
+    if (sorted.length > 8) {
+      setTimeout(function() {
+        if (scoreChartInstance) {
+          scoreChartInstance.pan({
+            x: -(sorted.length - 8) * (scoreChartInstance.width / 8)
+          });
+        }
+      }, 300);
+    }
+  }
+
+  function resetScoreZoom() {
+    if (scoreChartInstance) {
+      scoreChartInstance.resetZoom();
+    }
   }
 
   function getSubjectLabel(subject) {
@@ -1065,7 +1179,6 @@
       document.querySelectorAll('.score-tab').forEach(function(t) { t.classList.remove('active'); });
       e.target.classList.add('active');
       currentScoreSubject = e.target.dataset.subject;
-      scoreScrollOffset = 0; // 切换科目时重置位置
       renderScoreChart(currentScoreSubject);
     }
   });
@@ -1082,7 +1195,6 @@
     if (item.getAttribute('href') === path) item.classList.add('active');
   });
 
-  // 返回逻辑优化
   (function() {
     if (window.location.pathname === '/' || window.location.pathname === '') return;
     history.replaceState({ subPage: true }, '', window.location.href);
