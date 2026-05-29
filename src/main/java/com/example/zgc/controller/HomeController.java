@@ -40,13 +40,20 @@ public class HomeController {
 
     // ==================== 首页（含开屏动画） ====================
     @GetMapping("/")
-    public String home(Model model, @RequestParam(value = "loaded", required = false) String loaded) {
-        // 如果没有 loaded=true 参数，则显示开屏动画页
-        if (!"true".equals(loaded)) {
+    public String home(Model model,
+                       @RequestParam(value = "standalone", required = false) String standalone,
+                       @RequestParam(value = "loaded", required = false) String loaded) {
+
+        // 如果是 PWA 启动（standalone=true）或过渡页跳转（loaded=true），直接显示首页内容
+        // 不显示过渡动画，因为动画在 splash.html 里已经播放过了
+        boolean skipSplash = "true".equals(standalone) || "true".equals(loaded);
+
+        // 如果是浏览器直接访问（无任何参数），则显示过渡动画页
+        if (!skipSplash) {
             return "splash";
         }
 
-        // 开屏动画结束后，显示正常首页内容
+        // ====== 以下是首页的正常数据加载 ======
         List<GrowthRecord> records = recordService.findAllByOrderByRecordDateDesc();
 
         // 计算最新的身高和体重
