@@ -19,8 +19,8 @@ public class SecurityConfig {
     }
 
     /**
-     * 完全忽略静态资源的安全检查
-     * ✅ 新增了 PWA 关键文件的忽略
+     * 忽略静态资源的安全检查（仅真正的静态文件）
+     * 不建议将页面文件放在这里，因为被忽略的路径无法使用 Spring Security 的其他特性
      */
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -30,17 +30,15 @@ public class SecurityConfig {
                         "/photos/**",
                         "/css/**",
                         "/js/**",
-                        // ✅ PWA 关键文件：manifest、Service Worker、app.js
+                        // PWA 关键文件
                         "/manifest.json",
                         "/sw.js",
                         "/app.js",
-                        // ✅ PWA 图标
+                        // PWA 图标
                         "/xiao.png",
-                        "/da.png",
-                        // ✅ 过渡页
-                        "/splash.html",
-                        // ⚠️ 移除 /api/avatar/** 这里不该用 ignoring
-                        // （如果需要公开访问，在 filterChain 里 permitAll 就好）
+                        "/da.png"
+                        // ⚠️ 移除 /splash.html（改用 filterChain 的 permitAll）
+                        // ⚠️ 移除 /api/avatar/** 注释
                 );
     }
 
@@ -50,7 +48,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
 
                 .authorizeHttpRequests(auth -> auth
-                        // ✅ 公开页面（无需登录）
+                        // 公开页面（无需登录即可访问）
                         .requestMatchers(
                                 "/",
                                 "/gallery",
@@ -59,12 +57,16 @@ public class SecurityConfig {
                                 "/messages",
                                 "/register",
                                 "/login",
-                                // ✅ 过渡页和 PWA 启动参数
+                                // 过渡页（从 ignoring 移到这里，保持安全上下文可用）
                                 "/splash.html"
                         ).permitAll()
-                        // ✅ 公开 API（包括头像接口）
+                        // 公开 API
                         .requestMatchers("/api/avatar/**").permitAll()
-                        // 其他所有请求需要认证
+                        // 所有 POST 操作都需要认证
+                        .requestMatchers(request -> 
+                            "POST".equalsIgnoreCase(request.getMethod())
+                        ).authenticated()
+                        // 其他请求（如 /api/** 等）需要认证
                         .anyRequest().authenticated()
                 )
 
