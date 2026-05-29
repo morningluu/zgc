@@ -1,7 +1,7 @@
 {
-  "name": "成长手册",
+  "name": "赵高钏的成长记录手册",
   "short_name": "成长手册",
-  "start_url": "/",
+  "start_url": "/splash.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
