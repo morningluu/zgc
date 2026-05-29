@@ -488,6 +488,12 @@
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(255, 154, 178, 0.4);
     }
+    .btn-submit:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
     .add-sheet-cancel {
       display: block;
       margin: 16px auto 0;
@@ -619,7 +625,7 @@
   <div class="add-sheet">
     <div class="add-sheet-title">💌 写下留言</div>
     <p class="form-subtitle">留下你对宝宝的温暖寄语</p>
-    <form action="/messages/add" method="post">
+    <form action="/messages/add" method="post" onsubmit="return handleMessageSubmit(this)">
       <div class="field-group">
         <div class="field-label">📝 称呼 <span style="color:#E8788A;">*必填</span></div>
         <input type="text" name="title" placeholder="如：爸爸、妈妈、爷爷..." required>
@@ -635,7 +641,7 @@
           <span class="date-icon">📆</span>
         </div>
       </div>
-      <button type="submit" class="btn-submit">✨ 发布留言</button>
+      <button type="submit" id="msgSubmitBtn" class="btn-submit">✨ 发布留言</button>
     </form>
     <button class="add-sheet-cancel" onclick="closeMessageForm()">取消</button>
   </div>
@@ -645,12 +651,15 @@
 
 <script th:inline="javascript">
   /*<![CDATA[*/
+  
+  // 侧边栏控制
   function toggleSidebar() {
     var ov = document.getElementById('sidebarOverlay'), pn = document.getElementById('sidebarPanel');
     ov.classList.toggle('active'); pn.classList.toggle('active');
     document.body.style.overflow = ov.classList.contains('active') ? 'hidden' : '';
   }
 
+  // 添加记录弹窗
   function openAddOverlay() {
     document.getElementById('addOverlay').classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -663,6 +672,7 @@
     if (e.target === this) closeAddOverlay();
   });
 
+  // 留言表单弹窗
   function openAddForm() {
     document.getElementById('messageAddOverlay').classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -670,12 +680,50 @@
   function closeMessageForm() {
     document.getElementById('messageAddOverlay').classList.remove('active');
     document.body.style.overflow = '';
+    
+    // 关闭弹窗时重置提交按钮状态
+    resetSubmitButton();
   }
 
+  // 处理表单提交 - 防止重复提交
+  function handleMessageSubmit(form) {
+    var btn = document.getElementById('msgSubmitBtn');
+    
+    // 如果按钮已经被禁用，阻止重复提交
+    if (btn.disabled) {
+      return false;
+    }
+    
+    // 禁用按钮，防止重复点击
+    btn.disabled = true;
+    btn.textContent = '⏳ 发布中...';
+    
+    // 保存原始文本，以便恢复
+    btn.setAttribute('data-original-text', '✨ 发布留言');
+    
+    // 5秒后自动恢复按钮（防止网络异常导致按钮永久禁用）
+    setTimeout(function() {
+      resetSubmitButton();
+    }, 5000);
+    
+    return true;
+  }
+  
+  // 重置提交按钮
+  function resetSubmitButton() {
+    var btn = document.getElementById('msgSubmitBtn');
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = btn.getAttribute('data-original-text') || '✨ 发布留言';
+    }
+  }
+
+  // 回到顶部按钮显示/隐藏
   window.addEventListener('scroll', function() {
     document.getElementById('backToTop').style.display = window.scrollY > 300 ? 'block' : 'none';
   });
 
+  // 底部导航高亮
   var path = window.location.pathname;
   document.querySelectorAll('.bottom-nav-item').forEach(function(item) {
     if (item.getAttribute('href') === path) item.classList.add('active');
@@ -688,7 +736,11 @@
     window.addEventListener('popstate', function(event) {
       var overlays = document.querySelectorAll('.add-overlay.active');
       if (overlays.length > 0) {
-        overlays.forEach(function(ov) { ov.classList.remove('active'); });
+        overlays.forEach(function(ov) { 
+          ov.classList.remove('active'); 
+        });
+        document.body.style.overflow = '';
+        resetSubmitButton();
         history.pushState({ fromSubPage: true }, '', window.location.href);
         return;
       }
@@ -696,7 +748,13 @@
     });
   })();
 
-  // 已移除对登录链接的手动拦截，统一交给 app.js
+  // 页面卸载时重置按钮（防止浏览器缓存按钮状态）
+  window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+      resetSubmitButton();
+    }
+  });
+  
   /*]]>*/
 </script>
 <!-- 引入公共导航与退出控制脚本 -->
