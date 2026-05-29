@@ -19,17 +19,28 @@ public class SecurityConfig {
     }
 
     /**
-     * 完全忽略静态资源的安全检查（推荐方式）
+     * 完全忽略静态资源的安全检查
+     * ✅ 新增了 PWA 关键文件的忽略
      */
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
                 .requestMatchers(
-                        "/uploads/**",   // 上传的所有图片、头像
-                        "/photos/**",    // 其他可能的静态目录
+                        "/uploads/**",
+                        "/photos/**",
                         "/css/**",
                         "/js/**",
-                        "/api/avatar/**" // 头像接口也顺便忽略，避免未登录时加载失败
+                        // ✅ PWA 关键文件：manifest、Service Worker、app.js
+                        "/manifest.json",
+                        "/sw.js",
+                        "/app.js",
+                        // ✅ PWA 图标
+                        "/xiao.png",
+                        "/da.png",
+                        // ✅ 过渡页
+                        "/splash.html",
+                        // ⚠️ 移除 /api/avatar/** 这里不该用 ignoring
+                        // （如果需要公开访问，在 filterChain 里 permitAll 就好）
                 );
     }
 
@@ -39,9 +50,21 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/gallery", "/growth", "/diary", "/messages").permitAll()
-                        .requestMatchers("/register").permitAll()
-                        .requestMatchers("/login").permitAll()
+                        // ✅ 公开页面（无需登录）
+                        .requestMatchers(
+                                "/",
+                                "/gallery",
+                                "/growth",
+                                "/diary",
+                                "/messages",
+                                "/register",
+                                "/login",
+                                // ✅ 过渡页和 PWA 启动参数
+                                "/splash.html"
+                        ).permitAll()
+                        // ✅ 公开 API（包括头像接口）
+                        .requestMatchers("/api/avatar/**").permitAll()
+                        // 其他所有请求需要认证
                         .anyRequest().authenticated()
                 )
 
