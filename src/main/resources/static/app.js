@@ -9,8 +9,8 @@
   if (isSplashPage) return;
 
   // ===== 如果是通过 navigateTo 跳转过来的（内部导航），绝不播放动画 =====
-  if (window.__internalNav) {
-    window.__internalNav = false;
+  if (sessionStorage.getItem('skipSplash') === 'true') {
+    sessionStorage.removeItem('skipSplash');
     return;
   }
 
@@ -18,21 +18,14 @@
   var isHomePage = (path === '/' || path === '');
   if (!isHomePage) return;
 
-  // 检查是否需要播放动画（sessionStorage 在每次浏览器新会话时清空）
+  // 检查是否需要播放动画
   if (!sessionStorage.getItem('splashPlayed')) {
     sessionStorage.setItem('splashPlayed', 'true');
 
-    // 构建目标 URL：保留原始查询参数，追加 standalone 标记
     var targetUrl = '/';
     var currentSearch = window.location.search;
 
-    // 检测是否是 PWA standalone 模式
-    var isStandalone = window.matchMedia('(display-mode: standalone)').matches
-      || window.navigator.standalone
-      || window.location.search.includes('standalone=true');
-
     if (currentSearch) {
-      // 已有查询参数，追加 standalone
       if (!currentSearch.includes('standalone=')) {
         targetUrl = currentSearch + '&standalone=true';
       } else {
@@ -47,7 +40,7 @@
   }
 })();
 
-// 1. 注册 Service Worker（页面加载完成后注册）
+// 1. 注册 Service Worker
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
     navigator.serviceWorker.register('/sw.js').then(function(reg) {
@@ -58,7 +51,7 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// 2. 退出确认逻辑（通过 popstate + confirm，不拦截 beforeunload）
+// 2. 退出确认逻辑
 (function() {
   if (window.history.length <= 1) {
     history.pushState({ guard: true }, '', location.href);
@@ -83,7 +76,7 @@ if ('serviceWorker' in navigator) {
 
 // 3. 通用导航函数
 function navigateTo(url) {
-  window.__internalNav = true;   // 标记为内部导航
+  sessionStorage.setItem('skipSplash', 'true');
   location.replace(url);
 }
 
@@ -114,7 +107,7 @@ document.addEventListener('click', function(e) {
   }
 });
 
-// 6. 退出按钮（如有）
+// 6. 退出按钮
 var exitBtn = document.getElementById('exitBtn');
 if (exitBtn) {
   exitBtn.addEventListener('click', function() {
@@ -124,5 +117,5 @@ if (exitBtn) {
 
 // 表单提交时不拦截退出
 document.addEventListener('submit', function(e) {
-  window._internalNav = true;
+  sessionStorage.setItem('skipSplash', 'true');
 });
