@@ -6,11 +6,8 @@
   <title>成长数据 · 赵高钏的成长手册</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🌱</text></svg>">
   <link rel="manifest" href="/manifest.json">
-  <!-- 使用 Chart.js 4.4.7 版本 -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
-  <!-- 引入 chartjs-plugin-zoom 用于缩放和滑动 -->
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.2.0/dist/chartjs-plugin-zoom.min.js"></script>
-  <!-- 引入 hammer.js（zoom 插件的依赖） -->
   <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
@@ -58,7 +55,7 @@
       position: relative;
     }
 
-    /* ========== 顶部导航栏（相册样式） ========== */
+    /* ========== 顶部导航栏 ========== */
     .top-bar {
       position: sticky; top: 0; z-index: 1000;
       background: rgba(255,255,255,0.7); backdrop-filter: blur(22px);
@@ -352,9 +349,11 @@
   <div class="chart-card">
     <h3>📈 身高体重变化趋势</h3>
     <div class="chart-wrap" id="growthChartWrap"><canvas id="growthChart"></canvas></div>
-    <div class="chart-hint">💡 提示：可以用手指缩放和拖动图表</div>
+    <div class="chart-hint">💡 提示：左右滑动查看更多日期</div>
     <div class="chart-controls" id="growthChartControls" style="display:none;">
-      <button class="chart-control-btn" onclick="resetGrowthZoom()">🔄 重置视图</button>
+      <button class="chart-control-btn" onclick="scrollGrowthChart(-8)">⬅ 上一页</button>
+      <button class="chart-control-btn" onclick="resetGrowthZoom()">🔄 显示最新</button>
+      <button class="chart-control-btn" onclick="scrollGrowthChart(8)">下一页 ➡</button>
     </div>
     <div class="chart-empty" id="growthChartEmpty" style="display:none;">📊 添加身体数据后这里会显示折线图</div>
   </div>
@@ -405,9 +404,11 @@
         </div>
       </div>
       <div class="chart-wrap" id="scoreChartWrap" style="margin-top: 16px;"><canvas id="scoreChart"></canvas></div>
-      <div class="chart-hint">💡 提示：可以用手指缩放和拖动图表</div>
+      <div class="chart-hint">💡 提示：左右滑动查看更多日期</div>
       <div class="chart-controls" id="scoreChartControls" style="display:none;">
-        <button class="chart-control-btn" onclick="resetScoreZoom()">🔄 重置视图</button>
+        <button class="chart-control-btn" onclick="scrollScoreChart(-8)">⬅ 上一页</button>
+        <button class="chart-control-btn" onclick="resetScoreZoom()">🔄 显示最新</button>
+        <button class="chart-control-btn" onclick="scrollScoreChart(8)">下一页 ➡</button>
       </div>
       <div class="chart-empty" id="scoreChartEmpty" style="display:none;">✨ 添加成绩后这里会显示折线图</div>
     </div>
@@ -564,6 +565,17 @@
   // 防重复提交标志
   var isSubmittingScore = false;
   var isSubmittingGrowth = false;
+  
+  // 图表可视数据点数量
+  var VISIBLE_POINTS = 8;
+  
+  // 当前滚动位置（0 表示最新数据）
+  var growthScrollOffset = 0;
+  var scoreScrollOffset = 0;
+  
+  // 排序后的数据缓存
+  var sortedGrowthData = null;
+  var sortedScoreData = null;
 
   function showToast(msg) {
     var t = document.getElementById('toastMsg');
@@ -690,12 +702,65 @@
     return dateStr;
   }
 
-  // 获取 x 轴最多显示的标签数量（根据屏幕宽度）
-  function getMaxTicksLimit() {
-    var width = window.innerWidth;
-    if (width <= 480) return 6;
-    if (width <= 768) return 10;
-    return 15;
+  // 获取可视数据切片
+  function getVisibleSlice(sortedData, offset) {
+    var total = sortedData.length;
+    if (total <= VISIBLE_POINTS) {
+      return sortedData;
+    }
+    
+    // offset=0 表示显示最新的 VISIBLE_POINTS 条数据
+    // offset 为正表示向旧数据滚动
+    var endIndex = total - offset;
+    var startIndex = Math.max(0, endIndex - VISIBLE_POINTS);
+    
+    if (startIndex < 0) {
+      startIndex = 0;
+      endIndex = Math.min(total, VISIBLE_POINTS);
+    }
+    
+    return sortedData.slice(startIndex, endIndex);
+  }
+
+  // 滚动身高体重图表
+  function scrollGrowthChart(direction) {
+    if (!sortedGrowthData || sortedGrowthData.length <= VISIBLE_POINTS) return;
+    
+    growthScrollOffset += direction;
+    
+    // 边界检查
+    if (growthScrollOffset < 0) growthScrollOffset = 0;
+    if (growthScrollOffset > sortedGrowthData.length - VISIBLE_POINTS) {
+      growthScrollOffset = sortedGrowthData.length - VISIBLE_POINTS;
+    }
+    
+    renderGrowthChartWithOffset();
+  }
+
+  // 滚动成绩图表
+  function scrollScoreChart(direction) {
+    if (!sortedScoreData || sortedScoreData.length <= VISIBLE_POINTS) return;
+    
+    scoreScrollOffset += direction;
+    
+    if (scoreScrollOffset < 0) scoreScrollOffset = 0;
+    if (scoreScrollOffset > sortedScoreData.length - VISIBLE_POINTS) {
+      scoreScrollOffset = sortedScoreData.length - VISIBLE_POINTS;
+    }
+    
+    renderScoreChartWithOffset();
+  }
+
+  // 重置身高图表到最新
+  function resetGrowthZoom() {
+    growthScrollOffset = 0;
+    renderGrowthChartWithOffset();
+  }
+
+  // 重置成绩图表到最新
+  function resetScoreZoom() {
+    scoreScrollOffset = 0;
+    renderScoreChartWithOffset();
   }
 
   function renderGrowthChart() {
@@ -705,47 +770,34 @@
       document.getElementById('growthChartControls').style.display = 'none';
       return;
     }
-    document.getElementById('growthChartWrap').style.display = 'block';
-    document.getElementById('growthChartEmpty').style.display = 'none';
-    document.getElementById('growthChartControls').style.display = 'flex';
-
+    
+    // 缓存排序后的数据
+    sortedGrowthData = growthRecords.slice().sort(function(a, b) {
+      return (a.recordDate || '').localeCompare(b.recordDate || '');
+    });
+    
+    // 更新最新数据卡片
     var latest = growthRecords[0];
     document.getElementById('latestHeight').textContent = latest.heightCm != null ? latest.heightCm : '--';
     document.getElementById('latestWeight').textContent = latest.weightKg != null ? latest.weightKg : '--';
+    
+    growthScrollOffset = 0;
+    renderGrowthChartWithOffset();
+  }
 
-    var sorted = growthRecords.slice().sort(function(a, b) {
-      return (a.recordDate || '').localeCompare(b.recordDate || '');
-    });
-    var dates = sorted.map(function(r) { return r.recordDate || ''; });
-    var heights = sorted.map(function(r) { return r.heightCm; });
-    var weights = sorted.map(function(r) { return r.weightKg; });
+  function renderGrowthChartWithOffset() {
+    document.getElementById('growthChartWrap').style.display = 'block';
+    document.getElementById('growthChartEmpty').style.display = 'none';
+    document.getElementById('growthChartControls').style.display = sortedGrowthData.length > VISIBLE_POINTS ? 'flex' : 'none';
+
+    var visibleData = getVisibleSlice(sortedGrowthData, growthScrollOffset);
+    
+    var dates = visibleData.map(function(r) { return r.recordDate || ''; });
+    var heights = visibleData.map(function(r) { return r.heightCm; });
+    var weights = visibleData.map(function(r) { return r.weightKg; });
 
     if (growthChartInstance) growthChartInstance.destroy();
     var ctx = document.getElementById('growthChart').getContext('2d');
-    
-    // 配置缩放插件
-    Chart.register(ChartZoom);
-    // 注册 zoom 插件的默认设置
-    Chart.defaults.plugins.zoom = {
-      pan: {
-        enabled: true,
-        mode: 'x',
-        modifierKey: null
-      },
-      zoom: {
-        wheel: {
-          enabled: true,
-          modifierKey: null
-        },
-        pinch: {
-          enabled: true
-        },
-        mode: 'x',
-        drag: {
-          enabled: false
-        }
-      }
-    };
     
     growthChartInstance = new Chart(ctx, {
       type: 'line',
@@ -759,12 +811,9 @@
             backgroundColor: 'rgba(255,154,178,0.08)', 
             fill: true, 
             tension: 0.4, 
-            pointRadius: function(context) {
-              // 数据点多时减小点的大小
-              return growthRecords.length > 20 ? 2 : 4;
-            },
-            pointHoverRadius: 6,
-            borderWidth: 2,
+            pointRadius: 5,
+            pointHoverRadius: 7,
+            borderWidth: 2.5,
             yAxisID: 'y' 
           },
           { 
@@ -774,11 +823,9 @@
             backgroundColor: 'rgba(93,207,160,0.08)', 
             fill: true, 
             tension: 0.4, 
-            pointRadius: function(context) {
-              return growthRecords.length > 20 ? 2 : 4;
-            },
-            pointHoverRadius: 6,
-            borderWidth: 2,
+            pointRadius: 5,
+            pointHoverRadius: 7,
+            borderWidth: 2.5,
             yAxisID: 'y1' 
           }
         ]
@@ -796,16 +843,17 @@
             labels: { 
               usePointStyle: true,
               padding: 20,
-              font: { size: 12 }
+              font: { size: 13 }
             } 
           },
           tooltip: {
-            backgroundColor: 'rgba(255,255,255,0.9)',
+            backgroundColor: 'rgba(255,255,255,0.95)',
             titleColor: '#5D4E6D',
             bodyColor: '#5D4E6D',
             borderColor: '#FFB5C2',
             borderWidth: 1,
             padding: 12,
+            cornerRadius: 12,
             callbacks: {
               title: function(items) {
                 return '📅 ' + items[0].label;
@@ -816,26 +864,6 @@
                 } else {
                   return '⚖️ 体重: ' + context.parsed.y + ' kg';
                 }
-              }
-            }
-          },
-          zoom: {
-            pan: {
-              enabled: true,
-              mode: 'x',
-              modifierKey: null
-            },
-            zoom: {
-              wheel: {
-                enabled: true,
-                modifierKey: null
-              },
-              pinch: {
-                enabled: true
-              },
-              mode: 'x',
-              drag: {
-                enabled: false
               }
             }
           }
@@ -849,7 +877,6 @@
               font: { size: 12 }
             }, 
             min: function() {
-              // 动态计算最小值
               var validHeights = heights.filter(function(h) { return h != null; });
               if (validHeights.length === 0) return 40;
               return Math.max(0, Math.floor(Math.min.apply(null, validHeights) - 10));
@@ -889,12 +916,10 @@
           x: { 
             grid: { display: false },
             ticks: {
-              maxTicksLimit: getMaxTicksLimit(),
               maxRotation: 45,
               minRotation: 0,
-              font: { size: 10 },
+              font: { size: 11 },
               callback: function(value, index, values) {
-                // 格式化日期显示
                 return formatDate(this.getLabelForValue(value));
               }
             }
@@ -904,24 +929,6 @@
     });
   }
 
-  function resetGrowthZoom() {
-    if (growthChartInstance) {
-      growthChartInstance.resetZoom();
-    }
-  }
-
-  function getSubjectLabel(subject) {
-    if (subject === 'chinese') return '语文';
-    if (subject === 'math') return '数学';
-    return '英语';
-  }
-  
-  function getSubjectColor(subject) {
-    if (subject === 'chinese') return '#F9A66C';
-    if (subject === 'math') return '#6CB4D9';
-    return '#A1C964';
-  }
-
   function renderScoreChart(subject) {
     if (!scoreRecords || scoreRecords.length === 0) {
       document.getElementById('scoreChartWrap').style.display = 'none';
@@ -929,46 +936,49 @@
       document.getElementById('scoreChartControls').style.display = 'none';
       return;
     }
-    document.getElementById('scoreChartWrap').style.display = 'block';
-    document.getElementById('scoreChartEmpty').style.display = 'none';
-    document.getElementById('scoreChartControls').style.display = 'flex';
-
-    var sorted = scoreRecords.slice().sort(function(a, b) {
+    
+    // 缓存排序后的数据
+    sortedScoreData = scoreRecords.slice().sort(function(a, b) {
       return (a.recordDate || '').localeCompare(b.recordDate || '');
     });
-    var dates = sorted.map(function(r) { return r.recordDate || ''; });
-    var values = sorted.map(function(r) {
-      if (subject === 'chinese') return r.chinese;
-      if (subject === 'math') return r.math;
+    
+    scoreScrollOffset = 0;
+    renderScoreChartWithOffset();
+  }
+
+  function renderScoreChartWithOffset() {
+    document.getElementById('scoreChartWrap').style.display = 'block';
+    document.getElementById('scoreChartEmpty').style.display = 'none';
+    document.getElementById('scoreChartControls').style.display = sortedScoreData.length > VISIBLE_POINTS ? 'flex' : 'none';
+
+    var visibleData = getVisibleSlice(sortedScoreData, scoreScrollOffset);
+    
+    var dates = visibleData.map(function(r) { return r.recordDate || ''; });
+    var values = visibleData.map(function(r) {
+      if (currentScoreSubject === 'chinese') return r.chinese;
+      if (currentScoreSubject === 'math') return r.math;
       return r.english;
     });
 
     if (scoreChartInstance) scoreChartInstance.destroy();
     var ctx = document.getElementById('scoreChart').getContext('2d');
-    var color = getSubjectColor(subject);
-    
-    // 确保 zoom 插件已注册
-    if (typeof ChartZoom !== 'undefined') {
-      Chart.register(ChartZoom);
-    }
+    var color = getSubjectColor(currentScoreSubject);
     
     scoreChartInstance = new Chart(ctx, {
       type: 'line',
       data: {
         labels: dates,
         datasets: [{
-          label: getSubjectLabel(subject) + ' 成绩',
+          label: getSubjectLabel(currentScoreSubject) + ' 成绩',
           data: values,
           borderColor: color,
           backgroundColor: color + '15',
           fill: true,
           tension: 0.3,
-          pointRadius: function(context) {
-            return scoreRecords.length > 20 ? 2 : 5;
-          },
-          pointHoverRadius: 7,
+          pointRadius: 6,
+          pointHoverRadius: 8,
           pointBackgroundColor: color,
-          borderWidth: 2
+          borderWidth: 2.5
         }]
       },
       options: {
@@ -981,38 +991,19 @@
         plugins: { 
           legend: { display: false },
           tooltip: {
-            backgroundColor: 'rgba(255,255,255,0.9)',
+            backgroundColor: 'rgba(255,255,255,0.95)',
             titleColor: '#5D4E6D',
             bodyColor: '#5D4E6D',
             borderColor: color,
             borderWidth: 1,
             padding: 12,
+            cornerRadius: 12,
             callbacks: {
               title: function(items) {
                 return '📅 ' + items[0].label;
               },
               label: function(context) {
-                return '📝 ' + getSubjectLabel(subject) + ': ' + context.parsed.y + ' 分';
-              }
-            }
-          },
-          zoom: {
-            pan: {
-              enabled: true,
-              mode: 'x',
-              modifierKey: null
-            },
-            zoom: {
-              wheel: {
-                enabled: true,
-                modifierKey: null
-              },
-              pinch: {
-                enabled: true
-              },
-              mode: 'x',
-              drag: {
-                enabled: false
+                return '📝 ' + getSubjectLabel(currentScoreSubject) + ': ' + context.parsed.y + ' 分';
               }
             }
           }
@@ -1044,10 +1035,9 @@
           x: { 
             grid: { display: false },
             ticks: {
-              maxTicksLimit: getMaxTicksLimit(),
               maxRotation: 45,
               minRotation: 0,
-              font: { size: 10 },
+              font: { size: 11 },
               callback: function(value, index, values) {
                 return formatDate(this.getLabelForValue(value));
               }
@@ -1058,10 +1048,16 @@
     });
   }
 
-  function resetScoreZoom() {
-    if (scoreChartInstance) {
-      scoreChartInstance.resetZoom();
-    }
+  function getSubjectLabel(subject) {
+    if (subject === 'chinese') return '语文';
+    if (subject === 'math') return '数学';
+    return '英语';
+  }
+  
+  function getSubjectColor(subject) {
+    if (subject === 'chinese') return '#F9A66C';
+    if (subject === 'math') return '#6CB4D9';
+    return '#A1C964';
   }
 
   document.getElementById('scoreTabs').addEventListener('click', function(e) {
@@ -1069,22 +1065,13 @@
       document.querySelectorAll('.score-tab').forEach(function(t) { t.classList.remove('active'); });
       e.target.classList.add('active');
       currentScoreSubject = e.target.dataset.subject;
+      scoreScrollOffset = 0; // 切换科目时重置位置
       renderScoreChart(currentScoreSubject);
     }
   });
 
   renderGrowthChart();
   renderScoreChart('chinese');
-
-  // 监听窗口大小变化，重新渲染图表以适应新的 maxTicksLimit
-  var resizeTimeout;
-  window.addEventListener('resize', function() {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(function() {
-      renderGrowthChart();
-      renderScoreChart(currentScoreSubject);
-    }, 300);
-  });
 
   window.addEventListener('scroll', function() {
     document.getElementById('backToTop').style.display = window.scrollY > 300 ? 'block' : 'none';
@@ -1095,7 +1082,7 @@
     if (item.getAttribute('href') === path) item.classList.add('active');
   });
 
-  // 返回逻辑优化：优先关闭弹窗，否则交给 app.js 处理退出确认
+  // 返回逻辑优化
   (function() {
     if (window.location.pathname === '/' || window.location.pathname === '') return;
     history.replaceState({ subPage: true }, '', window.location.href);
@@ -1107,13 +1094,11 @@
         history.pushState({ subPage: true }, '', window.location.href);
         return;
       }
-      // 没有打开的弹窗，由 app.js 接管退出确认，这里什么都不做
     });
   })();
 
   /*]]>*/
 </script>
-<!-- 引入公共导航与退出控制脚本 -->
 <script src="/app.js"></script>
 </body>
 </html>
