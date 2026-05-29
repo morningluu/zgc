@@ -251,34 +251,24 @@ body {
 
 <script>
 (function() {
-  // 检测是否为 PWA 独立窗口（桌面图标启动）
-  function isPWAStandalone() {
-    if (window.matchMedia('(display-mode: standalone)').matches) return true;
-    if (window.navigator.standalone) return true; // iOS Safari
-    return false;
+  function goToTarget() {
+    // 获取 app.js 保存的目标页面路径
+    var targetPath = sessionStorage.getItem('splashTarget') || '/?standalone=true';
+    // 清除保存的路径
+    sessionStorage.removeItem('splashTarget');
+    // 跳转到目标页面
+    window.location.replace(targetPath);
   }
 
-  function goToHome() {
-    // 跳转到首页，带上 standalone=true 参数，后端需要放行这个参数避免重定向到登录页
-    window.location.replace('/?standalone=true');
-  }
-
-  // 如果不是 PWA 模式（比如浏览器直接访问），立刻跳转到首页，不显示动画
-  if (!isPWAStandalone()) {
-    goToHome();
-    return;
-  }
-
-  // 是 PWA 模式，播放完整动画后再跳转
+  // 3秒后跳转
   document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(goToHome, 3000);
+    setTimeout(goToTarget, 3000);
   });
-  // 兜底：万一 DOMContentLoaded 没触发，7秒后强制跳转
-  setTimeout(goToHome, 7000);
+  // 兜底：7秒后强制跳转
+  setTimeout(goToTarget, 7000);
 })();
 </script>
 
-<!-- 引入公共导航与退出控制脚本，确保 Service Worker 注册等 -->
 <script src="/app.js"></script>
 </body>
 </html>
