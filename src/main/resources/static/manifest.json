@@ -4,8 +4,8 @@
   "id": "/splash.html",
   "start_url": "/splash.html",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "background_color": "#FFFEDCDE",
+  "theme_color": #FFFEDCDE",
   "description": "记录赵高钏成长的每一个珍贵瞬间",
   "icons": [
     {
