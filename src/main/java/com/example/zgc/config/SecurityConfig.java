@@ -36,9 +36,10 @@ public class SecurityConfig {
                         "/app.js",
                         // PWA 图标
                         "/xiao.png",
-                        "/da.png"
-                        // ⚠️ 移除 /splash.html（改用 filterChain 的 permitAll）
-                        // ⚠️ 移除 /api/avatar/** 注释
+                        "/da.png",
+                        // PWA 截图（新增）
+                        "/screenshot-wide.png",
+                        "/screenshot-mobile.png"
                 );
     }
 
