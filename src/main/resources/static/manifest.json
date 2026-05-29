@@ -5,8 +5,10 @@
   "start_url": "/splash.html",
   "display": "standalone",
   "background_color": "#FFFEDCDE",
-  "theme_color": #FFFEDCDE",
+  "theme_color": "#FFFEDCDE",
   "description": "记录赵高钏成长的每一个珍贵瞬间",
+  "lang": "zh-CN",
+  "orientation": "any",
   "icons": [
     {
       "src": "/xiao.png",
@@ -18,7 +20,7 @@
       "src": "/da.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ],
   "screenshots": [
@@ -30,11 +32,12 @@
     },
     {
       "src": "/screenshot-mobile.png",
-      "sizes": "600x1334",
+      "sizes": "600x1067",
       "type": "image/png",
       "form_factor": "narrow"
     }
   ],
   "display_override": ["standalone", "window-controls-overlay"],
-  "protocol_handlers": []
+  "categories": ["parenting", "lifestyle"],
+  "prefer_related_applications": false
 }
