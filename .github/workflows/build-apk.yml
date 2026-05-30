@@ -25,19 +25,19 @@ jobs:
         with:
           packages: 'platforms;android-34 build-tools;34.0.0 platform-tools'
 
-      - name: Install deps & setup Android
+      - name: Install deps & sync
         working-directory: zgc-mobile
         run: |
           npm install
-          npm install @capacitor/assets --save-dev
-          npx cap add android
-          chmod +x android/gradlew
+          npx cap sync android
 
-      - name: Generate app icons
-        working-directory: zgc-mobile
+      - name: Replace app icon
+        working-directory: zgc-mobile/android/app/src/main/res
         run: |
-          cp ../src/main/resources/static/xtb.png icon-source.png
-          npx capacitor-assets generate --iconBackgroundColor '#fdadb7' --iconBackgroundColorDark '#fdadb7'
+          for dir in mipmap-hdpi mipmap-mdpi mipmap-xhdpi mipmap-xxhdpi mipmap-xxxhdpi; do
+            cp ../../../../../../src/main/resources/static/xtb.png $dir/ic_launcher.png
+            cp ../../../../../../src/main/resources/static/xtb.png $dir/ic_launcher_round.png
+          done
 
       - name: Build APK
         working-directory: zgc-mobile/android
