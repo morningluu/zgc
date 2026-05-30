@@ -17,7 +17,7 @@
 </script>
 
     <title>赵高钏的成长记录手册</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🌱</text></svg>">
+    <link rel="icon" href="/xtb.png">
     <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
 
     <!-- CSRF 元数据 -->
@@ -111,7 +111,7 @@
             justify-content: space-between;
         }
         .top-bar-brand { display: flex; align-items: center; gap: 8px; text-decoration: none; }
-        .top-bar-logo { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #FFE0E8, #FFB5C2); display: flex; align-items: center; justify-content: center; font-size: 1.1em; box-shadow: 0 3px 12px rgba(255,181,194,0.35); }
+        .top-bar-logo { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #FFE0E8, #FFB5C2); display: flex; align-items: center; justify-content: center; font-size: 1.1em; box-shadow: 0 3px 12px rgba(255,181,194,0.35); }
         .top-bar-appname { font-family: "ZCOOL KuaiLe", sans-serif; font-size: 1.05em; font-weight: 700; background: linear-gradient(135deg, #E8788A, #B8A9D4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
         .top-bar-mine { width: 38px; height: 38px; border-radius: 50%; border: none; background: rgba(200,180,220,0.12); cursor: pointer; font-size: 1.3em; display: flex; align-items: center; justify-content: center; transition: background 0.3s; }
         .top-bar-mine:active { background: rgba(200,180,220,0.25); }
@@ -274,7 +274,7 @@
 
 <header class="top-bar">
     <a href="/" class="top-bar-brand">
-        <div class="top-bar-logo">🌱</div>
+        <img class="top-bar-logo" src="/xtb.png" alt="logo" style="width:32px;height:32px;border-radius:50%;">
         <span class="top-bar-appname">成长手册</span>
     </a>
     <button class="top-bar-mine" onclick="toggleSidebar()">👤</button>
