@@ -50,6 +50,7 @@
       color: var(--text-primary);
       min-height: 100vh;
       overflow-x: hidden;
+
       -webkit-tap-highlight-color: transparent;
       -webkit-font-smoothing: antialiased;
       padding-bottom: 100px;
@@ -57,6 +58,10 @@
       -webkit-user-select: none;
       user-select: none;
     }
+    /* 隐藏右侧滚动条 */
+    html { scrollbar-width: none; -ms-overflow-style: none; }
+    html::-webkit-scrollbar { display: none; }
+
 
     /* ========== 顶部导航栏 ========== */
     .top-bar {
@@ -121,30 +126,12 @@
     }
     .sidebar-link:active { background: rgba(200,180,220,0.18); }
 
-    .bottom-nav {
-      position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000;
-      background: var(--nav-bg); backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-top: 1px solid rgba(200,180,220,0.1);
-      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-      display: flex; align-items: center; justify-content: space-around;
-      padding: 6px 8px 12px; padding-bottom: max(12px, env(safe-area-inset-bottom));
-    }
-    .bottom-nav-item {
-      display: flex; flex-direction: column; align-items: center; text-decoration: none;
-      color: var(--text-light); font-size: 0.68em; gap: 3px; transition: color 0.25s;
-    }
-    .bottom-nav-item span { font-size: 1.5em; }
-    .bottom-nav-item.active { color: #E8788A; }
-    .bottom-nav-add {
-      position: relative; top: -22px; width: 52px; height: 52px; border-radius: 50%;
-      background: linear-gradient(135deg, #FFB5C2, #FF9AB2);
-      border: 4px solid rgba(255,255,255,0.85);
-      box-shadow: 0 6px 22px rgba(255,154,178,0.35);
-      font-size: 1.6em; color: white; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: transform 0.3s var(--transition-bounce), box-shadow 0.3s;
-    }
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000; background: var(--nav-bg); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); border-top: 1px solid rgba(200,180,220,0.1); border-radius: var(--radius-xl) var(--radius-xl) 0 0; display: flex; align-items: center; justify-content: space-around; padding: 6px 8px 12px; padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+        .bottom-nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--text-light); font-size: 0.68em; gap: 3px; transition: color 0.25s; }
+        .bottom-nav-item span { font-size: 1.5em; }
+        .bottom-nav-item.active { color: #E8788A; }
+        .bottom-nav-add { position: relative; top: -22px; width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #FFB5C2, #FF9AB2); border: 4px solid rgba(255,255,255,0.85); box-shadow: 0 6px 22px rgba(255,154,178,0.35); font-size: 1.6em; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.3s var(--transition-bounce), box-shadow 0.3s; animation: addBtnBreathe 2.5s ease-in-out infinite; }
+        @keyframes addBtnBreathe { 0%,100%{box-shadow:0 8px 26px rgba(255,154,178,0.45)} 50%{box-shadow:0 14px 36px rgba(255,154,178,0.65)} }
     .bottom-nav-add:active { transform: scale(1.08); box-shadow: 0 8px 26px rgba(255,154,178,0.45); }
 
     .add-overlay {
@@ -188,13 +175,28 @@
       position: relative;
       overflow: hidden;
     }
+    /* 自定义 tooltip */
+    .chart-tooltip {
+      background: rgba(255,255,255,0.96); border-radius: 10px;
+      padding: 12px; box-shadow: 0 6px 16px rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05);
+      border: none; font-family: "Noto Sans SC", sans-serif;
+    }
+    .chart-tooltip .tt-title {
+      color: #5D4E6D; font-weight: 700; font-size: 0.9em; margin-bottom: 8px;
+    }
+    .chart-tooltip .tt-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      color: #8B7D9B; font-size: 0.85em; padding: 2px 0;
+    }
+    .chart-tooltip .tt-dot {
+      width: 10px; height: 10px; border-radius: 2px; display: inline-block; margin-right: 6px;
+    }
     .chart-card h3 { font-family: "ZCOOL KuaiLe", sans-serif; margin-bottom: 16px; text-align: center; }
     .chart-wrap { 
       position: relative; width: 100%; height: 350px;
-      touch-action: pan-x;
     }
     .chart-wrap canvas {
-      touch-action: pan-x;
+      display: block;
     }
     .chart-empty { text-align: center; padding: 60px 20px; color: #B8A9D4; font-size: 0.95em; }
 
@@ -232,8 +234,19 @@
       border: 1px solid #e2d7ec; font-weight: 600; color: #5D4E6D;
       cursor: pointer; transition: all 0.2s; font-size: 0.9em; font-family: "ZCOOL KuaiLe", sans-serif;
     }
-    .score-tab.active { background: #FFE5EC; border-color: #FF9AB2; color: #D45D7A; }
+    .score-tab.active { background: #fff; font-weight: 700; }
 
+    
+    .add-sheet-cards { display: flex; gap: 16px; justify-content: center; margin: 20px 0; }
+    .add-card-item {
+      flex: 1; display: flex; flex-direction: column; align-items: center;
+      padding: 20px 12px; border-radius: 22px; background: rgba(255,240,245,0.5);
+      text-decoration: none; color: #5D4E6D; border: none; cursor: pointer;
+      font-family: inherit; transition: all 0.3s var(--transition-bounce);
+    }
+    .add-card-item:active { transform: scale(0.92); background: rgba(255,220,230,0.6); }
+    .add-card-icon { font-size: 2.5em; }
+    .add-card-label { font-family: 'ZCOOL KuaiLe', sans-serif; margin-top: 4px; }
     .add-sheet-title {
       text-align: center; font-family: 'ZCOOL KuaiLe', sans-serif;
       font-size: 1.2em; color: #5D4E6D; margin-bottom: 6px;
@@ -346,8 +359,14 @@
   </div>
 
   <div class="chart-card">
-    <h3>📈 身高体重变化趋势</h3>
-    <div class="chart-wrap" id="growthChartWrap"><canvas id="growthChart"></canvas></div>
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+      <h3 style="margin-bottom: 0;">📈 身高体重变化趋势</h3>
+      <div class="score-tabs" id="growthTabs">
+        <span class="score-tab active" data-metric="height">身高</span>
+        <span class="score-tab" data-metric="weight">体重</span>
+      </div>
+    </div>
+    <div class="chart-wrap" id="growthChartWrap" style="margin-top: 16px;"><canvas id="growthChart"></canvas></div>
     <div class="chart-empty" id="growthChartEmpty" style="display:none;">📊 添加身体数据后这里会显示折线图</div>
   </div>
 
@@ -380,7 +399,7 @@
 
   <div style="margin-top: 32px;">
     <div class="page-header" style="margin-bottom: 12px;">
-      <h2>📚 学业成绩</h2>
+      <h1>📚 学业成绩</h1>
     </div>
     <div class="add-section">
       <button sec:authorize="isAuthenticated()" class="btn-add btn-add-active" onclick="openScoreForm()">＋ 添加成绩</button>
@@ -442,19 +461,10 @@
 <div class="add-overlay" id="addOverlay">
   <div class="add-sheet">
     <div class="add-sheet-title">✨ 添加新记录</div>
-    <div style="display:flex; gap:16px; justify-content:center; margin:20px 0;">
-      <a href="/gallery?action=add" style="flex:1; display:flex; flex-direction:column; align-items:center; padding:20px 12px; border-radius:22px; background:rgba(255,240,245,0.5); text-decoration:none; color:#5D4E6D;">
-        <span style="font-size:2.5em;">📷</span>
-        <span style="font-family:'ZCOOL KuaiLe',sans-serif;">上传照片</span>
-      </a>
-      <a href="/growth?action=add" style="flex:1; display:flex; flex-direction:column; align-items:center; padding:20px 12px; border-radius:22px; background:rgba(255,240,245,0.5); text-decoration:none; color:#5D4E6D;">
-        <span style="font-size:2.5em;">📊</span>
-        <span style="font-family:'ZCOOL KuaiLe',sans-serif;">记录数据</span>
-      </a>
-      <a href="/messages?action=add" style="flex:1; display:flex; flex-direction:column; align-items:center; padding:20px 12px; border-radius:22px; background:rgba(255,240,245,0.5); text-decoration:none; color:#5D4E6D;">
-        <span style="font-size:2.5em;">💌</span>
-        <span style="font-family:'ZCOOL KuaiLe',sans-serif;">写留言</span>
-      </a>
+    <div class="add-sheet-cards">
+      <button class="add-card-item" onclick="closeAddOverlay();window.location.href='/gallery?action=add'"><span class="add-card-icon">📷</span><span class="add-card-label">上传照片</span></button>
+      <button class="add-card-item" onclick="closeAddOverlay();openGrowthForm()"><span class="add-card-icon">📊</span><span class="add-card-label">记录数据</span></button>
+      <button class="add-card-item" onclick="closeAddOverlay();window.location.href='/messages?action=add'"><span class="add-card-icon">💌</span><span class="add-card-label">写留言</span></button>
     </div>
     <button class="add-sheet-cancel" onclick="closeAddOverlay()">取消</button>
   </div>
@@ -467,7 +477,7 @@
     <p class="form-subtitle">记录宝宝身高体重</p>
     <form th:action="@{/growth/add}" method="post" id="growthForm">
       <div class="field-group">
-        <div class="field-label">📅 测量日期 <span style="color:#E8788A;">*必填</span></div>
+        <div class="field-label">测量日期 <span style="color:#E8788A;">*必填</span></div>
         <div class="custom-date-wrap">
           <input type="date" name="recordDate" required>
           <span class="date-icon">📆</span>
@@ -475,21 +485,21 @@
       </div>
       <div class="form-row">
         <div class="field-group">
-          <div class="field-label">📏 身高 (cm)</div>
+          <div class="field-label">身高 (cm)</div>
           <input type="number" name="heightCm" step="0.1" placeholder="如：85.5">
         </div>
         <div class="field-group">
-          <div class="field-label">⚖️ 体重 (kg)</div>
+          <div class="field-label">体重 (kg)</div>
           <input type="number" name="weightKg" step="0.1" placeholder="如：12.5">
         </div>
       </div>
       <div class="field-group">
-        <div class="field-label">📝 备注</div>
+        <div class="field-label">备注</div>
         <input type="text" name="title" placeholder="如：3月体检">
       </div>
       <div class="field-group">
-        <div class="field-label">👤 记录人 <span style="color:#E8788A;">*必填</span></div>
-        <input type="text" name="recordedBy" placeholder="妈妈" required>
+        <div class="field-label">记录人 <span style="font-weight:normal;color:var(--text-light);">(选填)</span></div>
+        <input type="text" name="recordedBy" th:value="${#authentication.name}" placeholder="选填">
       </div>
       <button type="button" class="btn-submit" id="growthSubmitBtn" onclick="submitGrowthForm()">✨ 保存数据</button>
     </form>
@@ -504,7 +514,7 @@
     <p class="form-subtitle">记录语文·数学·英语成绩</p>
     <form th:action="@{/growth/addScore}" method="post" id="scoreForm">
       <div class="field-group">
-        <div class="field-label">📅 考试/记录日期 <span style="color:#E8788A;">*必填</span></div>
+        <div class="field-label">考试/记录日期 <span style="color:#E8788A;">*必填</span></div>
         <div class="custom-date-wrap">
           <input type="date" name="recordDate" required>
           <span class="date-icon">📆</span>
@@ -512,25 +522,25 @@
       </div>
       <div class="form-row">
         <div class="field-group">
-          <div class="field-label">📖 语文</div>
+          <div class="field-label">语文</div>
           <input type="number" name="chinese" step="0.5" placeholder="分数">
         </div>
         <div class="field-group">
-          <div class="field-label">🧮 数学</div>
+          <div class="field-label">数学</div>
           <input type="number" name="math" step="0.5" placeholder="分数">
         </div>
       </div>
       <div class="field-group">
-        <div class="field-label">🔤 英语</div>
+        <div class="field-label">英语</div>
         <input type="number" name="english" step="0.5" placeholder="分数">
       </div>
       <div class="field-group">
-        <div class="field-label">📝 备注</div>
+        <div class="field-label">备注</div>
         <input type="text" name="title" placeholder="如：期中考试">
       </div>
       <div class="field-group">
-        <div class="field-label">👤 记录人 <span style="color:#E8788A;">*必填</span></div>
-        <input type="text" name="recordedBy" placeholder="爸爸" required>
+        <div class="field-label">记录人 <span style="font-weight:normal;color:var(--text-light);">(选填)</span></div>
+        <input type="text" name="recordedBy" th:value="${#authentication.name}" placeholder="选填">
       </div>
       <button type="button" class="btn-submit" id="scoreSubmitBtn" onclick="submitScoreForm()">✨ 保存成绩</button>
     </form>
@@ -545,6 +555,7 @@
   var growthRecords = /*[[${records}]]*/ [];
   var scoreRecords = /*[[${scoreRecords}]]*/ [];
   var currentScoreSubject = 'chinese';
+  var currentGrowthMetric = 'height';
   var scoreChartInstance = null;
   var growthChartInstance = null;
   var isAuthenticated = /*[[${#authorization.expression('isAuthenticated()')}]]*/ false;
@@ -553,17 +564,9 @@
   var isSubmittingScore = false;
   var isSubmittingGrowth = false;
 
-  // Hammer 管理器
-  var growthHammer = null;
-  var scoreHammer = null;
-  
   // 当前平移偏移量
   var growthPanOffset = 0;
   var scorePanOffset = 0;
-  
-  // 最大平移范围
-  var growthMaxPan = 0;
-  var scoreMaxPan = 0;
 
   function showToast(msg) {
     var t = document.getElementById('toastMsg');
@@ -653,6 +656,17 @@
       return;
     }
     
+    // 至少填写语文、数学、英语中的一项
+    var chineseInput = form.querySelector('input[name="chinese"]');
+    var mathInput = form.querySelector('input[name="math"]');
+    var englishInput = form.querySelector('input[name="english"]');
+    if ((!chineseInput.value || chineseInput.value.trim() === '') && 
+        (!mathInput.value || mathInput.value.trim() === '') &&
+        (!englishInput.value || englishInput.value.trim() === '')) {
+      alert('请至少填写一门成绩');
+      return;
+    }
+    
     isSubmittingScore = true;
     btn.textContent = '⏳ 保存中...';
     btn.disabled = true;
@@ -672,6 +686,15 @@
       return;
     }
     
+    // 至少填写身高或体重中的一项
+    var heightInput = form.querySelector('input[name="heightCm"]');
+    var weightInput = form.querySelector('input[name="weightKg"]');
+    if ((!heightInput.value || heightInput.value.trim() === '') && 
+        (!weightInput.value || weightInput.value.trim() === '')) {
+      alert('请至少填写身高或体重中的一项');
+      return;
+    }
+    
     isSubmittingGrowth = true;
     btn.textContent = '⏳ 保存中...';
     btn.disabled = true;
@@ -679,296 +702,158 @@
     form.submit();
   }
 
-  function formatDate(dateStr) {
+  // 日期格式化：跨年时标注年份，如 "11/12" → "2025/1/1" → "2/4"
+  function formatDate(dateStr, index, allDates) {
     if (!dateStr) return '';
     var parts = dateStr.split('-');
-    if (parts.length === 3) {
-      return parts[1] + '/' + parts[2];
+    if (parts.length < 3) return dateStr;
+    var y = parts[0], m = parseInt(parts[1], 10), d = parseInt(parts[2], 10);
+    if (index === 0) return y + '/' + m + '/' + d;
+    if (index > 0 && allDates && allDates[index - 1]) {
+      var prevParts = allDates[index - 1].split('-');
+      if (prevParts.length >= 3 && prevParts[0] !== y) return y + '/' + m + '/' + d;
     }
-    return dateStr;
+    return m + '/' + d;
   }
 
-  // 计算纵坐标步长（确保间隔一致为10或5）
+  // 计算 Y 轴步长（保持间距一致，极简网格）
   function calculateStepSize(minVal, maxVal) {
     var range = maxVal - minVal;
-    if (range <= 0) return 10;
-    
-    // 尝试使用10作为步长
-    var step10 = 10;
-    var tickCount10 = Math.ceil(range / step10) + 1;
-    if (tickCount10 >= 3 && tickCount10 <= 12) {
+    if (range <= 0) return { stepSize: 10, min: minVal - 10, max: maxVal + 10 };
+    // 尝试 10 步长
+    if (Math.ceil(range / 10) + 1 <= 6)
       return { stepSize: 10, min: Math.floor(minVal / 10) * 10, max: Math.ceil(maxVal / 10) * 10 };
-    }
-    
-    // 尝试使用5作为步长
-    var step5 = 5;
-    var tickCount5 = Math.ceil(range / step5) + 1;
-    if (tickCount5 >= 3 && tickCount5 <= 15) {
+    // 尝试 5 步长
+    if (Math.ceil(range / 5) + 1 <= 6)
       return { stepSize: 5, min: Math.floor(minVal / 5) * 5, max: Math.ceil(maxVal / 5) * 5 };
-    }
-    
-    // 使用10但调整范围
+    // 尝试 2 步长
+    if (Math.ceil(range / 2) + 1 <= 8)
+      return { stepSize: 2, min: Math.floor(minVal / 2) * 2, max: Math.ceil(maxVal / 2) * 2 };
     return { stepSize: 10, min: Math.floor(minVal / 10) * 10, max: Math.ceil(maxVal / 10) * 10 };
   }
 
-  function renderGrowthChart() {
+  function renderGrowthChart(metric) {
+    if (!metric) metric = currentGrowthMetric;
     if (!growthRecords || growthRecords.length === 0) {
       document.getElementById('growthChartWrap').style.display = 'none';
       document.getElementById('growthChartEmpty').style.display = 'block';
       return;
     }
-    
-    // 按日期排序（旧→新，从左到右）
+
     var sortedData = growthRecords.slice().sort(function(a, b) {
       return (a.recordDate || '').localeCompare(b.recordDate || '');
     });
-    
-    // 更新最新数据卡片（取日期最新的记录）
-    var latest = sortedData[sortedData.length - 1];
-    document.getElementById('latestHeight').textContent = latest.heightCm != null ? latest.heightCm : '--';
-    document.getElementById('latestWeight').textContent = latest.weightKg != null ? latest.weightKg : '--';
-    
-    var dates = sortedData.map(function(r) { return r.recordDate || ''; });
-    var heights = sortedData.map(function(r) { return r.heightCm; });
-    var weights = sortedData.map(function(r) { return r.weightKg; });
-    
-    // 计算有效数据范围
-    var validHeights = heights.filter(function(h) { return h != null; });
-    var validWeights = weights.filter(function(w) { return w != null; });
-    
-    var heightMin = validHeights.length > 0 ? Math.min.apply(null, validHeights) : 40;
-    var heightMax = validHeights.length > 0 ? Math.max.apply(null, validHeights) : 180;
-    var weightMin = validWeights.length > 0 ? Math.min.apply(null, validWeights) : 0;
-    var weightMax = validWeights.length > 0 ? Math.max.apply(null, validWeights) : 80;
-    
-    var heightStep = calculateStepSize(heightMin - 10, heightMax + 10);
-    var weightStep = calculateStepSize(weightMin - 5, weightMax + 5);
-    
-    var pointCount = dates.length;
-    // 根据数据点数量动态设置每个点的最小宽度
-    var pointWidth = Math.max(40, Math.min(80, 400 / Math.max(1, pointCount)));
-    
+
+    // 更新最新数据卡片
+    var latestH = null, latestW = null, latestHDate = null, latestWDate = null;
+    for (var i = sortedData.length - 1; i >= 0; i--) {
+      if (latestH == null && sortedData[i].heightCm != null) {
+        latestH = sortedData[i].heightCm; latestHDate = sortedData[i].recordDate;
+      }
+      if (latestW == null && sortedData[i].weightKg != null) {
+        latestW = sortedData[i].weightKg; latestWDate = sortedData[i].recordDate;
+      }
+      if (latestH != null && latestW != null) break;
+    }
+    document.getElementById('latestHeight').textContent = latestH != null ? latestH : '--';
+    document.getElementById('latestWeight').textContent = latestW != null ? latestW : '--';
+
+    // 根据选择的指标过滤数据：只取该指标有值的记录
+    var filteredData = [];
+    for (var i = 0; i < sortedData.length; i++) {
+      var val = metric === 'height' ? sortedData[i].heightCm : sortedData[i].weightKg;
+      if (val != null) {
+        filteredData.push({ date: sortedData[i].recordDate, value: val });
+      }
+    }
+
+    if (filteredData.length === 0) {
+      document.getElementById('growthChartWrap').style.display = 'none';
+      document.getElementById('growthChartEmpty').style.display = 'block';
+      return;
+    }
+
+    var rawDates = filteredData.map(function(r) { return r.date; });
+    var values = filteredData.map(function(r) { return r.value; });
+    var labels = rawDates.map(function(d, i) { return formatDate(d, i, rawDates); });
+
+    var validVals = values.filter(function(v) { return v != null; });
+    var vMin = validVals.length > 0 ? Math.min.apply(null, validVals) : 0;
+    var vMax = validVals.length > 0 ? Math.max.apply(null, validVals) : (metric === 'height' ? 180 : 80);
+    var padding = metric === 'height' ? 15 : 8;
+    var step = calculateStepSize(Math.max(0, vMin - padding), vMax + padding);
+    var isHeight = metric === 'height';
+    var lineColor = isHeight ? '#FFB5C2' : '#B5EAD7';
+    var fillColor = isHeight ? 'rgba(255,181,194,0.12)' : 'rgba(181,234,215,0.12)';
+    var unit = isHeight ? 'cm' : 'kg';
+    var label = isHeight ? '身高' : '体重';
+
     document.getElementById('growthChartWrap').style.display = 'block';
     document.getElementById('growthChartEmpty').style.display = 'none';
-    
+
     if (growthChartInstance) growthChartInstance.destroy();
     var ctx = document.getElementById('growthChart').getContext('2d');
-    
+
     growthChartInstance = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: dates,
-        datasets: [
-          { 
-            label: '身高 (cm)', 
-            data: heights, 
-            borderColor: '#FF9AB2', 
-            backgroundColor: 'rgba(255,154,178,0.08)', 
-            fill: true, 
-            tension: 0.4, 
-            pointRadius: 5,
-            pointHoverRadius: 9,
-            pointHitRadius: 20,
-            borderWidth: 2.5,
-            yAxisID: 'y' 
-          },
-          { 
-            label: '体重 (kg)', 
-            data: weights, 
-            borderColor: '#5DCFA0', 
-            backgroundColor: 'rgba(93,207,160,0.08)', 
-            fill: true, 
-            tension: 0.4, 
-            pointRadius: 5,
-            pointHoverRadius: 9,
-            pointHitRadius: 20,
-            borderWidth: 2.5,
-            yAxisID: 'y1' 
-          }
-        ]
+        labels: labels,
+        datasets: [{
+          label: label,
+          data: values,
+          borderColor: lineColor,
+          backgroundColor: fillColor,
+          fill: true,
+          tension: 0.4,
+          pointRadius: 3,
+          pointHoverRadius: 6,
+          pointBackgroundColor: lineColor,
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2,
+          borderWidth: 1.5
+        }]
       },
       options: {
-        responsive: true, 
+        responsive: true,
         maintainAspectRatio: false,
-        animation: false,
-        interaction: {
-          mode: 'nearest',
-          intersect: true,
-        },
-        onClick: function(event, elements) {
-          if (elements.length > 0) {
-            var element = elements[0];
-            var datasetIndex = element.datasetIndex;
-            var index = element.index;
-            var record = sortedData[index];
-            var datasetLabel = growthChartInstance.data.datasets[datasetIndex].label;
-            var value = growthChartInstance.data.datasets[datasetIndex].data[index];
-            
-            var info = '📅 日期: ' + record.recordDate + '\n';
-            if (datasetLabel.includes('身高')) {
-              info += '📏 身高: ' + (value != null ? value + ' cm' : '无数据');
-            } else {
-              info += '⚖️ 体重: ' + (value != null ? value + ' kg' : '无数据');
-            }
-            if (record.title) {
-              info += '\n📝 备注: ' + record.title;
-            }
-            if (record.recordedBy) {
-              info += '\n👤 记录人: ' + record.recordedBy;
-            }
-            alert(info);
-          }
-        },
-        plugins: { 
-          legend: { 
-            position: 'bottom', 
-            labels: { 
-              usePointStyle: true,
-              padding: 20,
-              font: { size: 13 }
-            } 
-          },
+        animation: { duration: 1000, easing: 'easeInOutQuart' },
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { display: false },
           tooltip: {
             enabled: true,
-            backgroundColor: 'rgba(255,255,255,0.95)',
+            backgroundColor: 'rgba(255,255,255,0.96)',
             titleColor: '#5D4E6D',
-            bodyColor: '#5D4E6D',
-            borderColor: '#FFB5C2',
+            bodyColor: '#8B7D9B',
+            borderColor: 'rgba(200,180,220,0.15)',
             borderWidth: 1,
             padding: 12,
-            cornerRadius: 12,
+            cornerRadius: 10,
+            displayColors: true,
+            boxPadding: 4,
+            titleFont: { weight: '700', size: 13 },
+            bodyFont: { size: 12 },
             callbacks: {
-              title: function(items) {
-                return '📅 ' + items[0].label;
-              },
+              title: function(items) { return items[0].label; },
               label: function(context) {
-                if (context.dataset.label.includes('身高')) {
-                  return '📏 身高: ' + (context.parsed.y != null ? context.parsed.y + ' cm' : '无数据');
-                } else {
-                  return '⚖️ 体重: ' + (context.parsed.y != null ? context.parsed.y + ' kg' : '无数据');
-                }
+                return context.parsed.y != null ? label + '  ' + context.parsed.y + ' ' + unit : '无数据';
               }
             }
           }
         },
         scales: {
-          y: { 
-            position: 'left', 
-            title: { 
-              display: true, 
-              text: '身高 (cm)',
-              font: { size: 12 }
-            }, 
-            min: heightStep.min,
-            max: heightStep.max,
-            ticks: {
-              stepSize: heightStep.stepSize,
-              font: { size: 11 },
-              callback: function(value) {
-                return value;
-              }
-            },
-            grid: { color: 'rgba(200,180,220,0.15)' }
+          y: {
+            title: { display: true, text: unit, font: { size: 10 }, color: '#8B7D9B' },
+            min: step.min,
+            max: step.max,
+            ticks: { stepSize: step.stepSize, font: { size: 10 }, maxTicksLimit: 5 },
+            grid: { color: 'rgba(200,180,220,0.12)', drawTicks: false }
           },
-          y1: { 
-            position: 'right', 
-            title: { 
-              display: true, 
-              text: '体重 (kg)',
-              font: { size: 12 }
-            }, 
-            min: weightStep.min,
-            max: weightStep.max,
-            ticks: {
-              stepSize: weightStep.stepSize,
-              font: { size: 11 },
-              callback: function(value) {
-                return value;
-              }
-            },
-            grid: { drawOnChartArea: false }
-          },
-          x: { 
+          x: {
             grid: { display: false },
-            ticks: {
-              maxRotation: 45,
-              minRotation: 45,
-              font: { size: 10 },
-              autoSkip: false,
-              callback: function(value, index, values) {
-                return formatDate(this.getLabelForValue(value));
-              }
-            }
+            ticks: { maxRotation: 0, font: { size: 10 }, autoSkip: true, maxTicksLimit: 10 }
           }
         }
-      },
-      plugins: []
-    });
-    
-    // 计算最大平移范围
-    var chartWidth = ctx.canvas.clientWidth;
-    var totalPointsWidth = pointCount * pointWidth;
-    growthMaxPan = Math.max(0, totalPointsWidth - chartWidth + 60);
-    growthPanOffset = 0;
-    
-    // 设置 Hammer 手势
-    setupGrowthPan(ctx.canvas);
-  }
-
-  function setupGrowthPan(canvas) {
-    if (growthHammer) {
-      growthHammer.destroy();
-    }
-    
-    growthHammer = new Hammer(canvas, {
-      touchAction: 'pan-x',
-      recognizers: [
-        [Hammer.Pan, { direction: Hammer.DIRECTION_HORIZONTAL, threshold: 5 }]
-      ]
-    });
-    
-    growthHammer.on('panstart', function(e) {
-      // 不做特别处理
-    });
-    
-    growthHammer.on('panmove', function(e) {
-      if (!growthChartInstance) return;
-      var newOffset = growthPanOffset - e.deltaX;
-      newOffset = Math.max(0, Math.min(growthMaxPan, newOffset));
-      growthPanOffset = newOffset;
-      
-      // 通过修改图表容器的滚动位置来实现平移
-      var wrapper = document.getElementById('growthChartWrap');
-      wrapper.scrollLeft = growthPanOffset;
-    });
-    
-    growthHammer.on('panend', function(e) {
-      if (!growthChartInstance) return;
-      // 使用速度计算惯性滚动
-      var velocity = Math.abs(e.velocityX);
-      if (velocity > 0.3) {
-        var momentum = e.velocityX * 200;
-        var targetOffset = growthPanOffset - momentum;
-        targetOffset = Math.max(0, Math.min(growthMaxPan, targetOffset));
-        
-        var startOffset = growthPanOffset;
-        var startTime = Date.now();
-        var duration = 300;
-        
-        function animate() {
-          var elapsed = Date.now() - startTime;
-          var progress = Math.min(1, elapsed / duration);
-          var eased = 1 - Math.pow(1 - progress, 3);
-          growthPanOffset = startOffset + (targetOffset - startOffset) * eased;
-          
-          var wrapper = document.getElementById('growthChartWrap');
-          wrapper.scrollLeft = growthPanOffset;
-          
-          if (progress < 1) {
-            requestAnimationFrame(animate);
-          }
-        }
-        requestAnimationFrame(animate);
       }
     });
   }
@@ -979,194 +864,105 @@
       document.getElementById('scoreChartEmpty').style.display = 'block';
       return;
     }
-    
-    // 按日期排序（旧→新，从左到右）
+
     var sortedData = scoreRecords.slice().sort(function(a, b) {
       return (a.recordDate || '').localeCompare(b.recordDate || '');
     });
-    
-    var dates = sortedData.map(function(r) { return r.recordDate || ''; });
-    var values = sortedData.map(function(r) {
-      if (subject === 'chinese') return r.chinese;
-      if (subject === 'math') return r.math;
-      return r.english;
-    });
-    
+
+    // 只取该科目有值的记录（不做日期同步）
+    var filteredData = [];
+    for (var i = 0; i < sortedData.length; i++) {
+      var val = null;
+      if (subject === 'chinese') val = sortedData[i].chinese;
+      else if (subject === 'math') val = sortedData[i].math;
+      else val = sortedData[i].english;
+      if (val != null) {
+        filteredData.push({ date: sortedData[i].recordDate, value: val });
+      }
+    }
+
+    if (filteredData.length === 0) {
+      document.getElementById('scoreChartWrap').style.display = 'none';
+      document.getElementById('scoreChartEmpty').style.display = 'block';
+      return;
+    }
+
+    var rawDates = filteredData.map(function(r) { return r.date; });
+    var values = filteredData.map(function(r) { return r.value; });
+    var labels = rawDates.map(function(d, i) { return formatDate(d, i, rawDates); });
+
     var validValues = values.filter(function(v) { return v != null; });
     var minVal = validValues.length > 0 ? Math.min.apply(null, validValues) : 0;
     var maxVal = validValues.length > 0 ? Math.max.apply(null, validValues) : 100;
-    
     var step = calculateStepSize(Math.max(0, minVal - 10), maxVal < 100 ? Math.min(100, maxVal + 10) : maxVal + 5);
-    
-    var pointCount = dates.length;
-    var pointWidth = Math.max(40, Math.min(80, 400 / Math.max(1, pointCount)));
-    
+    var color = getSubjectColor(subject);
+
     document.getElementById('scoreChartWrap').style.display = 'block';
     document.getElementById('scoreChartEmpty').style.display = 'none';
-    
+
     if (scoreChartInstance) scoreChartInstance.destroy();
     var ctx = document.getElementById('scoreChart').getContext('2d');
-    var color = getSubjectColor(subject);
-    
+
     scoreChartInstance = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: dates,
+        labels: labels,
         datasets: [{
-          label: getSubjectLabel(subject) + ' 成绩',
+          label: getSubjectLabel(subject),
           data: values,
           borderColor: color,
-          backgroundColor: color + '15',
+          backgroundColor: color + '20',
           fill: true,
-          tension: 0.3,
-          pointRadius: 6,
-          pointHoverRadius: 10,
-          pointHitRadius: 20,
+          tension: 0.4,
+          pointRadius: 4,
+          pointHoverRadius: 7,
           pointBackgroundColor: color,
-          borderWidth: 2.5
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2,
+          borderWidth: 1.5
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        animation: false,
-        interaction: {
-          mode: 'nearest',
-          intersect: true,
-        },
-        onClick: function(event, elements) {
-          if (elements.length > 0) {
-            var element = elements[0];
-            var index = element.index;
-            var record = sortedData[index];
-            var value = scoreChartInstance.data.datasets[0].data[index];
-            
-            var info = '📅 日期: ' + record.recordDate + '\n';
-            info += '📝 ' + getSubjectLabel(subject) + ': ' + (value != null ? value + ' 分' : '无数据');
-            if (record.title) {
-              info += '\n📝 备注: ' + record.title;
-            }
-            if (record.recordedBy) {
-              info += '\n👤 记录人: ' + record.recordedBy;
-            }
-            alert(info);
-          }
-        },
-        plugins: { 
+        animation: { duration: 1000, easing: 'easeInOutQuart' },
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
           legend: { display: false },
           tooltip: {
             enabled: true,
-            backgroundColor: 'rgba(255,255,255,0.95)',
+            backgroundColor: 'rgba(255,255,255,0.96)',
             titleColor: '#5D4E6D',
-            bodyColor: '#5D4E6D',
-            borderColor: color,
+            bodyColor: '#8B7D9B',
+            borderColor: 'rgba(200,180,220,0.15)',
             borderWidth: 1,
             padding: 12,
-            cornerRadius: 12,
+            cornerRadius: 10,
+            displayColors: true,
+            boxPadding: 4,
+            titleFont: { weight: '700', size: 13 },
+            bodyFont: { size: 12 },
             callbacks: {
-              title: function(items) {
-                return '📅 ' + items[0].label;
-              },
+              title: function(items) { return items[0].label; },
               label: function(context) {
-                return '📝 ' + getSubjectLabel(subject) + ': ' + (context.parsed.y != null ? context.parsed.y + ' 分' : '无数据');
+                return context.parsed.y != null ? getSubjectLabel(subject) + '  ' + context.parsed.y + ' 分' : '无数据';
               }
             }
           }
         },
         scales: {
-          y: { 
-            beginAtZero: false, 
+          y: {
+            beginAtZero: false,
             min: step.min,
             max: step.max,
-            ticks: {
-              stepSize: step.stepSize,
-              font: { size: 11 },
-              callback: function(value) {
-                return value;
-              }
-            },
-            grid: { color: 'rgba(200,180,220,0.15)' }, 
-            title: { 
-              display: true, 
-              text: '分数',
-              font: { size: 12 }
-            }
+            ticks: { stepSize: step.stepSize, font: { size: 10 }, maxTicksLimit: 5 },
+            grid: { color: 'rgba(200,180,220,0.12)', drawTicks: false }
           },
-          x: { 
+          x: {
             grid: { display: false },
-            ticks: {
-              maxRotation: 45,
-              minRotation: 45,
-              font: { size: 10 },
-              autoSkip: false,
-              callback: function(value, index, values) {
-                return formatDate(this.getLabelForValue(value));
-              }
-            }
+            ticks: { maxRotation: 0, font: { size: 10 }, autoSkip: true, maxTicksLimit: 10 }
           }
         }
-      },
-      plugins: []
-    });
-    
-    // 计算最大平移范围
-    var chartWidth = ctx.canvas.clientWidth;
-    var totalPointsWidth = pointCount * pointWidth;
-    scoreMaxPan = Math.max(0, totalPointsWidth - chartWidth + 60);
-    scorePanOffset = 0;
-    
-    // 设置 Hammer 手势
-    setupScorePan(ctx.canvas);
-  }
-
-  function setupScorePan(canvas) {
-    if (scoreHammer) {
-      scoreHammer.destroy();
-    }
-    
-    scoreHammer = new Hammer(canvas, {
-      touchAction: 'pan-x',
-      recognizers: [
-        [Hammer.Pan, { direction: Hammer.DIRECTION_HORIZONTAL, threshold: 5 }]
-      ]
-    });
-    
-    scoreHammer.on('panmove', function(e) {
-      if (!scoreChartInstance) return;
-      var newOffset = scorePanOffset - e.deltaX;
-      newOffset = Math.max(0, Math.min(scoreMaxPan, newOffset));
-      scorePanOffset = newOffset;
-      
-      var wrapper = document.getElementById('scoreChartWrap');
-      wrapper.scrollLeft = scorePanOffset;
-    });
-    
-    scoreHammer.on('panend', function(e) {
-      if (!scoreChartInstance) return;
-      var velocity = Math.abs(e.velocityX);
-      if (velocity > 0.3) {
-        var momentum = e.velocityX * 200;
-        var targetOffset = scorePanOffset - momentum;
-        targetOffset = Math.max(0, Math.min(scoreMaxPan, targetOffset));
-        
-        var startOffset = scorePanOffset;
-        var startTime = Date.now();
-        var duration = 300;
-        
-        function animate() {
-          var elapsed = Date.now() - startTime;
-          var progress = Math.min(1, elapsed / duration);
-          var eased = 1 - Math.pow(1 - progress, 3);
-          scorePanOffset = startOffset + (targetOffset - startOffset) * eased;
-          
-          var wrapper = document.getElementById('scoreChartWrap');
-          wrapper.scrollLeft = scorePanOffset;
-          
-          if (progress < 1) {
-            requestAnimationFrame(animate);
-          }
-        }
-        requestAnimationFrame(animate);
       }
     });
   }
@@ -1178,24 +974,63 @@
   }
   
   function getSubjectColor(subject) {
-    if (subject === 'chinese') return '#F9A66C';
-    if (subject === 'math') return '#6CB4D9';
-    return '#A1C964';
+    if (subject === 'chinese') return '#FFB5C2';
+    if (subject === 'math') return '#A8D8EA';
+    return '#B5EAD7';
   }
 
+  // 标签配色映射
+  var tabColors = {
+    height: '#E8879B', weight: '#4AB892',
+    chinese: '#E8879B', math: '#5BA4C8', english: '#4AB892'
+  };
+
+  // 身体指标切换
+  document.getElementById('growthTabs').addEventListener('click', function(e) {
+    if (e.target.classList.contains('score-tab')) {
+      document.querySelectorAll('#growthTabs .score-tab').forEach(function(t) {
+        t.classList.remove('active'); t.style.color = ''; t.style.borderColor = '';
+      });
+      e.target.classList.add('active');
+      var c = tabColors[e.target.dataset.metric] || '#FFB5C2';
+      e.target.style.color = c;
+      e.target.style.borderColor = c;
+      currentGrowthMetric = e.target.dataset.metric;
+      renderGrowthChart(currentGrowthMetric);
+    }
+  });
+
+  // 成绩科目切换
   document.getElementById('scoreTabs').addEventListener('click', function(e) {
     if (e.target.classList.contains('score-tab')) {
-      document.querySelectorAll('.score-tab').forEach(function(t) { t.classList.remove('active'); });
+      document.querySelectorAll('#scoreTabs .score-tab').forEach(function(t) {
+        t.classList.remove('active'); t.style.color = ''; t.style.borderColor = '';
+      });
       e.target.classList.add('active');
+      var c = tabColors[e.target.dataset.subject] || '#FFB5C2';
+      e.target.style.color = c;
+      e.target.style.borderColor = c;
       currentScoreSubject = e.target.dataset.subject;
-      scorePanOffset = 0;
       renderScoreChart(currentScoreSubject);
     }
   });
 
-  // 初始化图表
+  // 初始化图表 + 默认标签颜色
+  (function(){
+    var hTab = document.querySelector('#growthTabs .score-tab[data-metric="height"]');
+    if (hTab) { hTab.style.color = '#E8879B'; hTab.style.borderColor = '#E8879B'; }
+    var cTab = document.querySelector('#scoreTabs .score-tab[data-subject="chinese"]');
+    if (cTab) { cTab.style.color = '#E8879B'; cTab.style.borderColor = '#E8879B'; }
+  })();
   renderGrowthChart();
   renderScoreChart('chinese');
+  // 设置日期默认值为今天
+  (function(){
+    var today = new Date().toISOString().split('T')[0];
+    document.querySelectorAll('input[type="date"]:not([value])').forEach(function(el){
+      el.value = today;
+    });
+  })();
 
   window.addEventListener('scroll', function() {
     document.getElementById('backToTop').style.display = window.scrollY > 300 ? 'block' : 'none';
@@ -1221,6 +1056,15 @@
     });
   })();
 
+  
+  // 所有日期选择器限制为今天及之前
+  (function(){
+    var today = new Date().toISOString().split('T')[0];
+    document.querySelectorAll('input[type="date"]').forEach(function(el){
+      el.setAttribute('max', today);
+      if (!el.value) el.value = today;
+    });
+  })();
   /*]]>*/
 </script>
 <script src="/app.js"></script>

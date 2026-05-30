@@ -10,18 +10,10 @@
 <link rel="manifest" href="/manifest.json">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-:root {
-  --pastel-pink: #FFB5C2;
-  --pastel-lavender: #C8B8E8;
-  --pastel-mint: #B5E8D5;
-  --pastel-peach: #FFDFB8;
-  --pastel-sky: #B8D8FF;
-  --text-dark: #5D4E6D;
-  --text-light: #B8A9D4;
-}
+
 body {
   font-family: "ZCOOL KuaiLe", "Noto Sans SC", sans-serif;
-  background: linear-gradient(135deg, #FFF5F7 0%, #FBE8F0 25%, #F2E6FF 50%, #E8F0FF 75%, #F0FFF8 100%);
+  background: linear-gradient(160deg, #FEF5F9 0%, #FFF0F5 15%, #F5EEFC 35%, #EEF3FB 55%, #F2FAF6 75%, #FFFBF5 100%);
   height: 100vh; width: 100vw;
   overflow: hidden;
   display: flex;
@@ -29,222 +21,156 @@ body {
   justify-content: center;
   position: relative;
 }
-.bg-decor { position: absolute; pointer-events: none; }
-.floating-circle {
-  border-radius: 50%;
-  animation: float 6s ease-in-out infinite;
-  opacity: 0.4;
+
+/* 浮动粒子 */
+.particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+.particle {
+  position: absolute; border-radius: 50%;
+  animation: driftUp linear infinite;
+  opacity: 0;
 }
-.floating-circle:nth-child(1) {
-  top: 10%; left: 5%;
-  width: 80px; height: 80px;
-  background: var(--pastel-pink);
-  animation-delay: 0s;
+.particle:nth-child(1)  { width: 6px; height: 6px;  background: #FFB5C2; left: 10%; bottom: -10%; animation-duration: 8s; animation-delay: 0s; }
+.particle:nth-child(2)  { width: 4px; height: 4px;  background: #C8B8E8; left: 25%; bottom: -10%; animation-duration: 9s; animation-delay: 0.8s; }
+.particle:nth-child(3)  { width: 8px; height: 8px;  background: #B5E8D5; left: 40%; bottom: -10%; animation-duration: 7.5s; animation-delay: 1.6s; }
+.particle:nth-child(4)  { width: 5px; height: 5px;  background: #FFDFB8; left: 55%; bottom: -10%; animation-duration: 8.5s; animation-delay: 2.4s; }
+.particle:nth-child(5)  { width: 7px; height: 7px;  background: #B8D8FF; left: 70%; bottom: -10%; animation-duration: 7s; animation-delay: 0.4s; }
+.particle:nth-child(6)  { width: 3px; height: 3px;  background: #FFB5C2; left: 85%; bottom: -10%; animation-duration: 9.5s; animation-delay: 1.2s; }
+.particle:nth-child(7)  { width: 6px; height: 6px;  background: #E8D5F5; left: 15%; bottom: -10%; animation-duration: 8.2s; animation-delay: 3s; }
+.particle:nth-child(8)  { width: 4px; height: 4px;  background: #B5E8D5; left: 50%; bottom: -10%; animation-duration: 7.8s; animation-delay: 2s; }
+.particle:nth-child(9)  { width: 5px; height: 5px;  background: #FFD4B8; left: 65%; bottom: -10%; animation-duration: 9s; animation-delay: 3.2s; }
+.particle:nth-child(10) { width: 6px; height: 6px;  background: #C8B8E8; left: 35%; bottom: -10%; animation-duration: 8s; animation-delay: 1s; }
+
+@keyframes driftUp {
+  0%   { transform: translateY(0) scale(0); opacity: 0; }
+  10%  { opacity: 0.6; }
+  50%  { opacity: 0.4; }
+  90%  { opacity: 0.1; }
+  100% { transform: translateY(-110vh) scale(1.2); opacity: 0; }
 }
-.floating-circle:nth-child(2) {
-  top: 20%; right: 10%;
-  width: 60px; height: 60px;
-  background: var(--pastel-lavender);
-  animation-delay: -1.5s;
+
+/* 中心内容 */
+.center {
+  z-index: 10; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 28px;
 }
-.floating-circle:nth-child(3) {
-  bottom: 25%; left: 8%;
-  width: 100px; height: 100px;
-  background: var(--pastel-mint);
-  animation-delay: -3s;
-}
-.floating-circle:nth-child(4) {
-  bottom: 15%; right: 5%;
-  width: 70px; height: 70px;
-  background: var(--pastel-peach);
-  animation-delay: -4.5s;
-}
-@keyframes float {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-25px) rotate(10deg); }
-}
-.star {
-  width: 28px; height: 28px;
-  background: var(--pastel-peach);
-  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-  animation: twinkle 2.5s ease-in-out infinite;
-}
-.star:nth-child(5) { top: 15%; left: 20%; animation-delay: 0s; }
-.star:nth-child(6) { top: 30%; right: 18%; animation-delay: -0.8s; width: 22px; height: 22px; }
-.star:nth-child(7) { bottom: 35%; left: 15%; animation-delay: -1.6s; width: 20px; height: 20px; background: var(--pastel-sky); }
-.star:nth-child(8) { bottom: 25%; right: 22%; animation-delay: -2.2s; width: 26px; height: 26px; background: var(--pastel-mint); }
-.star:nth-child(9) { top: 60%; left: 78%; animation-delay: -1.2s; width: 18px; height: 18px; background: var(--pastel-lavender); }
-@keyframes twinkle {
-  0%, 100% { opacity: 0.3; transform: scale(0.8) rotate(0deg); }
-  50% { opacity: 1; transform: scale(1.4) rotate(15deg); }
-}
-.center-content {
-  z-index: 10;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-}
-.seed-container {
+
+/* 图标区域：生长的嫩芽 */
+.icon-wrap {
   position: relative;
-  width: 140px;
-  height: 140px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 100px; height: 110px;
+  display: flex; align-items: center; justify-content: center;
 }
-.sprout {
-  font-size: 110px;
-  animation: sway 3s ease-in-out infinite;
-  transform-origin: bottom center;
-  filter: drop-shadow(0 10px 25px rgba(180,160,200,0.35));
-  opacity: 1;
+
+/* 光晕波纹 */
+.ripple {
+  position: absolute; border-radius: 50%;
+  border: 2px solid rgba(200, 180, 220, 0.3);
+  animation: rippleOut 2.5s ease-out infinite;
 }
-@keyframes sway {
-  0%, 100% { transform: rotate(-4deg); }
-  50% { transform: rotate(4deg); }
+.ripple:nth-child(1) { width: 60px; height: 60px;  animation-delay: 0s; }
+.ripple:nth-child(2) { width: 60px; height: 60px;  animation-delay: 0.6s; }
+.ripple:nth-child(3) { width: 60px; height: 60px;  animation-delay: 1.2s; }
+
+@keyframes rippleOut {
+  0%   { transform: scale(0.8); opacity: 0.6; }
+  100% { transform: scale(3.5); opacity: 0; }
 }
-.ring {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border: 3px solid transparent;
-  border-radius: 50%;
-  animation: ringPulse 2.5s ease-in-out infinite;
+
+/* 嫩芽图标 */
+.sprout-icon {
+  font-size: 64px;
+  z-index: 2;
+  animation: growSprout 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  transform: scale(0);
 }
-.ring:nth-child(1) {
-  border-top-color: var(--pastel-pink);
-  animation-delay: 0s;
+@keyframes growSprout {
+  0%   { transform: scale(0) rotate(-10deg); }
+  100% { transform: scale(1) rotate(0deg); }
 }
-.ring:nth-child(2) {
-  border-right-color: var(--pastel-lavender);
-  width: 120%; height: 120%;
-  animation-delay: -0.3s;
-}
-.ring:nth-child(3) {
-  border-bottom-color: var(--pastel-mint);
-  width: 140%; height: 140%;
-  animation-delay: -0.6s;
-}
-@keyframes ringPulse {
-  0%, 100% {
-    transform: rotate(0deg) scale(0.8);
-    opacity: 0;
-  }
-  50% {
-    transform: rotate(180deg) scale(1);
-    opacity: 0.6;
-  }
-}
+
+/* 标题 */
 .title {
-  font-size: 2.6em;
-  color: var(--text-dark);
-  letter-spacing: 0.1em;
-  text-shadow: 0 5px 15px rgba(180,140,160,0.25);
-  animation: titleFade 1.8s ease-out 1.2s forwards;
-  opacity: 0;
-  transform: translateY(25px);
+  font-size: 2.2em;
+  color: #5D4E6D;
+  letter-spacing: 0.08em;
+  animation: fadeUp 0.8s ease-out 0.3s forwards;
+  opacity: 0; transform: translateY(20px);
 }
-@keyframes titleFade {
-  0% { opacity: 0; transform: translateY(25px); }
-  40% { opacity: 0.8; transform: translateY(5px); }
-  100% { opacity: 1; transform: translateY(0); }
+.title span {
+  background: linear-gradient(135deg, #E8879B, #9B8DC4);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
+
+/* 副标题 */
 .subtitle {
-  font-size: 1.1em;
-  color: var(--text-light);
-  animation: subtitleFade 1.8s ease-out 1.8s forwards;
-  opacity: 0;
-  transform: translateY(20px);
+  font-size: 0.95em;
+  color: #B8A9D4;
+  margin-top: -16px;
+  animation: fadeUp 0.8s ease-out 0.6s forwards;
+  opacity: 0; transform: translateY(16px);
 }
-@keyframes subtitleFade {
-  0% { opacity: 0; transform: translateY(20px); }
-  40% { opacity: 0.7; transform: translateY(4px); }
+
+@keyframes fadeUp {
+  0%   { opacity: 0; transform: translateY(20px); }
   100% { opacity: 1; transform: translateY(0); }
 }
-.loader-container {
-  display: flex;
-  gap: 16px;
-  margin-top: 25px;
-  animation: loaderFade 1.2s ease-out 2.4s forwards;
+
+/* 进度条 */
+.progress-wrap {
+  width: 180px; height: 3px;
+  background: rgba(200, 180, 220, 0.2);
+  border-radius: 2px; overflow: hidden;
+  animation: fadeUp 0.6s ease-out 1s forwards;
   opacity: 0;
 }
-@keyframes loaderFade {
-  0% { opacity: 0; transform: scale(0.8); }
-  50% { opacity: 0.7; transform: scale(1.02); }
-  100% { opacity: 1; transform: scale(1); }
+.progress-bar {
+  width: 0%; height: 100%;
+  background: linear-gradient(90deg, #FFB5C2, #C8B8E8, #B5E8D5);
+  border-radius: 2px;
+  animation: fillBar 3s ease-in-out forwards;
 }
-.loader-dot {
-  width: 18px; height: 18px;
-  border-radius: 50%;
-  animation: bounce 2s ease-in-out infinite both;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+@keyframes fillBar {
+  0%   { width: 0%; }
+  30%  { width: 25%; }
+  60%  { width: 55%; }
+  85%  { width: 80%; }
+  100% { width: 100%; }
 }
-.loader-dot:nth-child(1) {
-  background: var(--pastel-pink);
-  animation-delay: 2.4s;
-}
-.loader-dot:nth-child(2) {
-  background: var(--pastel-lavender);
-  animation-delay: 2.65s;
-}
-.loader-dot:nth-child(3) {
-  background: var(--pastel-mint);
-  animation-delay: 2.9s;
-}
-.loader-dot:nth-child(4) {
-  background: var(--pastel-peach);
-  animation-delay: 3.15s;
-}
-@keyframes bounce {
-  0%, 80%, 100% {
-    transform: translateY(0) scale(0.7);
-    opacity: 0.4;
-  }
-  40% {
-    transform: translateY(-18px) scale(1);
-    opacity: 1;
-  }
-}
+
+/* 底部文字 */
 .hint {
-  font-size: 0.95em;
-  color: #9B8DAB;
+  font-size: 0.8em;
+  color: #C8B8D8;
+  animation: hintPulse 2s ease-in-out 1.4s infinite;
   opacity: 0;
-  animation: hintPulse 2.5s ease-in-out infinite 3s;
-  margin-top: 10px;
 }
 @keyframes hintPulse {
-  0%, 100% { opacity: 0.2; }
-  50% { opacity: 0.7; }
+  0%, 100% { opacity: 0.3; }
+  50%      { opacity: 0.8; }
 }
 </style>
 </head>
 <body>
-<div class="bg-decor floating-circle"></div>
-<div class="bg-decor floating-circle"></div>
-<div class="bg-decor floating-circle"></div>
-<div class="bg-decor floating-circle"></div>
-<div class="bg-decor star"></div>
-<div class="bg-decor star"></div>
-<div class="bg-decor star"></div>
-<div class="bg-decor star"></div>
-<div class="bg-decor star"></div>
 
-<div class="center-content">
-  <div class="seed-container">
-    <div class="ring"></div>
-    <div class="ring"></div>
-    <div class="ring"></div>
-    <span class="sprout">🌱</span>
+<div class="particles">
+  <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+  <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+  <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+  <div class="particle"></div>
+</div>
+
+<div class="center">
+  <div class="icon-wrap">
+    <div class="ripple"></div>
+    <div class="ripple"></div>
+    <div class="ripple"></div>
+    <span class="sprout-icon">🌱</span>
   </div>
-  <div class="title">成长手册</div>
+  <div class="title"><span>成长手册</span></div>
   <div class="subtitle">赵高钏的专属时光</div>
-  <div class="loader-container">
-    <span class="loader-dot"></span>
-    <span class="loader-dot"></span>
-    <span class="loader-dot"></span>
-    <span class="loader-dot"></span>
+  <div class="progress-wrap">
+    <div class="progress-bar"></div>
   </div>
   <div class="hint">正在进入...</div>
 </div>
@@ -256,23 +182,16 @@ body {
   function goToTarget() {
     if (redirected) return;
     redirected = true;
-
-    // 获取 app.js 保存的目标页面路径
-    var targetPath = sessionStorage.getItem('splashTarget') || '/?standalone=true';
-    // 清除保存的路径
+    var targetPath = sessionStorage.getItem('splashTarget') || '/?loaded=true';
     sessionStorage.removeItem('splashTarget');
-    // 跳转到目标页面
     window.location.replace(targetPath);
   }
 
-  // 3.5 秒后跳转（给动画足够的展示时间）
   document.addEventListener('DOMContentLoaded', function() {
     setTimeout(goToTarget, 3500);
   });
-  // 兜底：8 秒后强制跳转
   setTimeout(goToTarget, 8000);
 })();
 </script>
-<!-- 注意：splash.html 不引入 app.js，避免双重逻辑 -->
 </body>
 </html>

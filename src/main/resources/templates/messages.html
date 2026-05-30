@@ -50,11 +50,16 @@
       color: var(--text-primary);
       min-height: 100vh;
       overflow-x: hidden;
+
       -webkit-tap-highlight-color: transparent;
       -webkit-font-smoothing: antialiased;
       padding-bottom: 100px;
       position: relative;
     }
+    /* 隐藏右侧滚动条 */
+    html { scrollbar-width: none; -ms-overflow-style: none; }
+    html::-webkit-scrollbar { display: none; }
+
 
     /* 顶部导航栏（相册样式） */
     .top-bar {
@@ -209,60 +214,24 @@
       background: rgba(200, 180, 220, 0.18);
     }
 
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      z-index: 1000;
-      background: var(--nav-bg);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-top: 1px solid rgba(200, 180, 220, 0.1);
-      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      padding: 6px 8px 12px;
-      padding-bottom: max(12px, env(safe-area-inset-bottom));
+    
+    .toast-message {
+      position: fixed; bottom: 28%; left: 50%; transform: translateX(-50%);
+      background: rgba(0,0,0,0.72); color: #fff; padding: 10px 24px;
+      border-radius: 28px; font-size: 0.88em; z-index: 9999;
+      opacity: 0; pointer-events: none; transition: opacity 0.35s;
+      font-family: "Noto Sans SC", sans-serif;
     }
-    .bottom-nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-decoration: none;
-      color: var(--text-light);
-      font-size: 0.68em;
-      gap: 3px;
-      transition: color 0.25s;
+    .toast-message.show { opacity: 1; }
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000; background: var(--nav-bg); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); border-top: 1px solid rgba(200,180,220,0.1); border-radius: var(--radius-xl) var(--radius-xl) 0 0; display: flex; align-items: center; justify-content: space-around; padding: 6px 8px 12px; padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+        .bottom-nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--text-light); font-size: 0.68em; gap: 3px; transition: color 0.25s; }
+        .bottom-nav-item span { font-size: 1.5em; }
+        .bottom-nav-item.active { color: #E8788A; }
+        .bottom-nav-add { position: relative; top: -22px; width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #FFB5C2, #FF9AB2); border: 4px solid rgba(255,255,255,0.85); box-shadow: 0 6px 22px rgba(255,154,178,0.35); font-size: 1.6em; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.3s var(--transition-bounce), box-shadow 0.3s; animation: addBtnBreathe 2.5s ease-in-out infinite; }
+        @keyframes addBtnBreathe { 0%,100%{box-shadow:0 8px 26px rgba(255,154,178,0.45)}
+      50% { box-shadow: 0 14px 36px rgba(255, 154, 178, 0.65); }
     }
-    .bottom-nav-item span {
-      font-size: 1.5em;
-    }
-    .bottom-nav-item.active {
-      color: #E8788A;
-    }
-    .bottom-nav-add {
-      position: relative;
-      top: -22px;
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #FFB5C2, #FF9AB2);
-      border: 4px solid rgba(255, 255, 255, 0.85);
-      box-shadow: 0 6px 22px rgba(255, 154, 178, 0.35);
-      font-size: 1.6em;
-      color: white;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.3s var(--transition-bounce), box-shadow 0.3s;
-    }
-    .bottom-nav-add:active {
-      transform: scale(1.08);
-      box-shadow: 0 8px 26px rgba(255, 154, 178, 0.45);
-    }
+    .bottom-nav-add:active { transform: scale(1.08); box-shadow: 0 8px 26px rgba(255,154,178,0.45); }
 
     .add-overlay {
       position: fixed;
@@ -418,6 +387,17 @@
       font-family: "ZCOOL KuaiLe", sans-serif;
     }
 
+    
+    .add-sheet-cards { display: flex; gap: 16px; justify-content: center; margin: 20px 0; }
+    .add-card-item {
+      flex: 1; display: flex; flex-direction: column; align-items: center;
+      padding: 20px 12px; border-radius: 22px; background: rgba(255,240,245,0.5);
+      text-decoration: none; color: #5D4E6D; border: none; cursor: pointer;
+      font-family: inherit; transition: all 0.3s var(--transition-bounce);
+    }
+    .add-card-item:active { transform: scale(0.92); background: rgba(255,220,230,0.6); }
+    .add-card-icon { font-size: 2.5em; }
+    .add-card-label { font-family: 'ZCOOL KuaiLe', sans-serif; margin-top: 4px; }
     .add-sheet-title {
       text-align: center;
       font-family: 'ZCOOL KuaiLe', sans-serif;
@@ -592,10 +572,12 @@
   </div>
 </main>
 
+
+<div class="toast-message" id="toastMsg">提示</div>
 <nav class="bottom-nav">
   <a href="/" class="bottom-nav-item"><span>🏠</span>首页</a>
   <a href="/gallery" class="bottom-nav-item"><span>📷</span>相册</a>
-  <button class="bottom-nav-add" onclick="openAddOverlay()" aria-label="添加记录">+</button>
+  <button class="bottom-nav-add" onclick="handleAddClick()" aria-label="添加记录">+</button>
   <a href="/growth" class="bottom-nav-item"><span>📊</span>数据</a>
   <a href="/messages" class="bottom-nav-item active"><span>💌</span>留言</a>
 </nav>
@@ -603,19 +585,10 @@
 <div class="add-overlay" id="addOverlay">
   <div class="add-sheet">
     <div class="add-sheet-title">✨ 添加新记录</div>
-    <div style="display:flex; gap:16px; justify-content:center; margin:20px 0;">
-      <a href="/gallery?action=add" style="flex:1; display:flex; flex-direction:column; align-items:center; padding:20px 12px; border-radius:22px; background:rgba(255,240,245,0.5); text-decoration:none; color:#5D4E6D;">
-        <span style="font-size:2.5em;">📷</span>
-        <span style="font-family:'ZCOOL KuaiLe',sans-serif;">上传照片</span>
-      </a>
-      <a href="/growth?action=add" style="flex:1; display:flex; flex-direction:column; align-items:center; padding:20px 12px; border-radius:22px; background:rgba(255,240,245,0.5); text-decoration:none; color:#5D4E6D;">
-        <span style="font-size:2.5em;">📊</span>
-        <span style="font-family:'ZCOOL KuaiLe',sans-serif;">记录数据</span>
-      </a>
-      <a href="/messages?action=add" style="flex:1; display:flex; flex-direction:column; align-items:center; padding:20px 12px; border-radius:22px; background:rgba(255,240,245,0.5); text-decoration:none; color:#5D4E6D;">
-        <span style="font-size:2.5em;">💌</span>
-        <span style="font-family:'ZCOOL KuaiLe',sans-serif;">写留言</span>
-      </a>
+    <div class="add-sheet-cards">
+      <button class="add-card-item" onclick="closeAddOverlay();window.location.href='/gallery?action=add'"><span class="add-card-icon">📷</span><span class="add-card-label">上传照片</span></button>
+      <button class="add-card-item" onclick="closeAddOverlay();window.location.href='/growth?action=add'"><span class="add-card-icon">📊</span><span class="add-card-label">记录数据</span></button>
+      <button class="add-card-item" onclick="closeAddOverlay();openAddForm()"><span class="add-card-icon">💌</span><span class="add-card-label">写留言</span></button>
     </div>
     <button class="add-sheet-cancel" onclick="closeAddOverlay()">取消</button>
   </div>
@@ -625,17 +598,17 @@
   <div class="add-sheet">
     <div class="add-sheet-title">💌 写下留言</div>
     <p class="form-subtitle">留下你对宝宝的温暖寄语</p>
-    <form action="/messages/add" method="post" onsubmit="return handleMessageSubmit(this)">
+    <form th:action="@{/messages/add}" method="post" onsubmit="return handleMessageSubmit(this)">
       <div class="field-group">
-        <div class="field-label">📝 称呼 <span style="color:#E8788A;">*必填</span></div>
-        <input type="text" name="title" placeholder="如：爸爸、妈妈、爷爷..." required>
+        <div class="field-label">记录人 <span style="color:#E8788A;">*必填</span></div>
+        <input type="text" name="title" th:value="${#authentication.name}" placeholder="如：爸爸、妈妈、爷爷..." required>
       </div>
       <div class="field-group">
-        <div class="field-label">💬 留言内容 <span style="color:#E8788A;">*必填</span></div>
+        <div class="field-label">留言内容 <span style="color:#E8788A;">*必填</span></div>
         <textarea name="description" rows="3" placeholder="写下你想对宝宝说的话..." required></textarea>
       </div>
       <div class="field-group">
-        <div class="field-label">📅 日期 <span style="color:#E8788A;">*必填</span></div>
+        <div class="field-label">日期 <span style="color:#E8788A;">*必填</span></div>
         <div class="custom-date-wrap">
           <input type="date" name="recordDate" required>
           <span class="date-icon">📆</span>
@@ -651,7 +624,17 @@
 
 <script th:inline="javascript">
   /*<![CDATA[*/
-  
+  var isAuthenticated = /*[[${#authorization.expression('isAuthenticated()')}]]*/ false;
+
+  // Toast 提示
+  function showToast(msg) {
+    var t = document.getElementById('toastMsg');
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 1500);
+  }
+
   // 侧边栏控制
   function toggleSidebar() {
     var ov = document.getElementById('sidebarOverlay'), pn = document.getElementById('sidebarPanel');
@@ -660,6 +643,20 @@
   }
 
   // 添加记录弹窗
+  function requireAuth() {
+    if (!isAuthenticated) {
+      showToast('请先登录');
+      setTimeout(function() { window.location.href = '/login'; }, 600);
+      return false;
+    }
+    return true;
+  }
+
+  function handleAddClick() {
+    if (!requireAuth()) return;
+    openAddOverlay();
+  }
+
   function openAddOverlay() {
     document.getElementById('addOverlay').classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -755,6 +752,23 @@
     }
   });
   
+  
+  // 设置日期默认值为今天
+  (function(){
+    var today = new Date().toISOString().split('T')[0];
+    document.querySelectorAll('input[type="date"]:not([value])').forEach(function(el){
+      el.value = today;
+    });
+  })();
+  
+  // 所有日期选择器限制为今天及之前
+  (function(){
+    var today = new Date().toISOString().split('T')[0];
+    document.querySelectorAll('input[type="date"]').forEach(function(el){
+      el.setAttribute('max', today);
+      if (!el.value) el.value = today;
+    });
+  })();
   /*]]>*/
 </script>
 <!-- 引入公共导航与退出控制脚本 -->

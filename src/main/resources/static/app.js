@@ -5,10 +5,10 @@
   var path = window.location.pathname;
   var isSplashPage = (path === '/splash.html' || path === '/splash');
 
-  // 如果是开屏动画页本身，直接放行
+  // 开屏动画页本身直接放行
   if (isSplashPage) return;
 
-  // ===== 如果是通过 navigateTo 跳转过来的（内部导航），绝不播放动画 =====
+  // 内部导航跳转过来的，绝不播放动画
   if (sessionStorage.getItem('skipSplash') === 'true') {
     sessionStorage.removeItem('skipSplash');
     return;
@@ -18,24 +18,17 @@
   var isHomePage = (path === '/' || path === '');
   if (!isHomePage) return;
 
-  // 检查是否需要播放动画
+  // URL 自带 loaded 或 standalone 参数 → 说明刚从 splash 跳过来 → 跳过
+  var params = new URLSearchParams(window.location.search);
+  if (params.get('loaded') === 'true' || params.get('standalone') === 'true') {
+    return;
+  }
+
+  // 检查是否需要播放开屏动画（每个会话只播一次）
   if (!sessionStorage.getItem('splashPlayed')) {
     sessionStorage.setItem('splashPlayed', 'true');
-
-    var targetUrl = '/';
-    var currentSearch = window.location.search;
-
-    if (currentSearch) {
-      if (!currentSearch.includes('standalone=')) {
-        targetUrl = currentSearch + '&standalone=true';
-      } else {
-        targetUrl = currentSearch;
-      }
-    } else {
-      targetUrl = '/?standalone=true';
-    }
-
-    sessionStorage.setItem('splashTarget', targetUrl);
+    // 告诉 splash 页面播完后跳转到哪里
+    sessionStorage.setItem('splashTarget', '/?loaded=true');
     window.location.replace('/splash.html');
   }
 })();
@@ -44,9 +37,9 @@
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
     navigator.serviceWorker.register('/sw.js').then(function(reg) {
-      console.log('✅ Service Worker 注册成功，范围：', reg.scope);
+      // Service Worker registered
     }).catch(function(err) {
-      console.log('❌ Service Worker 注册失败：', err);
+      // Service Worker registration failed
     });
   });
 }
@@ -77,6 +70,10 @@ if ('serviceWorker' in navigator) {
 // 3. 通用导航函数
 function navigateTo(url) {
   sessionStorage.setItem('skipSplash', 'true');
+  // 内部跳转到首页时带上 loaded=true，避免服务器返回启动动画页
+  if (url === '/' || url === '' || url === '/index' || url === '/index.html') {
+    url = '/?loaded=true';
+  }
   location.replace(url);
 }
 

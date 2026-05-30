@@ -1,7 +1,9 @@
-更改我的网站的字体，要求好加载，童趣风格<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <meta name="_csrf" th:content="${_csrf?.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf?.headerName}"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>添加记录 - 赵高钏的成长记录手册</title>
     <style>
@@ -172,8 +174,10 @@
                     <span class="record-date" th:text="${#temporals.format(record.recordDate, 'yyyy/MM/dd')}">日期</span>
                     <span class="record-category" th:text="${record.category}">分类</span>
                 </div>
-                <a class="btn-delete" th:href="@{/admin/delete/{id}(id=${record.id})}"
-                   onclick="return confirm('确定删除这条记录吗？')">删除</a>
+                <form th:action="@{/admin/delete/{id}(id=${record.id})}" method="post" style="display:inline;"
+                      onsubmit="return confirm('确定删除这条记录吗？')">
+                    <button type="submit" class="btn-delete">删除</button>
+                </form>
             </li>
         </ul>
     </div>

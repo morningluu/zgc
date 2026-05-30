@@ -46,28 +46,25 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
-
                 .authorizeHttpRequests(auth -> auth
                         // 公开页面（无需登录即可访问）
                         .requestMatchers(
                                 "/",
                                 "/gallery",
                                 "/growth",
-                                "/diary",
                                 "/messages",
-                                "/register",
                                 "/login",
-                                // 过渡页（从 ignoring 移到这里，保持安全上下文可用）
                                 "/splash.html"
                         ).permitAll()
-                        // 公开 API
-                        .requestMatchers("/api/avatar/**").permitAll()
+                        // 公开 API（仅 GET 获取头像）
+                        .requestMatchers("/api/avatar").permitAll()
+                        // 管理员接口需要 ADMIN 角色
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         // 所有 POST 操作都需要认证
-                        .requestMatchers(request -> 
+                        .requestMatchers(request ->
                             "POST".equalsIgnoreCase(request.getMethod())
                         ).authenticated()
-                        // 其他请求（如 /api/** 等）需要认证
+                        // 其他请求需要认证
                         .anyRequest().authenticated()
                 )
 

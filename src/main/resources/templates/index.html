@@ -3,6 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<script>
+// 立即检查是否需要开屏动画（在页面渲染前），避免首页闪烁
+(function(){
+  if (window.location.pathname!=='/'&&window.location.pathname!=='') return;
+  if (/[?&](loaded|standalone)=true/.test(window.location.search)) return;
+  if (sessionStorage.getItem('splashPlayed')) return;
+  if (sessionStorage.getItem('skipSplash')==='true') return;
+  sessionStorage.setItem('splashPlayed','true');
+  sessionStorage.setItem('splashTarget','/?loaded=true');
+  window.location.replace('/splash.html');
+})();
+</script>
+
     <title>赵高钏的成长记录手册</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🌱</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
@@ -48,11 +61,16 @@
             color: var(--text-primary);
             min-height: 100vh;
             overflow-x: hidden;
+
             -webkit-tap-highlight-color: transparent;
             -webkit-font-smoothing: antialiased;
             padding-bottom: 100px;
             position: relative;
         }
+    /* 隐藏右侧滚动条 */
+    html { scrollbar-width: none; -ms-overflow-style: none; }
+    html::-webkit-scrollbar { display: none; }
+
 
         .exit-toast {
             position: fixed;
@@ -175,13 +193,13 @@
         .data-tag.weight-tag { color: #8B6E5E; border-color: rgba(139,110,94,0.3); }
         .data-tag.score-tag { color: #5D7E8A; border-color: rgba(93,126,138,0.3); }
 
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000; background: var(--nav-bg); backdrop-filter: blur(24px); border-top: 1px solid rgba(200,180,220,0.1); border-radius: var(--radius-xl) var(--radius-xl) 0 0; display: flex; align-items: center; justify-content: space-around; padding: 6px 8px 12px; padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000; background: var(--nav-bg); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); border-top: 1px solid rgba(200,180,220,0.1); border-radius: var(--radius-xl) var(--radius-xl) 0 0; display: flex; align-items: center; justify-content: space-around; padding: 6px 8px 12px; padding-bottom: max(12px, env(safe-area-inset-bottom)); }
         .bottom-nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--text-light); font-size: 0.68em; gap: 3px; transition: color 0.25s; }
         .bottom-nav-item span { font-size: 1.5em; }
         .bottom-nav-item.active { color: #E8788A; }
         .bottom-nav-add { position: relative; top: -22px; width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #FFB5C2, #FF9AB2); border: 4px solid rgba(255,255,255,0.85); box-shadow: 0 6px 22px rgba(255,154,178,0.35); font-size: 1.6em; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.3s var(--transition-bounce), box-shadow 0.3s; animation: addBtnBreathe 2.5s ease-in-out infinite; }
         @keyframes addBtnBreathe { 0%,100%{box-shadow:0 8px 26px rgba(255,154,178,0.45)} 50%{box-shadow:0 14px 36px rgba(255,154,178,0.65)} }
-        .bottom-nav-add:active { transform: scale(0.78) rotate(45deg); }
+        .bottom-nav-add:active { transform: scale(1.08); box-shadow: 0 8px 26px rgba(255,154,178,0.45); }
 
         .add-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 3000; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.35s; }
         .add-overlay.active { opacity: 1; pointer-events: auto; }
@@ -299,7 +317,7 @@
                 <input type="file" id="avatarInput" accept="image/*" style="display:none;">
             </div>
             <div class="page-right">
-                <div class="info-slip birthday"><span class="slip-icon">🎂</span><span class="slip-label">出生</span><span class="slip-value">2017年2月14日</span></div>
+                <div class="info-slip birthday"><span class="slip-icon">🎂</span><span class="slip-label">出生</span><span class="slip-value">2017年2月24日</span></div>
                 <div class="info-slip age"><span class="slip-icon">🎈</span><span class="slip-label">年龄</span><span class="slip-value" id="ageNumber">--</span></div>
                 <div class="info-slip height"><span class="slip-icon">📏</span><span class="slip-label">身高</span><span class="slip-value" id="statHeight" th:text="${latestHeight != null ? latestHeight + ' cm' : '待记录'}">待记录</span></div>
                 <div class="info-slip weight"><span class="slip-icon">⚖️</span><span class="slip-label">体重</span><span class="slip-value" id="statWeight" th:text="${latestWeight != null ? latestWeight + ' kg' : '待记录'}">待记录</span></div>
@@ -363,10 +381,10 @@
         <h3>📷 上传照片</h3>
         <p class="form-subtitle">记录宝宝精彩瞬间</p>
         <form th:action="@{/gallery/add}" method="post" enctype="multipart/form-data">
-            <div class="field-group"><div class="field-label">📝 照片标题</div><input type="text" name="title" placeholder="如：宝宝第一次走路"></div>
-            <div class="field-group"><div class="field-label">💬 描述</div><textarea name="description" rows="2" placeholder="记录下这一刻..."></textarea></div>
-            <div class="field-group"><div class="field-label">📅 日期 <span style="color:#E8788A;">*必填</span></div><div class="custom-date-wrap"><input type="date" name="recordDate" required><span class="date-icon">📆</span></div></div>
-            <div class="field-group"><div class="field-label">🖼️ 选择照片 <span style="color:#E8788A;">*必填</span></div><div class="file-upload-box"><input type="file" name="photo" accept="image/*" required>📷 点击选择照片</div></div>
+            <div class="field-group"><div class="field-label">照片标题</div><input type="text" name="title" placeholder="如：宝宝第一次走路"></div>
+            <div class="field-group"><div class="field-label">描述</div><textarea name="description" rows="2" placeholder="记录下这一刻..."></textarea></div>
+            <div class="field-group"><div class="field-label">日期 <span style="color:#E8788A;">*必填</span></div><div class="custom-date-wrap"><input type="date" name="recordDate" required><span class="date-icon">📆</span></div></div>
+            <div class="field-group"><div class="field-label">选择照片 <span style="color:#E8788A;">*必填</span></div><div class="file-upload-box"><input type="file" name="photo" accept="image/*" required>📷 点击选择照片</div></div>
             <button type="submit" class="btn-submit">✨ 上传照片</button>
         </form>
         <button class="add-sheet-cancel-btn" onclick="closePhotoForm()">取消</button>
@@ -378,13 +396,13 @@
         <h3>📊 记录成长数据</h3>
         <p class="form-subtitle">记录身高体重或学业成绩</p>
         <form th:action="@{/growth/add}" method="post">
-            <div class="field-group"><div class="field-label">📅 日期 <span style="color:#E8788A;">*必填</span></div><div class="custom-date-wrap"><input type="date" name="recordDate" required><span class="date-icon">📆</span></div></div>
+            <div class="field-group"><div class="field-label">日期 <span style="color:#E8788A;">*必填</span></div><div class="custom-date-wrap"><input type="date" name="recordDate" required><span class="date-icon">📆</span></div></div>
             <div class="form-row">
-                <div class="field-group"><div class="field-label">📏 身高 (cm)</div><input type="number" name="heightCm" step="0.1" placeholder="如：85.5"></div>
-                <div class="field-group"><div class="field-label">⚖️ 体重 (kg)</div><input type="number" name="weightKg" step="0.1" placeholder="如：12.5"></div>
+                <div class="field-group"><div class="field-label">身高 (cm)</div><input type="number" name="heightCm" step="0.1" placeholder="如：85.5"></div>
+                <div class="field-group"><div class="field-label">体重 (kg)</div><input type="number" name="weightKg" step="0.1" placeholder="如：12.5"></div>
             </div>
-            <div class="field-group"><div class="field-label">📝 备注</div><input type="text" name="title" placeholder="如：3月体检"></div>
-            <div class="field-group"><div class="field-label">👤 记录人 <span style="color:#E8788A;">*必填</span></div><input type="text" name="recordedBy" placeholder="妈妈" required></div>
+            <div class="field-group"><div class="field-label">备注</div><input type="text" name="title" placeholder="如：3月体检"></div>
+            <div class="field-group"><div class="field-label">记录人 <span style="font-weight:normal;color:var(--text-light);">(选填)</span></div><input type="text" name="recordedBy" placeholder="选填"></div>
             <button type="submit" class="btn-submit">✨ 保存数据</button>
         </form>
         <button class="add-sheet-cancel-btn" onclick="closeGrowthForm()">取消</button>
@@ -396,9 +414,9 @@
         <h3>💌 写下留言</h3>
         <p class="form-subtitle">留下对宝宝的温暖寄语</p>
         <form th:action="@{/messages/add}" method="post">
-            <div class="field-group"><div class="field-label">📝 称呼 <span style="color:#E8788A;">*必填</span></div><input type="text" name="title" placeholder="如：爸爸、妈妈..." required></div>
-            <div class="field-group"><div class="field-label">💬 留言内容 <span style="color:#E8788A;">*必填</span></div><textarea name="description" rows="3" placeholder="写下你想对宝宝说的话..." required></textarea></div>
-            <div class="field-group"><div class="field-label">📅 日期 <span style="color:#E8788A;">*必填</span></div><div class="custom-date-wrap"><input type="date" name="recordDate" required><span class="date-icon">📆</span></div></div>
+            <div class="field-group"><div class="field-label">称呼 <span style="color:#E8788A;">*必填</span></div><input type="text" name="title" placeholder="如：爸爸、妈妈..." required></div>
+            <div class="field-group"><div class="field-label">留言内容 <span style="color:#E8788A;">*必填</span></div><textarea name="description" rows="3" placeholder="写下你想对宝宝说的话..." required></textarea></div>
+            <div class="field-group"><div class="field-label">日期 <span style="color:#E8788A;">*必填</span></div><div class="custom-date-wrap"><input type="date" name="recordDate" required><span class="date-icon">📆</span></div></div>
             <button type="submit" class="btn-submit">✨ 发布留言</button>
         </form>
         <button class="add-sheet-cancel-btn" onclick="closeMessageForm()">取消</button>
@@ -581,7 +599,7 @@
     function closeMessageForm() { document.getElementById('messageFormOverlay').classList.remove('active'); }
 
     (function() {
-        var birthday = new Date(2017, 1, 14);
+        var birthday = new Date(2017, 1, 24);
         var now = new Date();
         var y = now.getFullYear() - birthday.getFullYear();
         var m = now.getMonth() - birthday.getMonth();
@@ -652,7 +670,24 @@
     });
 
     // 原有的返回键拦截逻辑已删除，现在由 app.js 统一处理
-    /*]]>*/
+    
+    // 设置日期默认值为今天
+    (function(){
+        var today = new Date().toISOString().split('T')[0];
+        document.querySelectorAll('input[type="date"]:not([value])').forEach(function(el){
+            el.value = today;
+        });
+    })();
+  
+  // 所有日期选择器限制为今天及之前
+  (function(){
+    var today = new Date().toISOString().split('T')[0];
+    document.querySelectorAll('input[type="date"]').forEach(function(el){
+      el.setAttribute('max', today);
+      if (!el.value) el.value = today;
+    });
+  })();
+  /*]]>*/
 </script>
 <!-- 引入公共导航与退出控制脚本 -->
 <script src="/app.js"></script>

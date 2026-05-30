@@ -36,8 +36,4 @@ public class GrowthRecordService {
     public void delete(Long id) {
         repository.deleteById(id);
     }
-
-    public List<GrowthRecord> findAll() {
-        return repository.findAll();
-    }
 }

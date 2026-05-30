@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Logger;
 import java.util.concurrent.TimeUnit;
 
 @Controller
@@ -34,25 +35,21 @@ public class HomeController {
 
     private final GrowthRecordService recordService;
     private static final String AVATAR_FILE_NAME = "baby-avatar";
+    private static final Logger logger = Logger.getLogger(HomeController.class.getName());
 
     public HomeController(GrowthRecordService recordService) {
         this.recordService = recordService;
     }
 
-    // ==================== 首页（含开屏动画） ====================
+    // ==================== 首页 ====================
     @GetMapping("/")
     public String home(Model model,
                        @RequestParam(value = "standalone", required = false) String standalone,
                        @RequestParam(value = "loaded", required = false) String loaded) {
 
-        // 如果是 PWA 启动（standalone=true）或过渡页跳转（loaded=true），直接显示首页内容
-        // 不显示过渡动画，因为动画在 splash.html 里已经播放过了
-        boolean skipSplash = "true".equals(standalone) || "true".equals(loaded);
-
-        // 如果是浏览器直接访问（无任何参数），则显示过渡动画页
-        if (!skipSplash) {
-            return "splash";
-        }
+        // 始终返回 index 页面，开屏动画由 app.js 在客户端控制
+        // app.js 通过 sessionStorage 的 splashPlayed 标记来判断是否需要播放动画
+        // 这样内部导航、登录/退出后不会重复播放 splash
 
         // ====== 以下是首页的正常数据加载 ======
         List<GrowthRecord> records = recordService.findAllByOrderByRecordDateDesc();
@@ -312,27 +309,6 @@ public class HomeController {
         return "redirect:/growth";
     }
 
-    // ==================== 日记 ====================
-    @GetMapping("/diary")
-    public String diary(Model model) {
-        List<GrowthRecord> records = recordService.findByCategory("diary");
-        model.addAttribute("records", records);
-        return "diary";
-    }
-
-    @PostMapping("/diary/add")
-    public String addDiary(@RequestParam String title,
-                           @RequestParam String description,
-                           @RequestParam String recordDate) {
-        GrowthRecord record = new GrowthRecord();
-        record.setCategory("diary");
-        record.setTitle(title);
-        record.setDescription(description);
-        record.setRecordDate(LocalDate.parse(recordDate));
-        recordService.save(record);
-        return "redirect:/diary";
-    }
-
     // ==================== 留言 ====================
     @GetMapping("/messages")
     public String messages(Model model) {
@@ -364,7 +340,7 @@ public class HomeController {
             try {
                 Files.deleteIfExists(Paths.get(filePath));
             } catch (IOException e) {
-                // 日志记录，不影响删除流程
+                logger.warning("删除文件失败: " + filePath + " - " + e.getMessage());
             }
         }
         recordService.delete(id);
@@ -379,7 +355,7 @@ public class HomeController {
             try {
                 Files.deleteIfExists(Paths.get(filePath));
             } catch (IOException e) {
-                // 忽略
+                logger.warning("删除文件失败: " + filePath + " - " + e.getMessage());
             }
         }
         recordService.delete(id);

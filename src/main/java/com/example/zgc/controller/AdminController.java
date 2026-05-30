@@ -3,6 +3,7 @@ package com.example.zgc.controller;
 import com.example.zgc.model.GrowthRecord;
 import com.example.zgc.service.FileStorageService;
 import com.example.zgc.service.GrowthRecordService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 
 @Controller
 @RequestMapping("/admin")
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
     private final GrowthRecordService recordService;
@@ -48,8 +50,7 @@ public class AdminController {
         return "redirect:/admin/upload";
     }
 
-    // ✅ 修改：删除后重定向
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String deleteRecord(@PathVariable Long id) {
         recordService.delete(id);
         return "redirect:/admin/upload";
