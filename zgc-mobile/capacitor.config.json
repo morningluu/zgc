@@ -4,7 +4,8 @@
   "webDir": "www",
   "server": {
     "url": "https://zgc-production.up.railway.app",
-    "cleartext": true
+    "cleartext": true,
+    "allowNavigation": ["zgc-production.up.railway.app"]
   },
   "android": {
     "allowMixedContent": true
