@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add *)",
+      "Bash(git commit -m '全面优化: 安全加固 + 折线图重设计 + 底部导航统一 + 启动页重做 + 家庭账号 *)",
+      "Bash(Co-Authored-By: Claude Opus 4.8)",
+      "Bash(git push *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code} %{size_download}\" http://localhost:8080/xtb.png)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code} %{size_download}\" http://localhost:8080/dtb.png)",
+      "Bash(pngquant --quality=60-80 --force --ext .png /workspaces/zgc/src/main/resources/static/xtb.png /workspaces/zgc/src/main/resources/static/dtb.png)",
+      "Bash(convert /workspaces/zgc/src/main/resources/static/xtb.png -resize 192x192 -quality 85 /workspaces/zgc/src/main/resources/static/xtb-compressed.png)"
+    ]
+  }
+}
