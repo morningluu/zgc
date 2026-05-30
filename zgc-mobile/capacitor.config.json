@@ -1,0 +1,12 @@
+{
+  "appId": "com.zgc.growth",
+  "appName": "成长手册",
+  "webDir": "www",
+  "server": {
+    "url": "https://zgc-production.up.railway.app",
+    "cleartext": true
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}
